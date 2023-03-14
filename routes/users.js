@@ -1,21 +1,20 @@
 const express = require("express");
 const router = express.Router();
+const userController = require("../controllers/userController");
 
-/* GET home page. */
-router.get("/", function (req, res, next) {
-  res.render("layout", { user: false });
-});
+// /* GET home page. */
+router.get("/", userController.homePage);
 
-router.get("/signup", (req, res) => {
-  res.render("signup.ejs", { registered: false, olduser: false, user: false });
-});
-router.post("/signup", (req, res) => {
-  console.log(req.body);
-  res.send("got it");
-});
-router.get("/login", (req, res) => {
-  res.render("login.ejs", { loginErr: false, user: false });
-});
+//sign up
+router.get("/signup", userController.signUpPage);
+
+router.post("/signup", userController.signUpPost);
+//Login Page
+
+router.get("/login", userController.loginPage);
+
+router.post("/login", userController.loginPost);
+
 router.get("/forgotpassword", (req, res) => {
   res.render("forgotpassword.ejs", {
     otpErr: false,

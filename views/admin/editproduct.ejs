@@ -1,0 +1,164 @@
+<section class="content-main">
+  <div class="row">
+    <form action="/admin/edited-product/{{ product._id }}" method="post">
+      <div class="col-9">
+        <div class="content-header">
+          <h2 class="content-title">Edit Product.</h2>
+          <div>
+            {{!--
+            <button
+              class="btn btn-light rounded font-sm mr-5 text-body hover-up"
+            >
+              Save to draft
+            </button>
+            --}}
+            <button class="btn btn-md rounded font-sm hover-up">Publish</button
+            ><br />
+            {{#if update}}
+            <label class="text-center" style="color: rgb(22, 131, 22)"
+              >Product Successfully Updated</label
+            >
+            {{/if}}
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="mb-4">
+              <label for="product_brand" class="form-label">Brand</label>
+              <input
+                type="text"
+                placeholder="Type here"
+                class="form-control"
+                id="product_brand"
+                name="productBrand"
+                value="{{ product.productBrand }}"
+                required
+              />
+            </div>
+            <div class="mb-4">
+              <label for="product_title" class="form-label"
+                >Product title</label
+              >
+              <input
+                type="text"
+                placeholder="Type here"
+                class="form-control"
+                id="product_title"
+                name="productTitle"
+                value="{{ product.productTitle }}"
+                required
+              />
+            </div>
+            <div class="row gx-3">
+              <div class="col-md-4 mb-3">
+                <label for="product_sku" class="form-label">Product ID</label>
+                <input
+                  type="text"
+                  placeholder="Type here"
+                  class="form-control"
+                  id="product_sku"
+                  name="productID"
+                  value="{{ product.productID }}"
+                  required
+                />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label for="product_color" class="form-label">Color</label>
+                <input
+                  type="text"
+                  placeholder="Type here"
+                  class="form-control"
+                  id="product_color"
+                  name="productColor"
+                  value="{{ product.productColor }}"
+                />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label for="product_size" class="form-label">Size</label>
+                <input
+                  type="text"
+                  placeholder="Type here"
+                  class="form-control"
+                  id="product_size"
+                  name="productSize"
+                  {{product.productSize}}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- card end// -->
+        <div class="card mb-4">
+          <div class="card-body">
+            <div>
+              <label class="form-label">Description</label>
+              <textarea
+                placeholder="Type here"
+                class="form-control"
+                rows="4"
+                name="productDescription"
+                value="{{ product.productDescription }}"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+        <!-- card end// -->
+        <div class="card mb-4">
+          <div class="card-body">
+            <div>
+              <label class="form-label">Images</label><br />
+              <img
+                src="/db/product-images/{{product.productImage.[0]}}"
+                alt=""
+                style="width: 100px; height: auto"
+              />
+              <input class="form-control" type="file" name="productImage" />
+              <input class="form-control" type="file" name="productImage" />
+              <input class="form-control" type="file" name="productImage" />
+              <input class="form-control" type="file" name="productImage" />
+            </div>
+          </div>
+        </div>
+        <!-- card end// -->
+      </div>
+      <div class="col-lg-3">
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="mb-4">
+              <label class="form-label">Price</label>
+              <input
+                type="text"
+                placeholder="Type here"
+                class="form-control"
+                name="productPrice"
+                value="{{ product.productPrice }}"
+                required
+              />
+            </div>
+            <div class="mb-4">
+              <label class="form-label">Status</label>
+              <p class="form-select">
+                <span>Listed</span>
+              </p>
+            </div>
+
+            <hr />
+            <h5 class="mb-3">Categories</h5>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                value=""
+                id="product-cat"
+              />
+              <label class="form-check-label" for="product-cat"> Shirt </label>
+            </div>
+          </div>
+        </div>
+        <!-- card end// -->
+      </div>
+    </form>
+  </div>
+</section>
