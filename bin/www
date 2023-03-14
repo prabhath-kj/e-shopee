@@ -7,6 +7,7 @@
 var app = require("../app");
 var debug = require("debug")("eshoppee:server");
 var http = require("http");
+const mongoose = require("mongoose");
 
 /**
  * Get port from environment and store in Express.
@@ -24,10 +25,13 @@ var server = http.createServer(app);
 /**
  * Listen on provided port, on all network interfaces.
  */
-
-server.listen(port, () => {
-  console.log("backend started @ http://localhost:3000/");
+mongoose.connection.once("open", () => {
+  console.log("Connected to the database.");
+  server.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
 });
+
 server.on("error", onError);
 server.on("listening", onListening);
 

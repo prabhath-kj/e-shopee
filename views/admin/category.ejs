@@ -1,0 +1,111 @@
+<%- include('../adincludes/header') %>
+
+<section class="content-main">
+  <div class="content-header">
+    <div>
+      <h2 class="content-title card-title">Categories.</h2>
+      <p>Add, edit or delete a category</p>
+    </div>
+    <div>
+      <input
+        type="text"
+        placeholder="Search Categories"
+        class="form-control bg-white"
+      />
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-3">
+          <form action="/admin/add-category" method="post">
+            <div class="mb-4">
+              <label for="product_name" class="form-label">Category</label>
+              <input
+                type="text"
+                placeholder="Type here"
+                class="form-control"
+                id="product_name"
+                name="catName"
+              />
+            </div>
+
+            <%#!--
+            <div class="mb-4">
+              <label class="form-label">Parent</label>
+              <select class="form-select">
+                <option>Clothes</option>
+                <option>T-Shirts</option>
+              </select>
+            </div>
+            --%>
+            <div class="mb-4">
+              <label class="form-label">Description</label>
+              <textarea
+                placeholder="Type here"
+                class="form-control"
+                name="catDescription"
+              ></textarea>
+            </div>
+
+            <div class="d-grid">
+              <button class="btn btn-primary">Create category</button>
+            </div>
+          </form>
+        </div>
+        <div class="col-md-9">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Description</th>
+
+                  <th class="text-end">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%#-- foreach (category){%>
+                <tr>
+                  <td>
+                    <b><%= this.catName %></b>
+                  </td>
+                  <td><%=this.catDescription %></td>
+                  <td class="text-end">
+                    <div class="dropdown">
+                      <a
+                        href="#"
+                        data-bs-toggle="dropdown"
+                        class="btn btn-light rounded btn-sm font-sm"
+                      >
+                        <i class="material-icons md-more_horiz"></i>
+                      </a>
+                      <div class="dropdown-menu">
+                        <%#-- <a class="dropdown-item" href="#">View detail</a>
+                        <a class="dropdown-item" href="#">Edit info</a> --%>
+                        <a
+                          class="dropdown-item text-danger"
+                          href="/admin/deletecategory/<%= this._id %>"
+                          onclick="return confirm(`do you want to delete ${ this.catName }`)"
+                          >Delete</a
+                        >
+                      </div>
+                    </div>
+                    <!-- dropdown //end -->
+                  </td>
+                </tr>
+                <%}%>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- .col// -->
+      </div>
+      <!-- .row // -->
+    </div>
+    <!-- card body .// -->
+  </div>
+  <!-- card .// -->
+</section>
+<!-- content-main end// -->
+<%- include('../adincludes/footer') %>
