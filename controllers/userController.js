@@ -1,12 +1,11 @@
-const express = require("express");
 const userHelper = require("../helpers/userHelper");
 const adminHelper = require("../helpers/adminHelper");
-const session = require("express-session");
 
 module.exports = {
   //homepage
   homePage: async (req, res, next) => {
     let user = req.session.user;
+
     if (user) {
       res.render("layout", {
         user,
@@ -53,7 +52,7 @@ module.exports = {
       res.render("signup", { registered: true, olduser: false, user: false });
     });
   },
-  loginPage: function (req, res) {
+  loginPage: (req, res) => {
     if (req.session.loggedIn) {
       res.redirect("/");
     } else {
@@ -61,7 +60,7 @@ module.exports = {
     }
   },
 
-  loginPost: function (req, res) {
+  loginPost: (req, res) => {
     console.log("hi iam here");
     userHelper.doLogin(req.body).then((response) => {
       if (response.status) {
@@ -72,5 +71,10 @@ module.exports = {
         res.render("login", { loginErr: true, user: false });
       }
     });
+  },
+  logOut: (req, res) => {
+    req.session.loggedIn = false;
+    req.session.user = null;
+    res.redirect("/");
   },
 };

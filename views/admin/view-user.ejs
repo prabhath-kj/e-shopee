@@ -1,5 +1,6 @@
-<%- include (../adincludes/header) -%>
-<section>
+<%- include('../adincludes/header') %>
+
+<main>
   <section class="content-main">
     <div class="content-header">
       <div>
@@ -52,23 +53,17 @@
               </tr>
             </thead>
             <tbody>
-              <% users.forEach(function(user) { %>
+              <% for(let user of users) { %>
               <tr>
                 <td><%= user._id %></td>
-                <td>
-                  <b><%= user.registerName %></b>
-                </td>
-                <td><%= user.registerEmail %></td>
+                <td><b><%= user.username %></b></td>
+                <td><%= user.email %></td>
                 <%#--
                 <td>
-                  <template
-                    class="__cf_email__"
-                    data-cfemail="aec3cfdcd8c7c0eecbd6cfc3dec2cb80cdc1c3"
-                    >[email&#160;protected]</template
-                  >
+                  <template class="__cf_email__" data-cfemail="..."></template>
                 </td>
                 --%>
-                <td><%= user.registerMobileno %></td>
+                <td><%= user.mobnumber %></td>
                 <% if (user.status) { %>
                 <td>
                   <span class="badge rounded-pill alert-success">Active</span>
@@ -94,7 +89,6 @@
                       <a class="dropdown-item text-danger" href="#">Delete</a>
                     </div>
                   </div>
-                  <!-- dropdown //end -->
                   --%>
                 </td>
                 <% } else { %>
@@ -124,12 +118,11 @@
                       <a class="dropdown-item text-danger" href="#">Delete</a>
                     </div>
                   </div>
-                  <!-- dropdown //end -->
                   --%>
                 </td>
                 <% } %>
               </tr>
-              <% }); %>
+              <% } %>
             </tbody>
           </table>
         </div>
@@ -155,22 +148,5 @@
       </nav>
     </div>
   </section>
-  <!-- content-main end// -->
-  <footer class="main-footer font-xs">
-    <div class="row pb-30 pt-15">
-      <div class="col-sm-6">
-        <script
-          data-cfasync="false"
-          src="../../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"
-        ></script>
-        <script>
-          document.write(new Date().getFullYear());
-        </script>
-      </div>
-      <div class="col-sm-6">
-        <div class="text-sm-end">All rights reserved</div>
-      </div>
-    </div>
-  </footer>
-</section>
-<%- include (../adincludes/footer) -%>
+</main>
+<%- include('../adincludes/footer') %>

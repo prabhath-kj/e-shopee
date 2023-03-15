@@ -51,7 +51,7 @@
                         <div class="icon">
                             <i class="icon-user"></i>
                         </div>
-                        <p>Account</p>
+                        <p>Hi <%=user.username%></p>
                     </a>
 
                     <div class="dropdown-menu dropdown-menu-right">
@@ -197,7 +197,40 @@
           <!-- End .container -->
         </div>
         <!-- End .header-middle -->
-        <%}%>
+        <%} else { %>
+          <div class="wishlist">
+            <a href="wishlist.html" title="Wishlist">
+              <div class="icon">
+                <i class="icon-heart-o"></i>
+                <!-- <span class="wishlist-count badge">3</span> -->
+              </div>
+              <p>Wishlist</p>
+            </a>
+          </div>
+          <!-- End .compare-dropdown -->
+
+          <div class="dropdown cart-dropdown">
+            <a
+              href="#"
+              class="dropdown-toggle"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+              data-display="static"
+            >
+              <div class="icon">
+                <i class="icon-shopping-cart"></i>
+                <!-- <span class="cart-count">2</span> -->
+              </div>
+              <p>Cart</p>
+            </a>
+        </div>
+        <!-- End .header-right -->
+      </div>
+      <!-- End .container -->
+    </div>
+    <%}%>
         <div class="header-bottom sticky-header">
           <div class="container">
             <div class="header-left">

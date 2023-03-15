@@ -15,6 +15,9 @@ router.get("/login", userController.loginPage);
 
 router.post("/login", userController.loginPost);
 
+//LOGOUT
+router.get("/logout", userController.logOut);
+
 router.get("/forgotpassword", (req, res) => {
   res.render("forgotpassword.ejs", {
     otpErr: false,
@@ -25,7 +28,5 @@ router.get("/forgotpassword", (req, res) => {
 router.get("/otp-login", (req, res) => {
   res.render("otp-login.ejs", { otpErr: false, loginErr: false, user: false });
 });
-router.get("/logout", (req, res) => {
-  res.redirect("/");
-});
+
 module.exports = router;
