@@ -73,8 +73,12 @@ module.exports = {
     });
   },
   logOut: (req, res) => {
-    req.session.loggedIn = false;
-    req.session.user = null;
-    res.redirect("/");
+    req.session.destroy((err) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.redirect("/");
+      }
+    });
   },
 };

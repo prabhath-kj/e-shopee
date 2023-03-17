@@ -28,6 +28,13 @@
 >
 
 </script>
+<script>
+  function handleChange(event) {
+    const status = event.target.value;
+    const url = `/admin/view-user?status=${status}`;
+    window.location.href = url;
+  }
+</script>
 </body>
 
 <!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:32:57 GMT -->

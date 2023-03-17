@@ -37,6 +37,7 @@ const databaseName = dbConfig.database;
 
 const usersRouter = require("./routes/users");
 const adminRouter = require("./routes/admin");
+const errorRoutes = require("./routes/error");
 
 const app = express();
 
@@ -71,7 +72,7 @@ app.use(function (req, res, next) {
 
 app.use("/", usersRouter);
 app.use("/admin", adminRouter);
-
+app.use(errorRoutes);
 /// Create session middleware
 // app.use(session(createSessionConfig()));
 

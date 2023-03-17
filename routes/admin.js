@@ -12,6 +12,18 @@ router.get("/login", adminController.loginPage);
 
 router.post("/login", adminController.loginPost);
 
+router.get("/logout", adminController.logOut);
+
 router.get("/view-user", adminController.viewUser);
+
+router.get("/block-user/:id", adminController.blockUser);
+
+router.get("/unblock-user/:id", adminController.unblockUser);
+
+router.get("/category", adminController.category);
+
+router.post("/add-category", adminController.addCategory);
+
+router.get("/delete-category/:id", adminController.deleteCategory);
 
 module.exports = router;
