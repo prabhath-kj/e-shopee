@@ -1,0 +1,404 @@
+<%- include('includes/header') -%>
+<%- include('includes/user-header') -%>                                    
+    <main class="main">
+        <div class="page-content mt-3">
+          <div class="container">
+            <div class="product-details-top">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="product-gallery product-gallery-vertical">
+                    <div class="row">
+                      <figure class="product-main-image">
+                        <img
+                          id="product-zoom"
+                          src="<%= products.productImage[0] %>"
+                          data-zoom-image="<%= products.productImage[0] %>"
+                          alt="product image"
+                        />
+      
+                        <a
+                          href="#"
+                          id="btn-product-gallery"
+                          class="btn-product-gallery"
+                        >
+                          <i class="icon-arrows"></i>
+                        </a>
+                      </figure>
+      
+                      <div id="product-zoom-gallery" class="product-image-gallery">
+                        <a
+                          class="product-gallery-item active"
+                          href="#"
+                          data-image="<%= products.productImage[0] %>"
+                          data-zoom-image="<%= products.productImage[0] %>"
+                        >
+                          <img
+                            src="<%= products.productImage[0] %>"
+                            alt="product side"
+                          />
+                        </a>
+      
+                        <a
+                          class="product-gallery-item"
+                          href="#"
+                          data-image="<%= products.productImage[1] %>"
+                          data-zoom-image="<%= products.productImage[1] %>"
+                        >
+                          <img
+                            src="<%= products.productImage[1] %>"
+                            alt="product cross"
+                          />
+                        </a>
+      
+                        <a
+                          class="product-gallery-item"
+                          href="#"
+                          data-image="<%= products.productImage[2] %>"
+                          data-zoom-image="<%= products.productImage[2] %>"
+                        >
+                          <img
+                            src="<%= products.productImage[2] %>"
+                            alt="product with model"
+                          />
+                        </a>
+      
+                        <a
+                          class="product-gallery-item"
+                          href="#"
+                          data-image="<%= products.productImage[3] %>"
+                          data-zoom-image="<%= products.productImage[3] %>"
+                        >
+                          <img
+                            src="<%= products.productImage[3] %>"
+                            alt="product back"
+                          />
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+      
+                <div class="col-md-6">
+                  <div class="product-details">
+                    <h1 class="product-cat"><%= products.productModel %></h1>
+                    <h1 class="product-title"><%= products.productName %></h1>
+      
+                    <div class="ratings-container">
+                      <div class="ratings">
+                        <div class="ratings-val" style="width: 80%"></div>
+                      </div>
+                      <a
+                        class="ratings-text"
+                        href="#product-review-link"
+                        id="review-link"
+                        >( 2 Reviews )</a
+                      >
+                    </div>
+      
+                    <div class="product-price">
+                      &#x20B9;<%= products.productPrice %>
+                    </div>
+      
+                    <div class="product-content">
+                      <p><%= products.productDescription %></p>
+                    </div>
+      
+                    
+              </div><!-- End .details-filter-row -->
+      
+              <div class="details-filter-row details-row-size">
+                  <label for="qty">Qty:</label>
+                  <div class="product-details-quantity">
+                      <input type="number" id="qty" class="form-control" value="1" min="1" max="10"
+                          step="1" data-decimals="0" required>
+                  </div><!-- End .product-details-quantity -->
+              </div><!-- End .details-filter-row -->
+      
+              <div class="product-details-action">
+                  <a href="/add-to-cart/" class=" btn-cart"><span>add to
+                          cart</span></a>
+      
+                  <div class="details-action-wrapper">
+                      <a href="#" class=" btn-cart" title="Wishlist"><span>Add to
+                              Wishlist</span></a>
+                     
+                  </div><!-- End .product-cat -->
+                   
+                  <div class="social-icons social-icons-sm m-5">
+                    
+                      <span class="social-label">Share:</span>
+                      <a href="#" class="social-icon" title="Facebook" target="_blank"><i
+                              class="icon-facebook-f"></i></a>
+                      <a href="#" class="social-icon" title="Twitter" target="_blank"><i
+                              class="icon-twitter"></i></a>
+                      <a href="#" class="social-icon" title="Instagram" target="_blank"><i
+                              class="icon-instagram"></i></a>
+                      
+                  </div>
+              </div><!-- End .product-details-footer -->
+          </div><!-- End .product-details -->
+      </div><!-- End .col-md-6 -->
+      </div><!-- End .row -->
+      </div><!-- End .product-details-top -->
+      </div><!-- End .container -->
+      </div><!-- End .page-content -->
+      </main><!-- End .main -->
+      </section>
+      
+      <footer class="footer">
+          <div
+            class="cta bg-image bg-dark pt-4 pb-5 mb-0"
+            style="background-image: url(assets/images/demos/demo-4/bg-5.jpg)"
+          >
+            <div class="container">
+              <div class="row justify-content-center">
+                <div class="col-sm-10 col-md-8 col-lg-6">
+                  <div class="cta-heading text-center">
+                    <h3 class="cta-title text-white">Get The Latest Deals</h3>
+                    <!-- End .cta-title -->
+                    <p class="cta-desc text-white">
+                      and receive
+                      <span class="font-weight-normal">30% off</span> for first
+                      shopping
+                    </p>
+                    <!-- End .cta-desc -->
+                  </div>
+                  <!-- End .text-center -->
+      
+                  <form action="#">
+                    <div class="input-group input-group-round">
+                      <input
+                        type="email"
+                        class="form-control form-control-white"
+                        placeholder="Enter your Email Address"
+                        aria-label="Email Adress"
+                        required
+                      />
+                      <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit">
+                          <span>Subscribe</span><i class="icon-long-arrow-right"></i>
+                        </button>
+                      </div>
+                      <!-- .End .input-group-append -->
+                    </div>
+                    <!-- .End .input-group -->
+                  </form>
+                </div>
+                <!-- End .col-sm-10 col-md-8 col-lg-6 -->
+              </div>
+              <!-- End .row -->
+            </div>
+            <!-- End .container -->
+          </div>
+          <!-- End .cta -->
+          <div class="footer-middle">
+            <div class="container">
+              <div class="row">
+                <div class="col-sm-6 col-lg-3">
+                  <div class="widget widget-about"></div>
+                  <!-- End .widget about-widget -->
+                </div>
+                <!-- End .col-sm-6 col-lg-3 -->
+      
+                <div class="col-sm-6 col-lg-3">
+                  <div class="widget">
+                    <h4 class="widget-title">Useful Links</h4>
+                    <!-- End .widget-title -->
+      
+                    <ul class="widget-list">
+                      <li><a href="about.html">About </a></li>
+                      <li><a href="#">Our Services</a></li>
+                      <li><a href="#">How to shop </a></li>
+                      <li><a href="faq.html">FAQ</a></li>
+                      <li><a href="contact.html">Contact us</a></li>
+                    </ul>
+                    <!-- End .widget-list -->
+                  </div>
+                  <!-- End .widget -->
+                </div>
+                <!-- End .col-sm-6 col-lg-3 -->
+      
+                <div class="col-sm-6 col-lg-3">
+                  <div class="widget">
+                    <h4 class="widget-title">Customer Service</h4>
+                    <!-- End .widget-title -->
+      
+                    <ul class="widget-list">
+                      <li><a href="#">Payment Methods</a></li>
+                      <li><a href="#">Money-back guarantee!</a></li>
+                      <li><a href="#">Returns</a></li>
+                      <li><a href="#">Shipping</a></li>
+                      <li><a href="#">Terms and conditions</a></li>
+                      <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                    <!-- End .widget-list -->
+                  </div>
+                  <!-- End .widget -->
+                </div>
+                <!-- End .col-sm-6 col-lg-3 -->
+      
+                <div class="col-sm-6 col-lg-3">
+                  <div class="widget">
+                    <h4 class="widget-title">My Account</h4>
+                    <!-- End .widget-title -->
+      
+                    <ul class="widget-list">
+                      <li><a href="#">Sign In</a></li>
+                      <li><a href="cart.html">View Cart</a></li>
+                      <li><a href="#">My Wishlist</a></li>
+                      <li><a href="#">Track My Order</a></li>
+                      <li><a href="#">Help</a></li>
+                    </ul>
+                    <!-- End .widget-list -->
+                  </div>
+                  <!-- End .widget -->
+                </div>
+                <!-- End .col-sm-6 col-lg-3 -->
+              </div>
+              <!-- End .row -->
+            </div>
+            <!-- End .container -->
+          </div>
+          <!-- End .footer-middle -->
+      
+          <div class="footer-bottom">
+            <p class="text-center ">
+                Copyright © 2023 e shopee. All Rights Reserved.
+              </p>
+              
+            <div class="container ">
+              
+              <!-- End .footer-copyright -->
+            <%#  <figure class="footer-payments">
+                <img
+                  src="assets/images/payments.png"
+                  alt="Payment methods"
+                  width="272"
+                  height="20"
+                />
+              </figure>%>
+              <!-- End .footer-payments -->
+            </div>
+            <!-- End .container -->
+          </div>
+          <!-- End .footer-bottom -->
+        </footer>
+      
+        <!-- End .modal -->
+      </div>
+      <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+      <!-- Mobile Menu -->
+      <div class="mobile-menu-overlay"></div>
+      <!-- End .mobil-menu-overlay -->
+      
+      <div class="mobile-menu-container mobile-menu-light">
+        <div class="mobile-menu-wrapper">
+          <span class="mobile-menu-close"><i class="icon-close"></i></span>
+      
+          <form action="#" method="get" class="mobile-search">
+            <label for="mobile-search" class="sr-only">Search</label>
+            <input
+              type="search"
+              class="form-control"
+              name="mobile-search"
+              id="mobile-search"
+              placeholder="Search in..."
+              required
+            />
+            <button class="btn btn-primary" type="submit">
+              <i class="icon-search"></i>
+            </button>
+          </form>
+      
+          <ul class="nav nav-pills-mobile nav-border-anim" role="tablist">
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                id="mobile-menu-link"
+                data-toggle="tab"
+                href="#mobile-menu-tab"
+                role="tab"
+                aria-controls="mobile-menu-tab"
+                aria-selected="true"
+                >Menu</a
+              >
+            </li>
+          </ul>
+      
+          <div class="tab-content">
+            <div
+              class="tab-pane fade show active"
+              id="mobile-menu-tab"
+              role="tabpanel"
+              aria-labelledby="mobile-menu-link"
+            >
+              <nav class="mobile-nav">
+                <ul class="mobile-menu">
+                  <li class="active">
+                    <a href="/">Home</a>
+                  </li>
+                  <li class="active">
+                    <li class="active">
+                      <% if(user){%>
+                        <a href="/logout" class="btn  dark-2 mx-3"> <button type="button" class="btn btn-primary btn-lg"
+                      style="padding-left: 2.5rem; padding-right: 2.5rem;">LogOut</button></a>
+                      <% } else { %>
+                      <a href="/signup" class="btn  dark-2 mx-3"> <button type="button" class="btn btn-primary btn-lg"
+                        style="padding-left: 2.5rem; padding-right: 2.5rem;">LogIn</button></a>
+                       <%}%>            </li>
+                  </li>
+                </ul>
+              </nav>
+              
+              <!-- End .mobile-nav -->
+            </div>
+            <!-- .End .tab-pane -->
+      
+          <div class="social-icons">
+            <a href="#" class="social-icon" target="_blank" title="Facebook"
+              ><i class="icon-facebook-f"></i
+            ></a>
+            <a href="#" class="social-icon" target="_blank" title="Twitter"
+              ><i class="icon-twitter"></i
+            ></a>
+            <a href="#" class="social-icon" target="_blank" title="Instagram"
+              ><i class="icon-instagram"></i
+            ></a>
+            <a href="#" class="social-icon" target="_blank" title="Youtube"
+              ><i class="icon-youtube"></i
+            ></a>
+          </div>
+          <!-- End .social-icons -->
+        </div>
+        <!-- End .mobile-menu-wrapper -->
+      </div>
+      <!-- End .mobile-menu-container -->
+      
+      
+      </section>
+
+
+    <!-- Main JS File -->
+    
+
+    
+    <script src="/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/js/jquery.hoverIntent.min.js"></script>
+    <script src="/assets/js/jquery.waypoints.min.js"></script>
+    <script src="/assets/js/superfish.min.js"></script>
+    <script src="/assets/js/owl.carousel.min.js"></script>
+    <script src="/assets/js/bootstrap-input-spinner.js"></script>
+    <script src="/assets/js/jquery.elevateZoom.min.js"></script>
+    <script src="/assets/js/bootstrap-input-spinner.js"></script>
+    <script src="/assets/js/jquery.magnific-popup.min.js"></script>
+     <script src="/assets/js/jquery.countdown.min.js"></script>
+    <!-- Main JS File -->
+    <script src="/assets/js/main.js"></script>
+    <script src="/assets/js/demos/demo-2.js"></script>
+
+    
+</body>
+
+
+
+</html>

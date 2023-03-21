@@ -5,26 +5,20 @@ module.exports = {
   //homepage
   homePage: async (req, res, next) => {
     let user = req.session.user;
+    try {
+      var products = await adminHelper.getAllProducts();
+    } catch (err) {
+      console.error(err);
+    }
 
     if (user) {
       res.render("layout", {
         user,
-        //       products,
-        //       cartCount,
+        products,
       });
-      //   userHelper.getCartCount().then((cartCount) => {
-      //     console.log(cartCount);
-      //   });
-      //   let cartCount = req.session.cartCount;
-      //   adminHelper.getAllProducts().then((products) => {
-      //     res.render("layout", {
-      //       user,
-      //       products,
-      //       cartCount,
-      //     });
-      //   });
     } else {
-      res.render("layout", { user });
+      console.log(products);
+      res.render("layout", { user, products });
     }
   },
 
@@ -80,5 +74,18 @@ module.exports = {
         res.redirect("/");
       }
     });
+  },
+  productView: async (req, res) => {
+    let user = req.session.user;
+    try {
+      var products = await adminHelper.getProductDetails(req.params.id);
+    } catch (err) {
+      console.error(err);
+    }
+    if (user) {
+      res.render("product-view", { user, products });
+    } else {
+      res.render("product-view", { user, products });
+    }
   },
 };

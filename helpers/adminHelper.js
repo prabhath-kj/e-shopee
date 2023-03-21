@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const Category = require("../models/category");
+const Product = require("../models/product");
 
 module.exports = {
   adminLogin: (admindata) => {
@@ -13,7 +14,6 @@ module.exports = {
 
       if (validAdmin) {
         if (validAdmin.isAdmin) {
-          console.log("Login Success");
           response.validAdmin = validAdmin;
           response.status = true;
           resolve(response);
@@ -96,7 +96,7 @@ module.exports = {
             CategoryName: category.CategoryName,
             CategoryDescription: category.CategoryDescription,
           },
-          { new: false }
+          { new: true }
         );
 
         return updatedCategory;
@@ -118,6 +118,94 @@ module.exports = {
     try {
       await Category.findByIdAndDelete(categoryId);
       return;
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  addProducts: async (productData) => {
+    try {
+      const newProducts = new Product({
+        productModel: productData.productModel,
+
+        productName: productData.productName,
+
+        productPrice: productData.productPrice,
+
+        productDescription: productData.productDescription,
+
+        productQuantity: productData.productQuantity,
+
+        productColor: productData.productColor,
+
+        productImage: productData.productImages,
+
+        productStatus: productData.productStatus,
+
+        category: productData.Category,
+      });
+
+      await newProducts.save();
+      return;
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  getAllProducts: async () => {
+    try {
+      const products = await Product.find({});
+      return products;
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  getProductDetails: async (proId) => {
+    try {
+      const product = await Product.findById(proId);
+      return product;
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  updateProducts: async (productData, proID) => {
+    let update = {};
+    if (productData.productImages && productData.productImages.length > 0) {
+      update.productImage = productData.productImages;
+    }
+    try {
+      await Product.findByIdAndUpdate(
+        proID,
+        {
+          productModel: productData.productModel,
+
+          productName: productData.productName,
+
+          productPrice: productData.productPrice,
+
+          productDescription: productData.productDescription,
+
+          productQuantity: productData.productQuantity,
+
+          productColor: productData.productColor,
+
+          ...update,
+
+          productStatus: productData.productStatus,
+        },
+        { new: true }
+      );
+
+      return;
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  unlistProduct: async (proID) => {
+    try {
+      await Product.findByIdAndUpdate(
+        proID,
+        { productStatus: "Unlisted" },
+        { new: true }
+      );
     } catch (err) {
       console.error(err);
     }

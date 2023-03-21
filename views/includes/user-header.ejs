@@ -11,7 +11,7 @@
                 <i class="icon-bars"></i>
               </button>
 
-              <a href="#layout" class="logo">
+              <a href="/" class="logo">
                 <p class="text-primary" style="font-size: 4rem;" alt="e sopee Logo" >e shopee</p>
             </a>
             </div>
@@ -235,7 +235,7 @@
         <div class="header-bottom sticky-header">
           <div class="container">
             <div class="header-left">
-              <div class="dropdown category-dropdown bg-primary mb-1">
+              <div class="dropdown category-dropdown  mb-1">
                 <a
                   href="#"
                   class="dropdown-toggle "
@@ -273,12 +273,11 @@
                 <!-- <a href="/" data-toggle="modal"
                   >Sign in / Sign up</a
                 > -->
-                <% if(user){%>
-                <a href="/logout" class="btn  dark-2 mx-3"> <button type="button" class="btn btn-primary btn-lg"
-              style="padding-left: 2.5rem; padding-right: 2.5rem;">LogOut</button></a>
-              <% } else { %>
-              <a href="/signup" class="btn  dark-2 mx-3"> <button type="button" class="btn btn-primary btn-lg"
-                style="padding-left: 2.5rem; padding-right: 2.5rem;">LogIn</button></a>
+                <% if(!user){%>
+                  <a href="/signup" class="btn  dark-2 mx-3"> <button type="button" class="btn btn-primary btn-lg"
+                    style="padding-left: 2.5rem; padding-right: 2.5rem;">LogIn</button></a>
+            
+             
                <%}%>
             </div>
         </div>

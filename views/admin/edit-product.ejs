@@ -1,0 +1,191 @@
+<%- include('../adincludes/header') %>
+
+<section class="content-main">
+  <div class="row">
+    <form
+      action="/admin/edited-product/<%=product._id%>"
+      method="post"
+      enctype="multipart/form-data"
+    >
+      <div class="col-9">
+        <div class="content-header">
+          <h2 class="content-title">Edit Product.</h2>
+        </div>
+      </div>
+      <div class="col-xl">
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="mb-4">
+              <label for="product_brand" class="form-label">Model</label>
+              <input
+                type="text"
+                placeholder="Type here"
+                class="form-control"
+                id="product_brand"
+                value="<%= product.productModel %>"
+                name="productModel"
+                required
+              />
+            </div>
+            <div class="col-xl mb-4">
+              <label for="product_title" class="form-label"
+                >Product title</label
+              >
+              <input
+                type="text"
+                placeholder="Type here"
+                class="form-control"
+                id="product_title"
+                value="<%= product.productName %>"
+                name="productName"
+                required
+              />
+            </div>
+            <%/*
+            <div class="row gx-3">
+              <div class="col-md-4 mb-3">
+                <label for="product_sku" class="form-label">Product ID</label>
+                <input
+                  type="text"
+                  placeholder="Type here"
+                  class="form-control"
+                  id="product_sku"
+                  name="productID"
+                  required
+                />
+              </div>
+              */%>
+              <div class="col-md-4 mb-3">
+                <label for="product_color" class="form-label">Color</label>
+                <input
+                  type="text"
+                  placeholder="Type here"
+                  class="form-control"
+                  id="product_color"
+                  value="<%= product.productColor %>"
+                  name="productColor"
+                />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label for="product_size" class="form-label">Quantity</label>
+                <input
+                  type="text"
+                  placeholder="Type here"
+                  class="form-control"
+                  id="product_size"
+                  value="<%= product.productQuantity %>"
+                  name="productQuantity"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- card end// -->
+        <div class="card col-xl mb-4">
+          <div class="card-body">
+            <div>
+              <label class="form-label">Description</label>
+              <textarea
+                placeholder="Type here"
+                class="form-control"
+                rows="4"
+                name="productDescription"
+              >
+<%= product.productDescription %></textarea
+              >
+            </div>
+          </div>
+        </div>
+        <!-- card end// -->
+        <div class="card mb-4">
+          <div class="card-body">
+            <div>
+              <label class="form-label">Images</label>
+              <% product.productImage.forEach((image)=>{%>
+              <img
+                src="<%=image %>"
+                alt=""
+                style="width: 100px; height: auto"
+              />
+              <%})%>
+              <input class="form-control" type="file" name="productImage" />
+              <input class="form-control" type="file" name="productImage" />
+              <input class="form-control" type="file" name="productImage" />
+              <input class="form-control" type="file" name="productImage" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="mb-4">
+              <label class="form-label">Price</label>
+              <input
+                type="text"
+                placeholder="Type here"
+                class="form-control"
+                value="<%= product.productPrice %>"
+                name="productPrice"
+                required
+              />
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="product_size" class="form-label">Status </label>
+              <input
+                type="text"
+                placeholder="Type here"
+                class="form-control"
+                id="product_size"
+                value="<%= product.productStatus %>"
+                name="productStatus"
+              />
+            </div>
+            <div class="mb-4">
+              <label class="form-label">Status</label>
+              <select class="form-select">
+                <option>Published</option>
+                <option>Draft</option>
+              </select>
+            </div>
+
+            <hr />
+            <%/*
+            <h5 class="mb-3">Categories</h5>
+            availCategory.forEach(function(category, index) { %>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="Category"
+                id="category-<%= index %>"
+                value="<%= category._id %>"
+              />
+              <label class="form-check-label" for="category-<%= index %>">
+                <%= category.CategoryName %>
+              </label>
+            </div>
+            <% }) */%>
+          </div>
+        </div>
+        <!-- card end// -->
+        <div>
+          <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">
+            Save to draft
+          </button>
+          <button class="btn btn-md rounded font-sm hover-up">Publish</button
+          ><br />
+
+          <% if (productUpdated) { %>
+          <label class="text-center" style="color: rgb(22, 131, 22)"
+            >Product Successfully Updated</label
+          >
+          <% } %>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script defer src="https://cdn.crop.guide/loader/l.js?c=KMVWFY"></script>
+<%- include('../adincludes/footer') %>

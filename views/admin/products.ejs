@@ -1,0 +1,121 @@
+<%- include('../adincludes/header') %>
+<section class="content-main">
+  <div class="content-header">
+    <div>
+      <h2 class="content-title card-title">Products List.</h2>
+      <p>View Products, Edit and Delete</p>
+    </div>
+    <div>
+      <a href="/admin/add-products" class="btn btn-primary btn-sm rounded"
+        >Add</a
+      >
+    </div>
+  </div>
+  <div class="card mb-4">
+    <header class="card-header">
+      <div class="row align-items-center">
+        <div class="col-md-3 col-12 me-auto mb-md-0 mb-3">
+          <select class="form-select">
+            <option selected>All category</option>
+            <option>Whole-Home Wi-Fi</option>
+            <option>Routers</option>
+            <option>Modems and Gateways</option>
+          </select>
+        </div>
+        <div class="col-md-2 col-6">
+          <input type="date" value="01.01.2023" class="form-control" />
+        </div>
+        <div class="col-lg-2 col-6 col-md-3">
+          <select class="form-select">
+            <option>Show 20</option>
+            <option>Show 30</option>
+            <option>Show 40</option>
+          </select>
+        </div>
+        <div class="col-md-2 col-6">
+          <select class="form-select">
+            <option selected>Status</option>
+            <option>Active</option>
+            <option>Disabled</option>
+            <option>Show all</option>
+          </select>
+        </div>
+      </div>
+    </header>
+    <div class="card-body">
+      <% products.forEach(product => { %>
+      <article class="itemlist">
+        <div class="row align-items-center">
+          <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
+            <a class="itemside">
+              <div class="left">
+                <img
+                  src="<%= product.productImage[0] %>"
+                  class="img-sm"
+                  alt="product Image"
+                />
+              </div>
+              <div class="info">
+                <h6 class="mb-0"><%= product.productName %></h6>
+              </div>
+            </a>
+          </div>
+          <div class="col-lg-2 col-sm-2 col-4 col-description">
+            <span><%= product.productDescription.slice(0,50) %>...</span>
+          </div>
+          <div class="col-lg-2 col-sm-2 col-4 col-price">
+            <span>&#x20B9;<%= product.productPrice %></span>
+          </div>
+          <% if (product.productStatus === 'Listed') { %>
+          <div class="col-lg-2 col-sm-2 col-4 col-status">
+            <span class="badge rounded-pill alert-success"
+              ><%= product.productStatus %></span
+            >
+          </div>
+          <% }else{ %>
+          <div class="col-lg-2 col-sm-2 col-4 col-status">
+            <span class="badge rounded-pill alert-danger"
+              ><%= product.productStatus %></span
+            >
+          </div>
+          <%}%>
+          <div class="col-lg-2 col-sm-2 col-4 col-dropdown text-end">
+            <a
+              href="/admin/edit-product/<%= product._id %>"
+              class="btn btn-md rounded font-sm"
+              >Edit</a
+            >
+            <% if (product.productStatus === 'Listed') { %>
+            <a
+              href="/admin/unlist-product/<%= product._id %>"
+              class="btn btn-danger font-sm mt-2"
+              >Unlist</a
+            >
+            <% } %>
+          </div>
+        </div>
+      </article>
+      <% }) %>
+    </div>
+  </div>
+
+  <!-- card end// -->
+  <div class="pagination-area mt-30 mb-50">
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-start">
+        <li class="page-item active"><a class="page-link" href="#">01</a></li>
+        <li class="page-item"><a class="page-link" href="#">02</a></li>
+        <li class="page-item"><a class="page-link" href="#">03</a></li>
+        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+        <li class="page-item"><a class="page-link" href="#">16</a></li>
+        <li class="page-item">
+          <a class="page-link" href="#"
+            ><i class="material-icons md-chevron_right"></i
+          ></a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</section>
+<!-- content-main end// -->
+<%- include('../adincludes/footer') %>

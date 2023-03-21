@@ -30,6 +30,55 @@
       rel="stylesheet"
       type="text/css"
     />
+    <script src="/node_modules/@eastdesire/jscolor/jscolor.js"></script>
+    <script>
+      // These options apply to all color pickers on the page
+      jscolor.presets.default = {
+        width: 201,
+        height: 81,
+        position: "right",
+        previewPosition: "right",
+        backgroundColor: "#f3f3f3",
+        borderColor: "#bbbbbb",
+        controlBorderColor: "#bbbbbb",
+        palette: [
+          "#000000",
+          "#7d7d7d",
+          "#870014",
+          "#ec1c23",
+          "#ff7e26",
+          "#fef100",
+          "#22b14b",
+          "#00a1e7",
+          "#3f47cc",
+          "#a349a4",
+          "#ffffff",
+          "#c3c3c3",
+          "#b87957",
+          "#feaec9",
+          "#ffc80d",
+          "#eee3af",
+          "#b5e61d",
+          "#99d9ea",
+          "#7092be",
+          "#c8bfe7",
+        ],
+        paletteCols: 10,
+        hideOnPaletteClick: true,
+      };
+    </script>
+
+    <style>
+      #color-picker {
+        width: 100px;
+        height: 100px;
+        border: 1px solid #ccc;
+        cursor: pointer;
+      }
+      .color-picker {
+        background-color: #fff;
+      }
+    </style>
   </head>
 
   <body>
@@ -60,22 +109,22 @@
             </a>
           </li>
           <li class="menu-item has-submenu">
-            <a class="menu-link" href="page-products-list.html">
+            <a class="menu-link" href="/admin/products">
               <i class="icon material-icons md-shopping_bag"></i>
               <span class="text">Products</span>
             </a>
             <div class="submenu">
-              <a href="/admin/products-list">Products List</a>
+              <a href="/admin/products">Products List</a>
               <a href="/admin/add-products">Add Products</a>
             </div>
           </li>
           <li class="menu-item has-submenu">
-            <a class="menu-link" href="page-products-list.html">
+            <a class="menu-link" href="#">
               <i class="icon material-icons md-person"></i>
               <span class="text">Users</span>
             </a>
             <div class="submenu">
-              <a href="../admin/view-user">Users List</a>
+              <a href="/admin/view-user">Users List</a>
               <%#-- <a href="page-products-grid.html">Product grid</a>
               <a href="page-products-grid-2.html">Product grid 2</a>
               <a href="page-categories.html">Categories</a> --%>
@@ -87,6 +136,16 @@
               <i class="icon material-icons md-store"></i>
               <span class="text">Category Management</span>
             </a>
+          </li>
+          <li class="menu-item has-submenu">
+            <a class="menu-link" href="/admin/banner">
+              <i class="icon material-icons md-shopping_bag"></i>
+              <span class="text">Banner Management</span>
+            </a>
+            <div class="submenu">
+              <a href="/admin/banner-list">Banners List</a>
+              <a href="/admin/add-banner">Add Banners</a>
+            </div>
           </li>
 
           <li class="menu-item">

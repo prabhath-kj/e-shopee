@@ -18,6 +18,8 @@ router.post("/login", userController.loginPost);
 //LOGOUT
 router.get("/logout", userController.logOut);
 
+router.get("/product-view/:id", userController.productView); //Product View Page
+
 router.get("/forgotpassword", (req, res) => {
   res.render("forgotpassword.ejs", {
     otpErr: false,

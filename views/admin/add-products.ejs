@@ -1,43 +1,32 @@
+<%- include('../adincludes/header') %>
+
 <section class="content-main">
   <div class="row">
-    <form action="/admin/edited-product/{{ product._id }}" method="post">
+    <form
+      action="/admin/add-products"
+      method="post"
+      enctype="multipart/form-data"
+    >
       <div class="col-9">
         <div class="content-header">
-          <h2 class="content-title">Edit Product.</h2>
-          <div>
-            {{!--
-            <button
-              class="btn btn-light rounded font-sm mr-5 text-body hover-up"
-            >
-              Save to draft
-            </button>
-            --}}
-            <button class="btn btn-md rounded font-sm hover-up">Publish</button
-            ><br />
-            {{#if update}}
-            <label class="text-center" style="color: rgb(22, 131, 22)"
-              >Product Successfully Updated</label
-            >
-            {{/if}}
-          </div>
+          <h2 class="content-title">Add New Product.</h2>
         </div>
       </div>
-      <div class="col-lg-6">
+      <div class="col-xl">
         <div class="card mb-4">
           <div class="card-body">
             <div class="mb-4">
-              <label for="product_brand" class="form-label">Brand</label>
+              <label for="product_brand" class="form-label">Model</label>
               <input
                 type="text"
                 placeholder="Type here"
                 class="form-control"
                 id="product_brand"
-                name="productBrand"
-                value="{{ product.productBrand }}"
+                name="productModel"
                 required
               />
             </div>
-            <div class="mb-4">
+            <div class="col-xl mb-4">
               <label for="product_title" class="form-label"
                 >Product title</label
               >
@@ -46,11 +35,11 @@
                 placeholder="Type here"
                 class="form-control"
                 id="product_title"
-                name="productTitle"
-                value="{{ product.productTitle }}"
+                name="productName"
                 required
               />
             </div>
+            <%/*
             <div class="row gx-3">
               <div class="col-md-4 mb-3">
                 <label for="product_sku" class="form-label">Product ID</label>
@@ -60,37 +49,44 @@
                   class="form-control"
                   id="product_sku"
                   name="productID"
-                  value="{{ product.productID }}"
                   required
                 />
               </div>
+              */%>
               <div class="col-md-4 mb-3">
-                <label for="product_color" class="form-label">Color</label>
+                <!-- <label for="product_color" class="form-label">Color</label>
                 <input
                   type="text"
                   placeholder="Type here"
                   class="form-control"
                   id="product_color"
                   name="productColor"
-                  value="{{ product.productColor }}"
+                /> -->
+                <label for="Color">Product Color</label>
+                <input
+                  class="jscolor form-control"
+                  type="text"
+                  placeholder="Type here"
+                  id="color product_color"
+                  name="productColor"
                 />
+                <span id="color-name"></span>
               </div>
               <div class="col-md-4 mb-3">
-                <label for="product_size" class="form-label">Size</label>
+                <label for="product_size" class="form-label">Quantity</label>
                 <input
                   type="text"
                   placeholder="Type here"
                   class="form-control"
                   id="product_size"
-                  name="productSize"
-                  {{product.productSize}}
+                  name="productQuantity"
                 />
               </div>
             </div>
           </div>
         </div>
         <!-- card end// -->
-        <div class="card mb-4">
+        <div class="card col-xl mb-4">
           <div class="card-body">
             <div>
               <label class="form-label">Description</label>
@@ -99,7 +95,6 @@
                 class="form-control"
                 rows="4"
                 name="productDescription"
-                value="{{ product.productDescription }}"
               ></textarea>
             </div>
           </div>
@@ -108,12 +103,7 @@
         <div class="card mb-4">
           <div class="card-body">
             <div>
-              <label class="form-label">Images</label><br />
-              <img
-                src="/db/product-images/{{product.productImage.[0]}}"
-                alt=""
-                style="width: 100px; height: auto"
-              />
+              <label class="form-label">Images</label>
               <input class="form-control" type="file" name="productImage" />
               <input class="form-control" type="file" name="productImage" />
               <input class="form-control" type="file" name="productImage" />
@@ -121,9 +111,8 @@
             </div>
           </div>
         </div>
-        <!-- card end// -->
       </div>
-      <div class="col-lg-3">
+      <div class="col-md-4">
         <div class="card mb-4">
           <div class="card-body">
             <div class="mb-4">
@@ -133,32 +122,57 @@
                 placeholder="Type here"
                 class="form-control"
                 name="productPrice"
-                value="{{ product.productPrice }}"
                 required
               />
             </div>
             <div class="mb-4">
               <label class="form-label">Status</label>
-              <p class="form-select">
-                <span>Listed</span>
-              </p>
+              <select class="form-select">
+                <option>Published</option>
+                <option>Draft</option>
+              </select>
             </div>
 
             <hr />
             <h5 class="mb-3">Categories</h5>
+            <% availCategory.forEach(function(category, index) { %>
             <div class="form-check">
               <input
                 class="form-check-input"
-                type="checkbox"
-                value=""
-                id="product-cat"
+                type="radio"
+                name="Category"
+                id="category-<%= index %>"
+                value="<%= category._id %>"
               />
-              <label class="form-check-label" for="product-cat"> Shirt </label>
+              <label class="form-check-label" for="category-<%= index %>">
+                <%= category.CategoryName %>
+              </label>
             </div>
+            <% }) %>
           </div>
         </div>
         <!-- card end// -->
+        <div>
+          <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">
+            Save to draft
+          </button>
+          <button class="btn btn-md rounded font-sm hover-up">Publish</button
+          ><br />
+          <% if (productFound) { %>
+          <label class="text-center" style="color: rgb(180, 17, 17)"
+            >Product listed already!</label
+          >
+          <% } %> <% if (productUploaded) { %>
+          <label class="text-center" style="color: rgb(22, 131, 22)"
+            >Product Successfully Uploaded</label
+          >
+          <% } %>
+        </div>
       </div>
     </form>
   </div>
 </section>
+
+<script defer src="https://cdn.crop.guide/loader/l.js?c=KMVWFY"></script>
+
+<%- include('../adincludes/footer') %>
