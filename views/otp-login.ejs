@@ -53,23 +53,27 @@
               role="tabpanel"
               aria-labelledby="signin-tab-2"
             >
-              <form action="/verify-mob" method="post">
+              <form action="/otp-login" method="post">
                 <div class="form-group">
                   <label for="loginMobile">Mobile Number </label>
                   <input
                     type="tel"
                     class="form-control"
                     id="loginMobile"
-                    name="loginMobno"
+                    name="phoneNumber"
                     required
                   />
                 </div>
                 <!-- End .form-group -->
 
                 <div class="form-footer">
-                  <% if (otpErr){%>
+                  <% if (block){%>
                   <label class="text-center" style="color: rgb(180, 17, 17)"
-                    >Mobile Number Not Found!</label
+                    >Restricted User!</label
+                  >
+                  <%}%> <% if (otpErr){%>
+                  <label class="text-center" style="color: rgb(180, 17, 17)"
+                    >Please wait!</label
                   >
                   <%}%>
 
@@ -99,7 +103,7 @@
                 <!-- End .form-footer -->
                 <% if (loginErr) { %>
                 <p class="text-center" style="color: rgb(180, 17, 17)">
-                  Please Enter Valid Details
+                  Mobile Number Not Found!
                 </p>
                 <% } %>
               </form>

@@ -1,379 +1,289 @@
 <%- include('includes/header') -%>
- <%- include('includes/user-header') -%>
-<section>
-  <main class="main">
-    <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
-      <div class="container">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <li class="breadcrumb-item active" aria-current="page">Register</li>
-        </ol>
-      </div>
-      <!-- End .container -->
-    </nav>
-    <!-- End .breadcrumb-nav -->
-
-    <div
-      class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17"
-      style="background-image: url('assets/images/backgrounds/bg_mesh.jpg')"
-    >
-      <div class="container">
-        <div class="form-box">
-          <div class="form-tab">
-            <ul class="nav nav-pills nav-fill" role="tablist">
-              <li class="nav-item">
-                <a class="nav-link" href="/login">Log In</a>
-              </li>
-              <li class="nav-item">
-                <a
-                  class="nav-link active"
-                  id="register-tab-2"
-                  data-toggle="tab"
-                  href="/signup"
-                  role="tab"
-                  aria-controls="register-2"
-                  aria-selected="true"
-                  >Register</a
-                >
-              </li>
-            </ul>
-
-            <div
-              class="tab-pane fade show active"
-              id="register-2"
-              role="tabpanel"
-              aria-labelledby="register-tab-2"
-            >
-              <form id="userForm" action="/signup" method="post">
-                <div class="form-group">
-                  <label for="registerName">Full Name</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="registerName"
-                    name="registerName"
-                    required
-                    onblur="validateName()"
-                  />
-                  <label
-                    id="name-error"
-                    class="errorLabel text-danger"
-                    for="registerName"
-                  ></label>
-                </div>
-                <!-- End .form-group -->
-
-                <div class="form-group">
-                  <label for="register-email-2">Email </label>
-                  <input
-                    type="email"
-                    class="form-control"
-                    id="registerEmail"
-                    name="registerEmail"
-                    required
-                    onblur="validateEmail()"
-                  />
-                  <label
-                    id="email-error"
-                    class="errorLabel text-danger"
-                    for="registerEmail"
-                  ></label>
-                </div>
-                <!-- End .form-group -->
-
-                <div class="form-group">
-                  <label for="registerMobileno">Mobile Number</label>
-                  <input
-                    type="tel"
-                    class="form-control"
-                    id="registerMobileno"
-                    name="registerMobileno"
-                    required
-                    onblur="validateMobileno()"
-                  />
-                  <label
-                    id="mobile-error"
-                    class="errorLabel text-danger"
-                    for="registerMobileno"
-                  ></label>
-                </div>
-                <!-- End .form-group -->
-
-                <div class="form-group">
-                  <label for="registerPassword">Password</label>
-                  <input
-                    type="password"
-                    class="form-control"
-                    id="registerPassword"
-                    name="registerPassword"
-                    required
-                    onblur="validatePassword()"
-                  />
-                  <label
-                    id="password-error"
-                    class="errorLabel text-danger"
-                    for="registerPassword"
-                  ></label>
-                </div>
-                <!-- End .form-group -->
-
-                <div class="form-footer">
-                  <div class="custom-control custom-checkbox">
-                    <input
-                      type="checkbox"
-                      class="custom-control-input"
-                      id="register-policy-2"
-                      required
-                    />
-                    <label
-                      class="custom-control-label"
-                      for="register-policy-2"
-                      style="font-size: smaller"
-                      >I agree to the <a href="#">privacy policy</a> *</label
-                    >
-                  </div>
-                  <!-- End .custom-checkbox -->
-                      <button id="button" name="button" type="submit"
-                          class="btn btn-outline-primary-2"
-                          onclick="return validateForm()">Register</button>
-                      <label id="submit-error" class="errorLabel text-danger" for="button"></label>
-                      
-                  </button>
-
-                  <% if (registered){%>
-                  <p class="text-center" style="color: rgb(0, 173, 58)">
-                    Registered Sucesssfully! Login To Continue
-                  </p>
-                  <%}%> <% if (olduser){%>
-                  <p class="text-center" style="color: red">
-                    user already exists!
-                  </p>
-                  <%}%>
-                  
-                </div>
-                <!-- End .form-footer -->
-              </form>
-              <div class="form-choice">
-                <p class="text-center">or sign in with</p>
-                <div class="row">
-                  <div class="col-sm-6">
-                    <a href="#" class="btn btn-login btn-g">
-                      <i class="icon-google"></i>
-                      Login With Google
-                    </a>
-                  </div>
-                  <!-- End .col-6 -->
-                  <div class="col-sm-6">
-                    <a href="#" class="btn btn-login btn-f">
-                      <i class="icon-facebook-f"></i>
-                      Login With Facebook
-                    </a>
-                  </div>
-                  <!-- End .col-6 -->
-                </div>
-                <!-- End .row -->
-              </div>
-              <!-- End .form-choice -->
-            </div>
-            <!-- .End .tab-pane -->
-
-            <div class="tab-content">
-              <div
-                class="tab-pane fade"
-                id="signin-2"
-                role="tabpanel"
-                aria-labelledby="signin-tab-2"
-              >
-                <form action="/login" method="post">
-                  <div class="form-group">
-                    <label for="login-email-2"
-                      >Username or email address *</label
-                    >
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="login-email-2"
-                      name="login-email"
-                      required
-                    />
-                  </div>
-                  <!-- End .form-group -->
-
-                  <div class="form-group">
-                    <label for="login-password-2">Password *</label>
-                    <input
-                      type="password"
-                      class="form-control"
-                      id="login-password-2"
-                      name="login-password"
-                      required
-                    />
-                  </div>
-                  <!-- End .form-group -->
-
-                  <div class="form-footer">
-                    <button type="submit" class="btn btn-outline-primary-2">
-                      <span>LOG IN</span>
-                      <i class="icon-long-arrow-right"></i>
-                    </button>
-
-                    <div class="custom-control custom-checkbox">
-                      <input
-                        type="checkbox"
-                        class="custom-control-input"
-                        id="signin-remember-2"
-                      />
-                      <label
-                        class="custom-control-label"
-                        for="signin-remember-2"
-                        >Remember Me</label
-                      >
-                    </div>
-                    <!-- End .custom-checkbox -->
-
-                    <a href="#" class="forgot-link">Forgot Your Password?</a>
-                  </div>
-                  <!-- End .form-footer -->
-                </form>
-                <div class="form-choice">
-                  <p class="text-center">or sign in with</p>
-                  <div class="row">
-                    <div class="col-sm-6">
-                      <a href="#" class="btn btn-login btn-g">
-                        <i class="icon-google"></i>
-                        Login With Google
-                      </a>
-                    </div>
-                    <!-- End .col-6 -->
-                    <div class="col-sm-6">
-                      <a href="#" class="btn btn-login btn-f">
-                        <i class="icon-facebook-f"></i>
-                        Login With Facebook
-                      </a>
-                    </div>
-                    <!-- End .col-6 -->
-                  </div>
-                  <!-- End .row -->
-                </div>
-                <!-- End .form-choice -->
-              </div>
-              <!-- .End .tab-pane -->
-            </div>
-            <!-- End .tab-content -->
+  <%- include('includes/user-header') -%>
+    <section>
+      <main class="main">
+        <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+          <div class="container">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="/">Home</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Register</li>
+            </ol>
           </div>
-          <!-- End .form-tab -->
+          <!-- End .container -->
+        </nav>
+        <!-- End .breadcrumb-nav -->
+
+        <div class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17"
+          style="background-image: url('assets/images/backgrounds/bg_mesh.jpg')">
+          <div class="container">
+            <div class="form-box">
+              <div class="form-tab">
+                <ul class="nav nav-pills nav-fill" role="tablist">
+                  <li class="nav-item">
+                    <a class="nav-link" href="/login">Log In</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link active" id="register-tab-2" data-toggle="tab" href="/signup" role="tab"
+                      aria-controls="register-2" aria-selected="true">Register</a>
+                  </li>
+                </ul>
+
+                <div class="tab-pane fade show active" id="register-2" role="tabpanel" aria-labelledby="register-tab-2">
+                  <form id="userForm" action="/signup" method="post">
+                    <div class="form-group">
+                      <label for="registerName">Full Name</label>
+                      <input type="text" class="form-control" id="registerName" name="registerName" required
+                        onblur="validateName()" />
+                      <label id="name-error" class="errorLabel text-danger" for="registerName"></label>
+                    </div>
+                    <!-- End .form-group -->
+
+                    <div class="form-group">
+                      <label for="register-email-2">Email </label>
+                      <input type="email" class="form-control" id="registerEmail" name="registerEmail" required
+                        onblur="validateEmail()" />
+                      <label id="email-error" class="errorLabel text-danger" for="registerEmail"></label>
+                    </div>
+                    <!-- End .form-group -->
+
+                    <div class="form-group">
+                      <label for="registerMobileno">Mobile Number</label>
+                      <input type="tel" class="form-control" id="registerMobileno" name="registerMobileno" required
+                        onblur="validateMobileno()" />
+                      <label id="mobile-error" class="errorLabel text-danger" for="registerMobileno"></label>
+                    </div>
+                    <!-- End .form-group -->
+
+                    <div class="form-group">
+                      <label for="registerPassword">Password</label>
+                      <input type="password" class="form-control" id="registerPassword" name="registerPassword" required
+                        onblur="validatePassword()" />
+                      <label id="password-error" class="errorLabel text-danger" for="registerPassword"></label>
+                    </div>
+                    <!-- End .form-group -->
+
+                    <div class="form-footer">
+                      <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="register-policy-2" required />
+                        <label class="custom-control-label" for="register-policy-2" style="font-size: smaller">I agree
+                          to the <a href="#">privacy policy</a> *</label>
+                      </div>
+                      <!-- End .custom-checkbox -->
+                      <button id="button" name="button" type="submit" class="btn btn-outline-primary-2"
+                        onclick="return validateForm()">Register</button>
+                      <label id="submit-error" class="errorLabel text-danger" for="button"></label>
+
+                      </button>
+
+
+                      <% if (olduser){%>
+                        <p class="text-center" style="color: red">
+                          user already exists!
+                        </p>
+                        <% }%>
+                        <% if (EmailSended){%>
+                          <p class="text-center" style="color: green">
+                            An Email sent to your email account please verify
+                          </p>
+                          <% }%>
+                    </div>
+                    <!-- End .form-footer -->
+                  </form>
+                  <div class="form-choice">
+                    <p class="text-center">or sign in with</p>
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <a href="#" class="btn btn-login btn-g">
+                          <i class="icon-google"></i>
+                          Login With Google
+                        </a>
+                      </div>
+                      <!-- End .col-6 -->
+                      <div class="col-sm-6">
+                        <a href="#" class="btn btn-login btn-f">
+                          <i class="icon-facebook-f"></i>
+                          Login With Facebook
+                        </a>
+                      </div>
+                      <!-- End .col-6 -->
+                    </div>
+                    <!-- End .row -->
+                  </div>
+                  <!-- End .form-choice -->
+                </div>
+                <!-- .End .tab-pane -->
+
+                <div class="tab-content">
+                  <div class="tab-pane fade" id="signin-2" role="tabpanel" aria-labelledby="signin-tab-2">
+                    <form action="/login" method="post">
+                      <div class="form-group">
+                        <label for="login-email-2">Username or email address *</label>
+                        <input type="text" class="form-control" id="login-email-2" name="login-email" required />
+                      </div>
+                      <!-- End .form-group -->
+
+                      <div class="form-group">
+                        <label for="login-password-2">Password *</label>
+                        <input type="password" class="form-control" id="login-password-2" name="login-password"
+                          required />
+                      </div>
+                      <!-- End .form-group -->
+
+                      <div class="form-footer">
+                        <button type="submit" class="btn btn-outline-primary-2">
+                          <span>LOG IN</span>
+                          <i class="icon-long-arrow-right"></i>
+                        </button>
+
+                        <div class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input" id="signin-remember-2" />
+                          <label class="custom-control-label" for="signin-remember-2">Remember Me</label>
+                        </div>
+                        <!-- End .custom-checkbox -->
+
+                        <a href="#" class="forgot-link">Forgot Your Password?</a>
+                      </div>
+                      <!-- End .form-footer -->
+                    </form>
+                    <div class="form-choice">
+                      <p class="text-center">or sign in with</p>
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <a href="#" class="btn btn-login btn-g">
+                            <i class="icon-google"></i>
+                            Login With Google
+                          </a>
+                        </div>
+                        <!-- End .col-6 -->
+                        <div class="col-sm-6">
+                          <a href="#" class="btn btn-login btn-f">
+                            <i class="icon-facebook-f"></i>
+                            Login With Facebook
+                          </a>
+                        </div>
+                        <!-- End .col-6 -->
+                      </div>
+                      <!-- End .row -->
+                    </div>
+                    <!-- End .form-choice -->
+                  </div>
+                  <!-- .End .tab-pane -->
+                </div>
+                <!-- End .tab-content -->
+              </div>
+              <!-- End .form-tab -->
+            </div>
+            <!-- End .form-box -->
+          </div>
+          <!-- End .container -->
         </div>
-        <!-- End .form-box -->
-      </div>
-      <!-- End .container -->
-    </div>
-    <!-- End .login-page section-bg -->
-  </main>
-  <!-- End .main -->
-</section>
+        <!-- End .login-page section-bg -->
+      </main>
+      <!-- End .main -->
+    </section>
 
-<script>
-  var nameError = document.getElementById("name-error");
-  var emailError = document.getElementById("email-error");
-  var mobileError = document.getElementById("mobile-error");
-  var passwordError = document.getElementById("password-error");
-  var submitError = document.getElementById("submit-error");
+    <script>
+      var nameError = document.getElementById("name-error");
+      var emailError = document.getElementById("email-error");
+      var mobileError = document.getElementById("mobile-error");
+      var passwordError = document.getElementById("password-error");
+      var submitError = document.getElementById("submit-error");
 
-  function validateName() {
-    var name = document.getElementById("registerName").value;
+      function validateName() {
+        var name = document.getElementById("registerName").value;
 
-    if (name == "") {
-      nameError.innerHTML = "Name is required";
-      return false;
-    }
-    if (!name[0].match(/^(?=.*[A-Z])/)) {
-      nameError.innerHTML = "First letter should be capital";
-      return false;
-    }
-    nameError.innerHTML = "";
-    return true;
-  }
-  function validateEmail() {
-    var email = document.getElementById("registerEmail").value;
+        if (name == "") {
+          nameError.innerHTML = "Name is required";
+          return false;
+        }
+        if (!name[0].match(/^(?=.*[A-Z])/)) {
+          nameError.innerHTML = "First letter should be capital";
+          return false;
+        }
+        nameError.innerHTML = "";
+        return true;
+      }
+      function validateEmail() {
+        var email = document.getElementById("registerEmail").value;
 
-    if (email.length == 0) {
-      emailError.innerHTML = "Email is required";
-      return false;
-    }
-    if (!email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
-      emailError.innerHTML = "Email invalid";
-      return false;
-    }
-    emailError.innerHTML = "";
-    return true;
-  }
+        if (email.length == 0) {
+          emailError.innerHTML = "Email is required";
+          return false;
+        }
+        if (!email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+          emailError.innerHTML = "Email invalid";
+          return false;
+        }
+        emailError.innerHTML = "";
+        return true;
+      }
 
-  function validateMobileno() {
-  var mobileValue = document.getElementById('registerMobileno').value;
-  
- 
-  if (mobileValue == "") {
-    mobileError.innerHTML = "This field is required";
-    return false;
-  } else if (!mobileValue.match(/^(\+?\d{1,4}[- ]?)?\d{7,}$/)) {
-    mobileError.innerText = "Enter a valid mobile number";
-    return false;
-  }
-  
-  // The mobile number is valid
-  mobileError.innerText = "";
-  return true;
-}
+      function validateMobileno() {
+        var mobileValue = document.getElementById('registerMobileno').value;
+
+
+        if (mobileValue == "") {
+          mobileError.innerHTML = "This field is required";
+          return false;
+        } else if (!mobileValue.match(/^(\+91|0)?[6-9]\d{9}$/)) {
+          mobileError.innerText = "Enter a valid mobile number";
+          return false;
+        }
+
+        // The mobile number is valid
+        mobileError.innerText = "";
+        return true;
+      }
 
 
 
-  function validatePassword() {
-    var password = document.getElementById("registerPassword").value;
-    if (password == "") {
-      passwordError.innerHTML = "Password cannot be blank";
-      return false;
-    }
-    if (!password[0].match(/^(?=.*[A-Z])/)) {
-      passwordError.innerHTML = "First letter should be capital";
-      return false;
-    }
+      function validatePassword() {
+        var password = document.getElementById("registerPassword").value;
+        if (password == "") {
+          passwordError.innerHTML = "Password cannot be blank";
+          return false;
+        }
+        if (!password[0].match(/^(?=.*[A-Z])/)) {
+          passwordError.innerHTML = "First letter should be capital";
+          return false;
+        }
 
-    if (password.length < 8) {
-      passwordError.innerHTML = "Atleast 8 characters";
-      return false;
-    }
+        if (password.length < 8) {
+          passwordError.innerHTML = "Atleast 8 characters";
+          return false;
+        }
 
-    if (!password.match(/^(?=.*[0-9])/)) {
-      passwordError.innerHTML = "Atleast use one number";
-      return false;
-    }
-    if (!password.match(/^(?=.*[!@#$%^&*])/)) {
-      passwordError.innerHTML = "Atleast use one special character";
-      return false;
-    }
-    if (!password.match(/^(?=.*[a-z])/)) {
-      passwordError.innerHTML = "Use atleast one lowercase letter";
-      return false;
-    }
-    passwordError.innerHTML = "";
-    return true;
-  }
+        if (!password.match(/^(?=.*[0-9])/)) {
+          passwordError.innerHTML = "Atleast use one number";
+          return false;
+        }
+        if (!password.match(/^(?=.*[!@#$%^&*])/)) {
+          passwordError.innerHTML = "Atleast use one special character";
+          return false;
+        }
+        if (!password.match(/^(?=.*[a-z])/)) {
+          passwordError.innerHTML = "Use atleast one lowercase letter";
+          return false;
+        }
+        passwordError.innerHTML = "";
+        return true;
+      }
 
-  function validateForm() {
-    if (
-      !validateEmail() ||
-      !validateName() ||
-      !validatePassword() ||
-      !validateMobileno()
-    ) {
-      submitError.innerHTML = "Please fix all errors to submit.";
-      setTimeout(function () {
-        submitError.style.display = "none";
-      }, 3000);
-      return false;
-    } else {
-      document.getElementById("userForm").submit();
-    }
-  }
-</script>
-<%- include('includes/footerpartial') -%>
+      function validateForm() {
+        if (
+          !validateEmail() ||
+          !validateName() ||
+          !validatePassword() ||
+          !validateMobileno()
+        ) {
+          submitError.innerHTML = "Please fix all errors to submit.";
+          setTimeout(function () {
+            submitError.style.display = "none";
+          }, 3000);
+          return false;
+        } else {
+          document.getElementById("userForm").submit();
+        }
+      }
+    </script>
+    <%- include('includes/footerpartial') -%>

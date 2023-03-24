@@ -56,15 +56,15 @@
               </div>
               */%>
               <div class="col-md-4 mb-3">
-                <label for="product_color" class="form-label">Color</label>
+             
+                
                 <input
+                  class="jscolor form-control"
                   type="text"
-                  placeholder="Type here"
-                  class="form-control"
-                  id="product_color"
-                  value="<%= product.productColor %>"
-                  name="productColor"
-                />
+                  id="color product_color"
+                   name="productColor"
+                   style="background-color:<%=product.productColor%>"
+                /> 
               </div>
               <div class="col-md-4 mb-3">
                 <label for="product_size" class="form-label">Quantity</label>

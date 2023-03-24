@@ -2,7 +2,7 @@ const { response } = require("express");
 const session = require("express-session");
 const adminHelper = require("../helpers/adminHelper");
 const cloudinary = require("../config/cloudinary");
-const upload = require("../config/diskStorage");
+const convert = require("color-convert");
 
 module.exports = {
   adminPage: (req, res) => {
@@ -35,6 +35,11 @@ module.exports = {
         req.session.loggedInad = true;
 
         req.session.admin = response.validAdmin;
+        if (req.body.Remember) {
+          req.session.cookie.maxAge = 600000;
+        } else {
+          req.session.cookie.maxAge = 60000;
+        }
 
         res.redirect("/admin/dashboard");
       } else {
@@ -59,6 +64,7 @@ module.exports = {
     }
   },
   logOut: (req, res) => {
+    // Destroy the session
     req.session.destroy((err) => {
       if (err) {
         console.log(err);
@@ -129,6 +135,7 @@ module.exports = {
       } catch (err) {
         console.error(err);
       }
+
       res.render("admin/products", {
         products,
       });
@@ -158,6 +165,12 @@ module.exports = {
   adProductsPost: async (results, Data) => {
     const productData = Data;
 
+    //convertion part color code to color name
+    const colorCode = productData.productColor;
+    const rgb = convert.hex.rgb(colorCode);
+    const colorName = convert.rgb.keyword(rgb);
+    productData.productColor = colorName;
+
     const productImages = results.map((file) => {
       return file.secure_url;
     });
@@ -175,7 +188,9 @@ module.exports = {
     let product;
     try {
       product = await adminHelper.getProductDetails(req.params.id);
-    } catch (err) {}
+    } catch (err) {
+      console.error(err);
+    }
     if (req.session.loggedInad) {
       res.render("admin/edit-product", { product, productUpdated: false });
     } else {
@@ -184,6 +199,13 @@ module.exports = {
   },
   editProductPost: async (results, Data, proID) => {
     const productData = Data;
+
+    //convertion part color code to color name
+    const colorCode = productData.productColor;
+    const rgb = convert.hex.rgb(colorCode);
+    const colorName = convert.rgb.keyword(rgb);
+    productData.productColor = colorName;
+
     if (results) {
       const productImages = results.map((file) => {
         return file.secure_url;

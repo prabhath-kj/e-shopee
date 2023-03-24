@@ -5,14 +5,14 @@
     <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
       <div class="container">
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <li class="breadcrumb-item active" aria-current="page">Login</li>
+          <li class="breadcrumb-item">
+            <a href="/">Home</a>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">Enter OTP</li>
         </ol>
       </div>
-      <!-- End .container -->
     </nav>
-    <!-- End .breadcrumb-nav -->
-
+  
     <div
       class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17"
       style="background-image: url('assets/images/backgrounds/bg_mesh.jpg')"
@@ -23,19 +23,16 @@
             <ul class="nav nav-pills nav-fill" role="tablist">
               <li class="nav-item">
                 <a
-                  class="nav-link active"
+                  class="nav-link"
                   id="signin-tab-2"
                   data-toggle="tab"
                   href="/login"
                   role="tab"
                   aria-controls="signin-2"
                   aria-selected="true"
-                  >Login</a
                 >
-              </li>
-
-              <li class="nav-item">
-                <a class="nav-link" href="/signup">Register</a>
+                  Enter OTP
+                </a>
               </li>
             </ul>
 
@@ -45,31 +42,24 @@
               role="tabpanel"
               aria-labelledby="signin-tab-2"
             >
-              <form action="/login" method="post">
+              <form action="/verify-mob" method="post">
                 <div class="form-group">
-                  <label for="loginEmail">Email </label>
-                  <input
-                    type="email"
-                    class="form-control"
-                    id="loginEmail"
-                    name="loginEmail"
-                    autocomplete="off"
-                    required
-                  />
-                </div>
-                <!-- End .form-group -->
+                  <label for="loginotp">Enter OTP</label>
 
-                <div class="form-group">
-                  <label for="loginPassword">Password</label>
                   <input
-                    type="password"
+                    type="tel"
                     class="form-control"
-                    id="loginPassword"
-                    name="loginPassword"
+                    id="loginotp"
+                    name="code"
                     required
                   />
+                  <input
+                    type="hidden"
+                    name="mobNumber"
+                    value="<%= mobNumber %>"
+                  />
                 </div>
-                <!-- End .form-group -->
+                <div id="countdown-timer">Time Left: 1:00</div>
 
                 <div class="float-right">
                   <label
@@ -77,48 +67,55 @@
                     for="register-policy-2"
                     style="font-size: smaller"
                   >
-                    <a href="/forgotpassword">Forgot Password?</a>
+                    <a href="/resendOTP/?mobNumber=<%= mobNumber %>">Resend OTP</a>
                   </label>
                 </div>
-                <!-- End .custom-checkbox -->
-
                 <div class="form-footer">
                   <button type="submit" class="btn btn-outline-primary-2">
-                    <span>LOGIN</span>
-                    <i class="icon-long-arrow-right"></i>
+                    <span>Verify OTP</span>
                   </button>
                 </div>
-                <!-- End .form-footer -->
-
-                <% if (loginErr){%>
+                <% if (loginErr) {%>
                 <p class="text-center" style="color: rgb(180, 17, 17)">
-                  Please Enter Valid Details
+                  Please Enter Valid OTP
                 </p>
                 <%}%>
               </form>
-
-              <div class="form-choice">
-                <p class="text-center">or login with</p>
-                <div class="row">
-                  <div class="col-sm-6">
-                    <a href="/otp-login" class="btn btn-login">
-                      Login With OTP
-                    </a>
-                  </div>
-                </div>
-              </div>
-              <!-- End .form-choice -->
             </div>
-            <!-- .End .tab-pane -->
           </div>
-          <!-- End .form-tab -->
         </div>
-        <!-- End .form-box -->
       </div>
-      <!-- End .container -->
     </div>
-    <!-- End .login-page section-bg -->
   </main>
-  <!-- End .main -->
 </section>
+;
+<script>
+  // Set the time limit for the OTP verification (in seconds)
+  const timeLimit = 60;
+
+  // Get the countdown timer element
+  const countdownTimer = document.getElementById("countdown-timer");
+
+  // Initialize the timer value
+  let timerValue = timeLimit;
+
+  // Update the timer value every second
+  const countdownInterval = setInterval(() => {
+    timerValue--;
+    const minutes = Math.floor(timerValue / 60);
+    const seconds = timerValue % 60;
+    countdownTimer.innerHTML = `Time Left: ${minutes}:${seconds
+      .toString()
+      .padStart(2, "0")}`;
+
+    // If the timer reaches zero, clear the interval and disable the form
+    if (timerValue === 0) {
+      clearInterval(countdownInterval);
+      document.getElementById("loginotp").disabled = true;
+      document.querySelector('button[type="submit"]').disabled = true;
+      countdownTimer.innerHTML = "Time's up!";
+    }
+  }, 1000);
+</script>
+
 <%- include('includes/footerpartial') -%>
