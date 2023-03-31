@@ -1,10 +1,14 @@
-const User = require("../models/user");
-const CryptoJS = require("crypto-js");
-const Token = require("../models/token");
-const crypto = require("crypto");
-const user = require("../models/user");
+import mongoose from "mongoose";
+import User from "../models/user.js";
+import CryptoJS from "crypto-js";
+import Token from "../models/token.js";
+import crypto from "crypto";
+import Product from "../models/product.js";
+import Category from "../models/category.js";
+import Cart from "../models/cart.js";
+import product from "../models/product.js";
 
-module.exports = {
+export default {
   doSignUp: (body) => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -44,18 +48,20 @@ module.exports = {
     return new Promise(async (resolve, reject) => {
       try {
         var validUser = await User.findOne({ email: user.loginEmail });
-        if (validUser.status) {
-          const hashedPassword = CryptoJS.AES.decrypt(
-            validUser.password,
-            process.env.Secret_PassPhrase
-          ).toString(CryptoJS.enc.Utf8);
-          console.log(hashedPassword);
-          console.log(user.loginPassword);
-          if (hashedPassword === user.loginPassword) {
-            resolve({ status: true, user: validUser });
-          } else {
-            console.log("Login Failed");
-            resolve({ status: false });
+        if (validUser) {
+          if (validUser.status) {
+            const hashedPassword = CryptoJS.AES.decrypt(
+              validUser.password,
+              process.env.Secret_PassPhrase
+            ).toString(CryptoJS.enc.Utf8);
+            console.log(hashedPassword);
+            console.log(user.loginPassword);
+            if (hashedPassword === user.loginPassword) {
+              resolve({ status: true, user: validUser });
+            } else {
+              console.log("Login Failed");
+              resolve({ status: false });
+            }
           }
         } else {
           console.log("No User Found!");
@@ -105,5 +111,147 @@ module.exports = {
       token: token,
     });
     return;
+  },
+  getUser: async (mob) => {
+    try {
+      const user = await User.findOne({ mobnumber: mob });
+      if (user && user.status) {
+        return user;
+      }
+      return false;
+    } catch (err) {
+      console.log(err);
+    }
+  },
+  updatePassword: async (id, newPassword) => {
+    try {
+      await User.findByIdAndUpdate(
+        id,
+        {
+          password: CryptoJS.AES.encrypt(
+            newPassword,
+            process.env.Secret_PassPhrase
+          ).toString(),
+        },
+        { new: true }
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  getAllCategory: async () => {
+    try {
+      let viewCategory = await Category.find({});
+      return viewCategory;
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  getAllProducts: async () => {
+    try {
+      const products = await Product.find({
+        productStatus: "Listed",
+      }).populate("category");
+
+      const categories = await Category.find({});
+
+      return { products, categories };
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  getAllProductsForList: async (categoryId) => {
+    try {
+      const productsQuery = Product.find({ category: categoryId }).populate(
+        "category"
+      );
+
+      const products = await productsQuery.exec();
+      return products;
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  getProductDetails: async (proId) => {
+    try {
+      const product = await Product.findById(proId);
+      return product;
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  getCartProducts: async (userId) => {
+    try {
+      const cart = await Cart.findOne({ user: userId }).populate(
+        "products.productId"
+      );
+      if (!cart) {
+        return null;
+      }
+      const cartItems = cart.products.map((item) => {
+        const { productId, quantity } = item;
+        const { _id, productName, productModel, productPrice, productImage } =
+          productId;
+        const totalPrice = productPrice * quantity;
+        return {
+          item: _id,
+          quantity,
+          totalPrice,
+          product: {
+            _id,
+            productName,
+            productModel,
+            productPrice,
+            productImage,
+          },
+        };
+      });
+      let subtotal = 0;
+      cartItems.forEach((item) => {
+        subtotal += item.product.productPrice * item.quantity;
+      });
+
+      return { cartItems, subtotal };
+    } catch (err) {
+      console.error(err);
+      throw new Error("Error getting cart products");
+    }
+  },
+
+  addToCart: async (productId, userId) => {
+    const isProductExist = await Cart.findOne({
+      user: userId,
+      "products.productId": productId,
+    });
+
+    if (isProductExist) {
+      await Cart.updateOne(
+        { user: userId, "products.productId": productId },
+        { $inc: { "products.$.quantity": 1 } }
+      );
+    } else {
+      await Cart.updateOne(
+        { user: userId },
+        { $push: { products: { productId, quantity: 1 } } },
+        { upsert: true }
+      );
+    }
+  },
+  removeProdctFromCart: async ({ cart, product }) => {
+    try {
+      const updatedCart = await Cart.findOneAndUpdate(
+        { user: cart },
+        { $pull: { products: { productId: product } } },
+        { new: true }
+      );
+      if (!updatedCart) {
+        throw new Error("Cart not found");
+      }
+
+      console.log(`Product ${product} removed from cart ${cart}`);
+      return;
+    } catch (error) {
+      console.error(error.message);
+    }
   },
 };

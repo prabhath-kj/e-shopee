@@ -1,9 +1,8 @@
-var express = require("express");
-var router = express.Router();
-const adminController = require("../controllers/adminController");
-const upload = require("../config/diskStorage");
-const cloudinary = require("../config/cloudinary");
-
+import express from "express";
+const router = express.Router();
+import adminController from "../controllers/adminController.js";
+import upload from "../config/diskStorage.js";
+import cloudinary from "../config/cloudinary.js";
 
 /* GET users listing. */
 
@@ -82,5 +81,10 @@ router.post(
 );
 router.get("/unlist-product/:id", adminController.unlistProduct);
 
+router.get("/add-banner",adminController.addBanner)
+
 // router.get("/delete-product/:id", adminController.deleteProduct);
-module.exports = router;
+
+
+
+export default router;

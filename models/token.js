@@ -1,5 +1,4 @@
-
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const tokenSchema = new Schema({
@@ -12,4 +11,4 @@ const tokenSchema = new Schema({
   token: { type: String, required: true },
   createdAt: { type: Date, default: Date.now(), expires: 3600 },
 });
-module.exports =mongoose.model("token",tokenSchema)
+export default mongoose.model("token", tokenSchema);

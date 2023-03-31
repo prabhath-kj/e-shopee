@@ -1,10 +1,13 @@
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
 const accountSid = process.env.accountSid;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const verifySid = process.env.verifySid;
-const client = require("twilio")(accountSid, authToken);
+// const client = require("twilio")(accountSid, authToken);
+import twilio from "twilio";
 
-module.exports = {
+const client = twilio(accountSid, authToken);
+const twilioFunctions = {
   client,
 
   verifySid,
@@ -15,3 +18,5 @@ module.exports = {
       .verifications.create({ to: `+91${mobNumber}`, channel: channel });
   },
 };
+
+export default twilioFunctions;

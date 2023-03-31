@@ -1,11 +1,11 @@
-const multer = require("multer");
-const path = require("path");
+import multer from "multer";
+import path from "path";
 
-module.exports = multer({
+export default multer({
   storage: multer.diskStorage({}),
   limits: {
-    files: 4, // Allow up to 4 files to be uploaded
-    fileSize: 1024 * 1024 * 5, // Allow files up to 5 MB (change as needed)
+    files: 4,
+    fileSize: 1024 * 1024 * 5,
   },
   fileFilter: (req, file, cb) => {
     let ext = path.extname(file.originalname);

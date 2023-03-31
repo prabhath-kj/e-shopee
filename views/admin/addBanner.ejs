@@ -1,0 +1,131 @@
+<%- include('../adincludes/header') %>
+
+<section class="content-main">
+  <div class="row">
+    <form
+      action="/admin/add-banner"
+      method="post"
+      enctype="multipart/form-data"
+    >
+      <div class="col-9">
+        <div class="content-header">
+          <h2 class="content-title">Add New Banner.</h2>
+        </div>
+      </div>
+      <div class="col-xl">
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="mb-4">
+              <label for="product_brand" class="form-label">Head Line </label>
+              <input
+                type="text"
+                placeholder="Type here"
+                class="form-control"
+                id="product_brand"
+                name="headline"
+                required
+              />
+            </div>
+
+              
+              
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- card end// -->
+        <div class="card col-xl mb-4">
+          <div class="card-body">
+            <div>
+              <label class="form-label">Additional Information</label>
+              <textarea
+                placeholder="Type here"
+                class="form-control"
+                rows="4"
+                name="productDescription"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+        <!-- card end// -->
+        <div class="card mb-4">
+          <div class="card-body">
+            <div>
+              <label class="form-label">Images</label>
+              <input
+                class="form-control"
+                type="file"
+                name="productImage"
+                onchange="previewImage(event)"
+              />
+              <img class="preview" style="width: 300px; height: inherit" />
+              
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card mb-4">
+          <div class="card-body">
+            
+            <div class="mb-4">
+              <label class="form-label">Status</label>
+              <select class="form-select">
+                <option>Published</option>
+                
+              </select>
+            </div>
+
+            <hr />
+            <h5 class="mb-3">Categories</h5>
+            <% availCategory.forEach(function(category, index) { %>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="Category"
+                id="category-<%= index %>"
+                value="<%= category._id %>"
+              />
+              <label class="form-check-label" for="category-<%= index %>">
+                <%= category.CategoryName %>
+              </label>
+            </div>
+            <% }) %>
+          </div>
+        </div>
+        <!-- card end// -->
+        <div>
+        
+          <button class="btn btn-md rounded font-sm hover-up">Publish</button
+          ><br />
+         <% if (productUploaded) { %>
+          <label class="text-center" style="color: rgb(22, 131, 22)"
+            >Product Successfully Uploaded</label
+          >
+          <% } %>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- <script defer src="https://cdn.crop.guide/loader/l.js?c=KMVWFY"></script> -->
+<script>
+  function previewImage(event) {
+    var input = event.target;
+
+    var preview = input.nextElementSibling;
+
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+
+      reader.onload = function () {
+        preview.src = reader.result;
+      };
+
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>
+<%- include('../adincludes/footer') %>

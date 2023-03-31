@@ -1,52 +1,28 @@
-require("dotenv").config();
-const createError = require("http-errors");
-const express = require("express");
-const path = require("path");
-const cookieParser = require("cookie-parser");
-const logger = require("morgan");
-const dbConfig = require("./config/db.config.js");
-const session = require("express-session");
-const mongoDBStore = require("connect-mongodb-session")(session);
+import dotenv from "dotenv";
+import createError from "http-errors";
+import express from "express";
+import cookieParser from "cookie-parser";
+import logger from "morgan";
+import http from "http";
+import debug from "debug";
+import mongoose from "mongoose";
+import connectDB from "./config/db.config.js";
+import session from "express-session";
 
-//connect to mongodb
-dbConfig.connectDB();
 
-const mongoDBConnString = dbConfig.url;
-const databaseName = dbConfig.database;
+// Load environment variables from .env file
+dotenv.config();
 
-// function createSessionStore() {
-//   return new mongoDBStore({
-//     uri: mongoDBConnString,
-//     databaseName: databaseName,
-//     collection: "sessions",
-//   });
-// }
+// Connect to mongodb
+connectDB();
 
-// function createSessionConfig() {
-//   return {
-//     secret: "key",
-//     resave: false,
-//     saveUninitialized: false,
-//     store: createSessionStore(),
-//     cookie: {
-//       maxAge: 172800000,
-//       sameSite: "lax",
-//     },
-//   };
-// }
-
-const usersRouter = require("./routes/users");
-const adminRouter = require("./routes/admin");
-const errorRoutes = require("./routes/error");
-
+// Create Express app
 const app = express();
 
-// view engine setup
+// View engine setup
 app.set("view engine", "ejs");
-
 app.set("views", "views");
 
-// app.use(expressLayouts);
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -54,7 +30,7 @@ app.use(cookieParser());
 app.use(express.static("public"));
 app.use("/node_modules", express.static("node_modules"));
 
-// session-handler
+// Session handler
 app.use(
   session({
     secret: "key",
@@ -63,6 +39,8 @@ app.use(
     resave: false,
   })
 );
+
+// Set headers for all responses
 app.use(function (req, res, next) {
   res.header(
     "Cache-Control",
@@ -71,26 +49,96 @@ app.use(function (req, res, next) {
   next();
 });
 
+// Routes
+import usersRouter from "./routes/users.js";
+import adminRouter from "./routes/admin.js";
+import errorRoutes from "./routes/error.js";
 app.use("/", usersRouter);
 app.use("/admin", adminRouter);
 app.use(errorRoutes);
-/// Create session middleware
-// app.use(session(createSessionConfig()));
 
-// catch 404 and forward to error handler
+// Catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
 });
 
-// error handler
+// Error handler
 app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
+  // Set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
-  // render the error page
+  // Render the error page
   res.status(err.status || 500);
   res.render("error");
 });
 
-module.exports = app;
+// Create HTTP server
+const server = http.createServer(app);
+
+// Set port
+const PORT = normalizePort(process.env.PORT || "3000");
+app.set("port", PORT);
+
+// Listen on provided port, on all network interfaces
+mongoose.connection.once("open", () => {
+  console.log("Connected to the database.");
+  server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+});
+
+// Event listener for HTTP server "error" event
+const onError = (error) => {
+  if (error.syscall !== "listen") {
+    throw error;
+  }
+
+  const bind = typeof PORT === "string" ? `Pipe ${PORT}` : `Port ${PORT}`;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case "EACCES":
+      console.error(`${bind} requires elevated privileges`);
+      process.exit(1);
+      break;
+    case "EADDRINUSE":
+      console.error(`${bind} is already in use`);
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+};
+
+server.on("error", onError);
+
+// Event listener for HTTP server "listening" event
+const onListening = () => {
+  const addr = server.address();
+  const bind = typeof addr === "string" ? `pipe ${addr}` : `port ${addr.port}`;
+  debug(`Listening on ${bind}`);
+};
+server.on("listening", onListening)
+
+
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  const port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}

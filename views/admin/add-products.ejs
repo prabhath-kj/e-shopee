@@ -54,7 +54,6 @@
               </div>
               */%>
               <div class="col-md-4 mb-3">
-                
                 <label for="Color">Product Color</label>
                 <input
                   class="jscolor form-control"
@@ -63,7 +62,6 @@
                   id="color product_color"
                   name="productColor"
                 />
-          
               </div>
               <div class="col-md-4 mb-3">
                 <label for="product_size" class="form-label">Quantity</label>
@@ -97,10 +95,34 @@
           <div class="card-body">
             <div>
               <label class="form-label">Images</label>
-              <input class="form-control" type="file" name="productImage" />
-              <input class="form-control" type="file" name="productImage" />
-              <input class="form-control" type="file" name="productImage" />
-              <input class="form-control" type="file" name="productImage" />
+              <input
+                class="form-control"
+                type="file"
+                name="productImage"
+                onchange="previewImage(event)"
+              />
+              <img class="preview" style="width: 300px; height: inherit" />
+              <input
+                class="form-control"
+                type="file"
+                name="productImage"
+                onchange="previewImage(event)"
+              />
+              <img class="preview" style="width: 300px; height: inherit" />
+              <input
+                class="form-control"
+                type="file"
+                name="productImage"
+                onchange="previewImage(event)"
+              />
+              <img class="preview" style="width: 300px; height: inherit" />
+              <input
+                class="form-control"
+                type="file"
+                name="productImage"
+                onchange="previewImage(event)"
+              />
+              <img class="preview" style="width: 300px; height: inherit" />
             </div>
           </div>
         </div>
@@ -166,6 +188,22 @@
   </div>
 </section>
 
-<script defer src="https://cdn.crop.guide/loader/l.js?c=KMVWFY"></script>
+<!-- <script defer src="https://cdn.crop.guide/loader/l.js?c=KMVWFY"></script> -->
+<script>
+  function previewImage(event) {
+    var input = event.target;
 
+    var preview = input.nextElementSibling;
+
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+
+      reader.onload = function () {
+        preview.src = reader.result;
+      };
+
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>
 <%- include('../adincludes/footer') %>

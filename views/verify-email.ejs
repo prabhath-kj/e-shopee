@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Email Verification Success</title>
+    <style>
+      /* Define animation styles */
+      .fade-in {
+        animation: fadeIn 1s ease-in-out forwards;
+      }
+      .fade-out {
+        animation: fadeOut 1s ease-in-out forwards;
+      }
+      @keyframes fadeIn {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+      }
+      @keyframes fadeOut {
+        0% { opacity: 1; }
+        100% { opacity: 0; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="message-container fade-in">
+      <h1>Email Verification Successful!</h1>
+      <p>Your email has been verified and your account is now active. You will now be redirected to the homepage.</p>
+    </div>
+    <script>
+      // Define animation timing
+      const animationTime = 2000;
+      const delayTime = 5000;
+      
+      // Get message container element
+      const messageContainer = document.querySelector('.message-container');
+      
+      // Wait for animation to finish and redirect to homepage
+      setTimeout(() => {
+        messageContainer.classList.add('fade-out');
+        setTimeout(() => {
+          window.location.href = '/';
+        }, animationTime);
+      }, delayTime);
+    </script>
+  </body>
+</html>

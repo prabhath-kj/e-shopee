@@ -82,12 +82,14 @@
                       </a>
                       <div class="dropdown-menu">
                         <%# <a class="dropdown-item" href="#">View detail</a>
+
+                        >
                         <a class="dropdown-item" href="#">Edit info</a>%>
                         <a
                           class="dropdown-item text-danger"
                           href="/admin/delete-category/<%= category._id %>"
                           onclick="return confirm('do you want to delete <%= category.CategoryName %>')"
-                          >Delete</a
+                          >Unlist</a
                         >
                       </div>
                     </div>

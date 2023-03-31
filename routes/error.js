@@ -1,5 +1,5 @@
-var express = require("express");
-var router = express.Router();
+import express from "express";
+const router = express.Router();
 
 router.use(function (req, res, next) {
   res.status(404);
@@ -17,4 +17,4 @@ router.use(function (err, req, res, next) {
   res.status(403);
   res.render("error", { status: 403 });
 });
-module.exports = router;
+export default router;

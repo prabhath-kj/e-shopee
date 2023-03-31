@@ -1,9 +1,10 @@
 {
   "name": "eshoppee",
   "version": "0.0.0",
+  "type": "module",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www"
+    "start": "nodemon app.js"
   },
   "dependencies": {
     "@eastdesire/jscolor": "^2.5.1",
@@ -28,5 +29,17 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.21"
-  }
+  },
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prabhath-kj/e-shopee.git"
+  },
+  "author": "prabhath-kj",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/prabhath-kj/e-shopee/issues"
+  },
+  "homepage": "https://github.com/prabhath-kj/e-shopee#readme",
+  "description": ""
 }

@@ -1,10 +1,7 @@
-const { response } = require("express");
-const session = require("express-session");
-const adminHelper = require("../helpers/adminHelper");
-const cloudinary = require("../config/cloudinary");
-const convert = require("color-convert");
+import adminHelper from "../helpers/adminHelper.js";
+import convert from "color-convert";
 
-module.exports = {
+export default {
   adminPage: (req, res) => {
     if (req.session.loggedInad) {
       let admin = req.session.admin;
@@ -35,11 +32,11 @@ module.exports = {
         req.session.loggedInad = true;
 
         req.session.admin = response.validAdmin;
-        if (req.body.Remember) {
-          req.session.cookie.maxAge = 600000;
-        } else {
-          req.session.cookie.maxAge = 60000;
-        }
+        // if (req.body.Remember) {
+        //   req.session.cookie.maxAge = 600000;
+        // } else {
+        //   req.session.cookie.maxAge = 60000;
+        // }
 
         res.redirect("/admin/dashboard");
       } else {
@@ -65,13 +62,16 @@ module.exports = {
   },
   logOut: (req, res) => {
     // Destroy the session
-    req.session.destroy((err) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.redirect("/admin");
-      }
-    });
+    req.session.loggedInad = false;
+    res.redirect("/admin");
+
+    // req.session.destroy((err) => {
+    //   if (err) {
+    //     console.log(err);
+    //   } else {
+    //     res.redirect("/admin");
+    //   }
+    // });
   },
   blockUser: async (req, res) => {
     if (req.session.loggedInad) {
@@ -221,6 +221,21 @@ module.exports = {
       return updatedProducts;
     } catch (err) {
       console.error(err);
+    }
+  },
+  addBanner: async (req, res) => {
+    if (req.session.loggedInad) {
+      try {
+        var availCategory = await adminHelper.getAllCategory();
+        res.render("admin/addBanner", {
+          availCategory,
+          productUploaded: false,
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    } else {
+      res.redirect("/admin");
     }
   },
   unlistProduct: async (req, res) => {

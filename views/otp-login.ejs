@@ -53,7 +53,7 @@
               role="tabpanel"
               aria-labelledby="signin-tab-2"
             >
-              <form action="/otp-login" method="post">
+              <form id="userForm" action="/otp-login" method="post">
                 <div class="form-group">
                   <label for="loginMobile">Mobile Number </label>
                   <input
@@ -62,7 +62,13 @@
                     id="loginMobile"
                     name="phoneNumber"
                     required
+                    onblur="validateMobileno()"
                   />
+                  <label
+                    id="mobile-error"
+                    class="errorLabel text-danger"
+                    for="loginMobile"
+                  ></label>
                 </div>
                 <!-- End .form-group -->
 
@@ -120,4 +126,33 @@
   </main>
   <!-- End .main -->
 </section>
+<script>
+  const mobileError = document.getElementById("mobile-error");
+  function validateMobileno() {
+    const mobileValue = document.getElementById("loginMobile").value;
+
+    if (mobileValue == "") {
+      mobileError.innerHTML = "This field is required";
+      return false;
+    } else if (!mobileValue.match(/^(\+91)?[6-9]\d{9}$/)) {
+      mobileError.innerText = "Enter a valid mobile number";
+      return false;
+    }
+
+    // The mobile number is valid
+    mobileError.innerText = "";
+    return true;
+  }
+  function validateForm() {
+    if (!validateMobileno()) {
+      submitError.innerHTML = "Please fix all errors to submit.";
+      setTimeout(function () {
+        submitError.style.display = "none";
+      }, 3000);
+      return false;
+    } else {
+      document.getElementById("userForm").submit();
+    }
+  }
+</script>
 <%- include('includes/footerpartial') -%>

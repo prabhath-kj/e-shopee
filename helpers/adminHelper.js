@@ -1,8 +1,8 @@
-const User = require("../models/user");
-const Category = require("../models/category");
-const Product = require("../models/product");
+import User from "../models/user.js";
+import Category from "../models/category.js";
+import Product from "../models/product.js";
 
-module.exports = {
+export default {
   adminLogin: (admindata) => {
     return new Promise(async (resolve, reject) => {
       let response = {};
@@ -166,6 +166,7 @@ module.exports = {
       console.error(err);
     }
   },
+
   updateProducts: async (productData, proID) => {
     let update = {};
     if (productData.productImages && productData.productImages.length > 0) {

@@ -225,7 +225,7 @@
         if (mobileValue == "") {
           mobileError.innerHTML = "This field is required";
           return false;
-        } else if (!mobileValue.match(/^(\+91|0)?[6-9]\d{9}$/)) {
+        } else if (!mobileValue.match(/^(\+91)?[6-9]\d{9}$/)) {
           mobileError.innerText = "Enter a valid mobile number";
           return false;
         }
