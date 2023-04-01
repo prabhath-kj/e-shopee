@@ -13,6 +13,7 @@ export default {
       const products = allProductWithCategory.products;
       const categories = allProductWithCategory.categories;
       if (user) {
+        user.count = await userHelper.getCartCount(user._id);
         res.render("layout", {
           user,
           products,
@@ -172,15 +173,17 @@ export default {
       res.redirect("/");
     }
     const mobNumber = req.query.mobNumber;
+    console.log(mobNumber);
     twilioFunctions
       .generateOTP(mobNumber, "sms")
       .then((verification) => {
-        if (verification.status)
-          res.render("verify-mob", {
-            loginErr: false,
-            user: false,
-            mobNumber: mobNumber,
-          });
+        if (verification.status == "pending") {
+          res.json({ status: "success" });
+          return;
+        } else {
+          res.json({ status: "error" });
+          return;
+        }
       })
       .catch((error) => {
         console.error(error);
@@ -369,6 +372,18 @@ export default {
       console.error(err);
     }
   },
+  changeProductQuantity: async (req, res) => {
+    try {
+      const [userId, productId,  count] = req.body.product;
+      await userHelper.updateQuantity(userId, productId, count);
+      res.json({status:"success"})
+    } catch (err) {
+      console.error(err);
+      res.json({status:"error"})
+
+    }
+  },
+
   removeProdctFromCart: async (req, res) => {
     try {
       console.log(req.body);

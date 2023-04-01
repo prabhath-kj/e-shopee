@@ -7,6 +7,7 @@ import Product from "../models/product.js";
 import Category from "../models/category.js";
 import Cart from "../models/cart.js";
 import product from "../models/product.js";
+import { error } from "console";
 
 export default {
   doSignUp: (body) => {
@@ -147,13 +148,16 @@ export default {
       console.error(err);
     }
   },
-  getAllProducts: async () => {
+  getAllProducts: async (userId) => {
     try {
       const products = await Product.find({
         productStatus: "Listed",
       }).populate("category");
 
       const categories = await Category.find({});
+
+      const cartCount = await Cart.findById(userId);
+      console.log(cartCount);
 
       return { products, categories };
     } catch (err) {
@@ -210,6 +214,7 @@ export default {
       cartItems.forEach((item) => {
         subtotal += item.product.productPrice * item.quantity;
       });
+      let cartCount = 0;
 
       return { cartItems, subtotal };
     } catch (err) {
@@ -237,6 +242,29 @@ export default {
       );
     }
   },
+
+  updateQuantity: async (userId, productId, count) => {
+    try {
+      const cart = await Cart.findOne({ user: userId });
+      const product = cart.products.find(
+        (p) => p.productId.toString() === productId
+      );
+      if (product.quantity === 1 && parseInt(count) === -1) {
+        // await cart.products.id(product._id).delete();
+        // await cart.save();
+        await Cart.findOneAndUpdate(
+          { user: userId },
+          { $pull: { products: { productId: productId } } },
+          { new: true }
+        );
+      } else {
+        cart.products.id(product._id).quantity += parseInt(count);
+        await cart.save();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  },
   removeProdctFromCart: async ({ cart, product }) => {
     try {
       const updatedCart = await Cart.findOneAndUpdate(
@@ -252,6 +280,15 @@ export default {
       return;
     } catch (error) {
       console.error(error.message);
+    }
+  },
+  getCartCount: async (userId) => {
+    try {
+      const cartCount = await Cart.findOne({ user: userId });
+      const productCount = cartCount.products.length;
+      return productCount;
+    } catch (err) {
+      console.error(err);
     }
   },
 };

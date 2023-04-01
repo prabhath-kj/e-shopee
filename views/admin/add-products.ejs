@@ -181,7 +181,11 @@
           <label class="text-center" style="color: rgb(22, 131, 22)"
             >Product Successfully Uploaded</label
           >
-          <% } %>
+          <% } %> <% if (productUploadedErr) { %>
+            <label class="text-center" style="color: rgb(22, 131, 22)"
+              >Product Not Uploaded</label
+            >
+            <% } %>
         </div>
       </div>
     </form>

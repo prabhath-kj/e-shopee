@@ -64,16 +64,16 @@
                     <td class="quantity-col">
                       <button
                         class="btn-remove"
-                        onclick="changeQuantity('<%= user._id %>','<%= product._id %>','<%= product.product._id %>', -1)"
+                        onclick="changeQuantity('<%= user._id %>','<%= product.product._id %>', -1)"
                       >
                         <i class="icon-minus"></i>
                       </button>
-                      <span id="<%= product.product._id %>"
+                      <span id="<%= product._id %>"
                         ><%= product.quantity %></span
                       >
                       <button
                         class="btn-remove"
-                        onclick="changeQuantity('<%= user._id %>','<%= product._id %>','<%= product.product._id %>', 1)"
+                        onclick="changeQuantity('<%= user._id %>','<%= product.product._id %>', 1)"
                       >
                         <i class="icon-plus"></i>
                       </button>
@@ -217,28 +217,5 @@
   </main>
   <!-- End .main -->
 </section>
-<script>
-  let removeCartProduct = (cartId, productId, productName) => {
-    let confirmation = confirm(
-      "Are you Sure want to remove ' " + productName + " ' from cart?"
-    );
-    if (confirmation == true) {
-      $.ajax({
-        url: "/remove-product-from-cart",
-        data: {
-          cart: cartId,
-          product: productId,
-          productName: productName,
-        },
-        method: "post",
-        success: (response) => {
-          if (response) {
-            alert("Product removed from Cart!");
-            location.reload();
-          }
-        },
-      });
-    }
-  };
-</script>
+
 <%- include('includes/footerpartial') -%>

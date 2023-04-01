@@ -12,3 +12,12 @@ export function isUser(req, res, next) {
     res.redirect("/");
   }
 }
+
+export function isloggedInad(req, res, next) {
+  if (req.session.loggedInad) {
+    req.admin = req.session.admin;
+    next();
+  } else {
+    res.redirect('/admin/login');
+  }
+}

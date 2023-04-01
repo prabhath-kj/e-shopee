@@ -58,6 +58,8 @@ router.post(
   userController.removeProdctFromCart
 );
 
+router.post("/change-product-quantity",userController.changeProductQuantity)
+
 //Cart Page
 router.get("/cart", isUser, userController.cartPage);
 

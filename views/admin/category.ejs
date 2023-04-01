@@ -30,23 +30,7 @@
               />
             </div>
 
-            <%#
-            <div class="mb-4">
-              <label class="form-label">Parent</label>
-              <select class="form-select">
-                <option>Clothes</option>
-                <option>T-Shirts</option>
-              </select>
-            </div>
-            --%>
-            <div class="mb-4">
-              <label class="form-label">Description</label>
-              <textarea
-                placeholder="Type here"
-                class="form-control"
-                name="CategoryDescription"
-              ></textarea>
-            </div>
+            
 
             <div class="d-grid">
               <button class="btn btn-primary">Create category</button>
@@ -59,7 +43,6 @@
               <thead>
                 <tr>
                   <th>Category</th>
-                  <th>Description</th>
 
                   <th class="text-end">Action</th>
                 </tr>
@@ -70,7 +53,6 @@
                   <td>
                     <b><%= category.CategoryName %></b>
                   </td>
-                  <td><%= category.CategoryDescription %></td>
                   <td class="text-end">
                     <div class="dropdown">
                       <a

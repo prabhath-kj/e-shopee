@@ -12,7 +12,7 @@
         </ol>
       </div>
     </nav>
-  
+
     <div
       class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17"
       style="background-image: url('assets/images/backgrounds/bg_mesh.jpg')"
@@ -59,7 +59,9 @@
                     value="<%= mobNumber %>"
                   />
                 </div>
-                <div id="countdown-timer">Time Left: 1:00</div>
+                <div id="countdown-timer" style="display: inline">
+                  Time Left: 1:00
+                </div>
 
                 <div class="float-right">
                   <label
@@ -67,7 +69,13 @@
                     for="register-policy-2"
                     style="font-size: smaller"
                   >
-                    <a href="/resendOTP/?mobNumber=<%= mobNumber %>">Resend OTP</a>
+                    <a
+                      id="resendOTP"
+                      class="resend-link"
+                      style="display: none"
+                      onclick="resendOTP() "
+                      >Resend OTP</a
+                    >
                   </label>
                 </div>
                 <div class="form-footer">
@@ -95,6 +103,7 @@
 
   // Get the countdown timer element
   const countdownTimer = document.getElementById("countdown-timer");
+  const resendLink = document.getElementById("resendOTP");
 
   // Initialize the timer value
   let timerValue = timeLimit;
@@ -111,11 +120,52 @@
     // If the timer reaches zero, clear the interval and disable the form
     if (timerValue === 0) {
       clearInterval(countdownInterval);
-      document.getElementById("loginotp").disabled = true;
+      resendLink.style.display = "inline";
       document.querySelector('button[type="submit"]').disabled = true;
-      countdownTimer.innerHTML = "Time's up!";
+      countdownTimer.style.display = "none";
+      Swal.fire({
+        title: "Time's up!",
+        icon: "warning",
+        timer: 3000,
+      });
     }
   }, 1000);
+
+  function resendOTP() {
+    let confirmation = confirm("do you want to resend");
+    if (confirmation === true) {
+      $.ajax({
+        url: "/resendOTP",
+        data: { mobNumber: "<%= mobNumber %>" },
+        method: "get",
+        success: function (response) {
+          if (response.status === "success") {
+            Swal.fire({
+              title: "OTP Resent!",
+              icon: "success",
+              timer: 4000,
+            });
+          } else {
+            Swal.fire({
+              title: "OTP resend failed!",
+              text: response.message,
+              icon: "error",
+              timer: 4000,
+            });
+          }
+        },
+        error: function (error) {
+          console.log(error);
+          Swal.fire({
+            title: "Error occurred!",
+            text: error.message,
+            icon: "error",
+            timer: 2000,
+          });
+        },
+      });
+    }
+  }
 </script>
 
 <%- include('includes/footerpartial') -%>

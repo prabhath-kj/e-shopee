@@ -145,9 +145,10 @@ export default {
       });
 
       await newProducts.save();
-      return;
+      return true
     } catch (err) {
       console.error(err);
+      return false;
     }
   },
   getAllProducts: async () => {

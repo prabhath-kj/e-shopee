@@ -1,30 +1,30 @@
 import adminHelper from "../helpers/adminHelper.js";
 import convert from "color-convert";
+import cloudinary from "../config/cloudinary.js";
 
 export default {
   adminPage: (req, res) => {
-    if (req.session.loggedInad) {
-      let admin = req.session.admin;
-      res.render("admin/layout");
-    } else {
-      res.render("admin/login", { adLogErr: false });
-    }
+    res.render("admin/layout");
   },
-  dashboard: (req, res) => {
-    if (req.session.loggedInad) {
-      let admin = req.session.admin;
 
+  dashboard: (req, res) => {
+    let admin = req.admin;
+
+    if (admin) {
       res.render("admin/dashboard");
     } else {
       res.redirect("admin/login");
     }
   },
+
   loginPage: (req, res) => {
-    if (!req.session.loggedInad) res.render("admin/login", { adLogErr: false });
-    else {
-      res.redirect("/admin/dashboard");
+    if (req.session.admin) {
+      res.redirect("/admin");
+    } else {
+      res.render("admin/login", { adLogErr: false });
     }
   },
+
   loginPost: (req, res) => {
     adminHelper.adminLogin(req.body).then((response) => {
       let admin = response.status;
@@ -44,8 +44,9 @@ export default {
       }
     });
   },
+
   viewUser: (req, res) => {
-    if (req.session.loggedInad) {
+    if (req.admin) {
       const status = req.query.status || "";
 
       try {
@@ -60,6 +61,7 @@ export default {
       res.redirect("/admin");
     }
   },
+
   logOut: (req, res) => {
     // Destroy the session
     req.session.loggedInad = false;
@@ -73,8 +75,9 @@ export default {
     //   }
     // });
   },
+
   blockUser: async (req, res) => {
-    if (req.session.loggedInad) {
+    if (req.admin) {
       let userId = req.params.id;
       try {
         await adminHelper.blockUser(userId);
@@ -84,8 +87,9 @@ export default {
       }
     }
   },
+
   unblockUser: async (req, res) => {
-    if (req.session.loggedInad) {
+    if (req.admin) {
       let userId = req.params.id;
       try {
         await adminHelper.unblockUser(userId);
@@ -97,7 +101,7 @@ export default {
   },
 
   category: async (req, res) => {
-    if (req.session.loggedInad) {
+    if (req.admin) {
       try {
         const viewCategory = await adminHelper.getAllCategory();
         res.render("admin/category", {
@@ -110,6 +114,7 @@ export default {
       res.redirect("/admin/dashboard");
     }
   },
+
   addCategory: async (req, res) => {
     try {
       await adminHelper.addCategory(req.body);
@@ -118,6 +123,7 @@ export default {
       console.error(err);
     }
   },
+
   deleteCategory: async (req, res) => {
     let categoryId = req.params.id;
     console.log(categoryId);
@@ -128,8 +134,9 @@ export default {
       console.error(err);
     }
   },
+
   getAllProducts: async (req, res) => {
-    if (req.session.loggedInad) {
+    if (req.admin) {
       try {
         var products = await adminHelper.getAllProducts();
       } catch (err) {
@@ -143,8 +150,9 @@ export default {
       res.redirect("/admin");
     }
   },
+
   addProducts: async (req, res) => {
-    if (req.session.loggedInad) {
+    if (req.admin) {
       try {
         var availCategory = await adminHelper.getAllCategory();
       } catch (err) {
@@ -153,37 +161,58 @@ export default {
       let productFound;
       req.session.productFound ? productFound : !productFound;
       const productUploaded = req.session.productUploaded;
+      const productUploadedErr = req.session.productUploadedErr;
       res.render("admin/add-products", {
         availCategory,
         productFound,
         productUploaded,
+        productUploadedErr,
       });
     } else {
       res.redirect("/admin");
     }
   },
-  adProductsPost: async (results, Data) => {
-    const productData = Data;
 
-    //convertion part color code to color name
-    const colorCode = productData.productColor;
-    const rgb = convert.hex.rgb(colorCode);
-    const colorName = convert.rgb.keyword(rgb);
-    productData.productColor = colorName;
-
-    const productImages = results.map((file) => {
-      return file.secure_url;
-    });
-
-    productData.productImages = productImages;
-    productData.productStatus = "Listed";
+  adProductsPost: async (req, res) => {
     try {
-      const savedProducts = await adminHelper.addProducts(productData);
-      return savedProducts;
+      const files = req.files;
+      const results = await Promise.all(
+        files.map((file) => cloudinary.uploader.upload(file.path))
+      );
+      const productData = req.body;
+
+      //convertion part color code to color name
+      const colorCode = productData.productColor;
+      const rgb = convert.hex.rgb(colorCode);
+      const colorName = convert.rgb.keyword(rgb);
+      productData.productColor = colorName;
+
+      const productImages = results.map((file) => {
+        return file.secure_url;
+      });
+
+      productData.productImages = productImages;
+      productData.productStatus = "Listed";
+      try {
+        const productFound = await adminHelper.addProducts(productData);
+        if (productFound) {
+          req.session.productUploaded = true;
+          res.redirect("/admin/add-products");
+          return;
+        }
+        req.session.productFound = true;
+        res.redirect("/admin/add-products");
+      } catch (err) {
+        console.error(err);
+      }
     } catch (err) {
       console.error(err);
+      req.session.productUploadErr = true;
+
+      res.redirect("/admin/add-products");
     }
   },
+
   editProduct: async (req, res) => {
     let product;
     try {
@@ -197,32 +226,38 @@ export default {
       res.redirect("/admin");
     }
   },
-  editProductPost: async (results, Data, proID) => {
-    const productData = Data;
 
-    //convertion part color code to color name
-    const colorCode = productData.productColor;
-    const rgb = convert.hex.rgb(colorCode);
-    const colorName = convert.rgb.keyword(rgb);
-    productData.productColor = colorName;
-
-    if (results) {
-      const productImages = results.map((file) => {
-        return file.secure_url;
-      });
-      productData.productImages = productImages;
-    }
-
+  editProductPost: async (req, res) => {
     try {
-      const updatedProducts = await adminHelper.updateProducts(
-        productData,
-        proID
+      const files = req.files;
+      const results = await Promise.all(
+        files.map((file) => cloudinary.uploader.upload(file.path))
       );
-      return updatedProducts;
+
+      const productData = req.body;
+
+      //convertion part color code to color name
+      const colorCode = productData.productColor;
+      const rgb = convert.hex.rgb(colorCode);
+      const colorName = convert.rgb.keyword(rgb);
+      productData.productColor = colorName;
+
+      if (results) {
+        const productImages = results.map((file) => {
+          return file.secure_url;
+        });
+        productData.productImages = productImages;
+      }
+      await adminHelper.updateProducts(productData, req.params.id);
+      res.redirect("/admin/products");
     } catch (err) {
       console.error(err);
+      req.session.productUploadError = true;
+
+      res.redirect("/admin/edit-product");
     }
   },
+
   addBanner: async (req, res) => {
     if (req.session.loggedInad) {
       try {
@@ -238,6 +273,7 @@ export default {
       res.redirect("/admin");
     }
   },
+
   unlistProduct: async (req, res) => {
     try {
       await adminHelper.unlistProduct(req.params.id);
