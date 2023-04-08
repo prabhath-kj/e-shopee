@@ -1,0 +1,184 @@
+<%- include('includes/header') -%> <%- include('includes/user-header') -%>
+<section>
+  <main class="main">
+    
+        <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
+            <div class="container">
+                <h1 class="page-title">Addresses.</span></h1>
+            </div><!-- End .container -->
+        </div><!-- End .page-header -->
+        <nav aria-label="breadcrumb" class="breadcrumb-nav">
+            <div class="container">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/checkout">checkout</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Add Address</li>
+                </ol>
+            </div><!-- End .container -->
+        </nav><!-- End .breadcrumb-nav -->
+  
+    <div class="page-content">
+      <div class="checkout">
+        <div class="container">
+          <form method="post" id="checkout-form" action="/add-address">
+            <input
+              type="text"
+              name="userId"
+              id=""
+              value="<%= user._id %>"
+              hidden
+            />
+            <div class="row">
+              <div class="col-lg-9">
+                <h2 class="checkout-title">Billing Details</h2>
+                <div class="row">
+                  <div class="col-sm-6">
+                    <label>Full Name</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="name"
+                      required
+                    />
+                  </div>
+                </div>
+                <label>Street address *</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="House number and Street name"
+                  name="Streetaddress"
+                  required
+                />
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Appartments, suite, unit etc ..."
+                  name="appartments"
+                />
+                <div class="row">
+                  <div class="col-sm-6">
+                    <label>Town / City </label>
+                    <input
+                      type="text"
+                      name="city"
+                      class="form-control"
+                      required
+                    />
+                  </div>
+                  <div class="col-sm-6">
+                    <label>State/Country </label>
+                    <input
+                      type="text"
+                      name="state"
+                      class="form-control"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-6">
+                    <label>Postcode / ZIP *</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      name="postalcode"
+                      required
+                    />
+                  </div>
+                  <div class="col-sm-6">
+                    <label>Phone *</label>
+                    <input
+                      type="tel"
+                      class="form-control"
+                      name="mobileNumber"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="btn-wrap mt-3">
+              <button type="submit" class="btn btn-outline-primary-2 mx-3">
+                <span>SAVE</span>
+                <i class="icon"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+</section>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $("#checkout-form").validate({
+      rules: {
+        name: {
+          required: true,
+          minlength: 3,
+        },
+        Streetaddress: {
+          required: true,
+          minlength: 3,
+        },
+        city: {
+          required: true,
+          minlength: 2,
+        },
+        state: {
+          required: true,
+          minlength: 2,
+        },
+        postalcode: {
+          required: true,
+          minlength: 5,
+          maxlength: 10,
+          digits: true,
+        },
+        mobileNumber: {
+          required: true,
+          minlength: 10,
+          maxlength: 10,
+          number: true,
+          digits: true,
+        },
+      },
+      messages: {
+        name: {
+          required: "Please enter your full name.",
+          minlength: "Name must be at least 3 characters long.",
+        },
+        Streetaddress: {
+          required: "Please enter your street address.",
+          minlength: "Street address must be at least 3 characters long.",
+        },
+        city: {
+          required: "Please enter your city.",
+          minlength: "City name must be at least 2 characters long.",
+        },
+        state: {
+          required: "Please enter your state/country.",
+          minlength: "State/country name must be at least 2 characters long.",
+        },
+        postalcode: {
+          required: "Please enter your postal code.",
+          minlength: "Postal code must be at least 5 characters long.",
+          maxlength: "Postal code must not exceed 10 characters.",
+          digits: "Postal code must contain only digits.",
+        },
+        mobileNumber: {
+          required: "Please enter your phone number.",
+          minlength: "Phone number must be 10 digits long.",
+          maxlength: "Phone number must be 10 digits long.",
+          digits: "Phone number must contain only digits.",
+          number: "Please enter a valid phone number",
+        },
+      },
+      errorClass: "text-danger",
+    });
+  });
+</script>
+
+<%- include('includes/footerpartial') -%>

@@ -26,11 +26,15 @@ router.get("/category", isloggedInad, adminController.category);
 
 router.post("/add-category", isloggedInad, adminController.addCategory);
 
+router.post("/edit-category/:id", adminController.editCategory);
+
 router.get(
   "/delete-category/:id",
   isloggedInad,
   adminController.deleteCategory
 );
+
+router.get("/list-category/:id", isloggedInad, adminController.listCategory);
 
 router.get("/products", isloggedInad, adminController.getAllProducts);
 
@@ -45,12 +49,32 @@ router.post(
 //Edit Product Page
 router.get("/edit-product/:id", isloggedInad, adminController.editProduct);
 
-router.post("/edited-product/:id", upload.array("productImage", 4),adminController.editProductPost);
+router.post(
+  "/edited-product/:id",
+  upload.array("productImage", 4),
+  adminController.editProductPost
+);
 
 router.get("/unlist-product/:id", isloggedInad, adminController.unlistProduct);
 
 router.get("/add-banner", isloggedInad, adminController.addBanner);
 
-// router.get("/delete-product/:id", adminController.deleteProduct);
+//order-management
+router.get("/order-management", isloggedInad, adminController.orderDetails);
+
+router.get("/view-order/:id", isloggedInad, adminController.viewOrder);
+
+router.post(
+  "/update-order-status",
+  isloggedInad,
+  adminController.updateOrderStatus
+);
+
+router
+  .route("/add-coupon")
+  .get(isloggedInad, adminController.addCoupon)
+  .post(isloggedInad, adminController.addCouponPost);
+
+router.get("/view-coupon", isloggedInad, adminController.viewCoupon);
 
 export default router;

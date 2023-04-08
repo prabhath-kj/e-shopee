@@ -10,24 +10,22 @@
     <meta property="og:type" content="" />
     <meta property="og:url" content="" />
     <meta property="og:image" content="" />
-    <!-- Favicon -->
 
-    <!-- <link
-      rel="icon"
-      type="image/png"
-      sizes="32x32"
-      href="../adminassets/dotmart-monogram.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="16x16"
-      href="../adminassets/dotmart-monogram.png"
-    /> -->
-    <!-- Template CSS -->
+
     <link href="/adminassets/css/main.css" rel="stylesheet" type="text/css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script><!-- SweetAlert CSS -->    
+
+    <!-- SweetAlert CSS -->    
     <script src="/node_modules/@eastdesire/jscolor/jscolor.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
+    <script src="/javascripts/adminscript.js"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css"
+    />
     <script>
       // These options apply to all color pickers on the page
       jscolor.presets.default = {
@@ -134,6 +132,15 @@
               <span class="text">Category Management</span>
             </a>
           </li>
+          <li class="menu-item has-submenu">
+            <a class="menu-link" href="/admin/add-coupon"> <i class="icon material-icons md-stars"></i>
+                <span class="text">Coupon</span> </a>
+            </a>
+            <div class="submenu">
+                <a href="/admin/view-coupon">Coupon List</a>
+                <a href="/admin/add-coupon">Add Coupon</a>
+            </div>
+        </li>
           <li class="menu-item has-submenu">
             <a class="menu-link" href="/admin/banner">
               <i class="icon material-icons md-shopping_bag"></i>

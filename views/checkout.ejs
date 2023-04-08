@@ -1,0 +1,465 @@
+<%- include('includes/header') -%> <%- include('includes/user-header') -%>
+<main class="main">
+  <div
+    class="page-header text-center"
+    style="background-image: url('assets/images/page-header-bg.jpg')"
+  >
+    <div class="container">
+      <h1 class="page-title" style="font-weight: 500">Checkout.</h1>
+    </div>
+    <!-- End .container -->
+  </div>
+  <!-- End .page-header -->
+  <nav aria-label="breadcrumb" class="breadcrumb-nav">
+    <div class="container">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item"><a href="/cart">Shopping Cart</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Checkout</li>
+      </ol>
+    </div>
+    <!-- End .container -->
+  </nav>
+  <!-- End .breadcrumb-nav -->
+
+  <div class="page-content">
+    <div class="checkout">
+      <div class="container">
+        <form method="post" id="checkout-form" action="">
+       
+
+          <input
+            type="text"
+            name="userId"
+            id=""
+            value="<%= user._id %>"
+            hidden
+          />
+          <input
+            type="text"
+            name="addressId"
+            id=""
+            value="<%=address?._id %>%>"
+           hidden
+          />
+
+         
+          <div class="row">
+            <div class="col-lg-9">
+              <h2 class="checkout-title">Billing Details</h2>
+              <!-- End .checkout-title -->
+              <div class="row">
+                <div class="col-sm-6">
+                  <label>Full Name</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="name"
+                    value=" <%= address?.full_name %>"
+                    required
+                  />
+                </div>
+                <!-- End .col-sm-6 -->
+              </div>
+              <!-- End .row -->
+
+              <label>Street address *</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="House number and Street name"
+                name="Streetaddress"
+                value=" <%= address?.street_name
+                 %>"
+                required
+              />
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Appartments, suite, unit etc ..."
+                name="appartments"
+                value="<%= address?.
+                apartment_number
+                
+                %>"
+          
+              />
+
+              <div class="row">
+                <div class="col-sm-6">
+                  <label>Town / City </label>
+                  <input type="text" name ="city"class="form-control" value="<%= address?.city %>" required />
+                </div>
+                <!-- End .col-sm-6 -->
+
+                <div class="col-sm-6">
+                  <label>State/Country </label>
+                  <input type="text" name ="state" class="form-control" value="<%= address?.state
+                  %>" required/>
+                </div>
+                <!-- End .col-sm-6 -->
+              </div>
+              <!-- End .row -->
+
+              <div class="row">
+                <div class="col-sm-6">
+                  <label>Postcode / ZIP *</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    name="postalcode"
+                    value="<%= address?.postal_code
+                  %>"
+                    required
+                  />
+                </div>
+                <!-- End .col-sm-6 -->
+
+                <div class="col-sm-6">
+                  <label>Phone *</label>
+                  <input
+                    type="tel"
+                    class="form-control"
+                    name="mobileNumber"
+                    value="<%= address?.mobile_Number
+                  %>"
+                    required
+                  />
+                </div>
+                <!-- End .col-sm-6 -->
+              </div>
+              <!-- End .row -->
+
+              <%/*!--
+              <div class="custom-control custom-checkbox">
+                <input
+                  type="checkbox"
+                  class="custom-control-input"
+                  id="checkout-create-acc"
+                />
+                <label class="custom-control-label" for="checkout-create-acc"
+                  >Create an account?</label
+                >
+              </div>
+              <!-- End .custom-checkbox -->
+
+              <div class="custom-control custom-checkbox">
+                <input
+                  type="checkbox"
+                  class="custom-control-input"
+                  id="checkout-diff-address"
+                />
+                <label class="custom-control-label" for="checkout-diff-address"
+                  >Ship to a different address?</label
+                >
+              </div>
+              <!-- End .custom-checkbox -->
+              --*/%>
+              <div class="custom-control custom-checkbox">
+                <input
+                  class="custom-control-input"
+                  id="checkout-diff-address"
+                />
+                <a href="/address" class="custom-control-label" for="checkout-diff-address"
+                  >Ship to a different address?</a
+                >
+              </div>
+              <label>Order notes (optional)</label>
+              <textarea
+                class="form-control"
+                cols="30"
+                rows="4"
+                placeholder="Notes about your order, e.g. special notes for delivery"
+              ></textarea>
+            </div>
+            <!-- End .col-lg-9 -->
+            <aside class="col-lg-3">
+              <div class="checkout-discount">
+								<input type="text" class="form-control" id="couponCode"
+									placeholder="Have Coupon? Enter here">
+								<button type="button" class="btn btn-outline-primary-2 btn-order btn-block"
+									onclick="applyCoupon({})">Apply</button>
+								<P for="couponErr" class="text-start" id="couponErr" style="color:rgb(180, 17, 17)"></P>
+								<p for="couponSuccess" class="text-start" id="couponSuccess"
+									style="color:rgb(22, 131, 22)"></p>
+								<p><a href="/all-coupons"><small><b>All Coupons ></b></small></a></p>
+							</div><!-- End .checkout-discount -->
+              <div class="summary">
+                <h3 class="summary-title">Your Order</h3>
+                <!-- End .summary-title -->
+
+                <table class="table table-summary">
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+
+                  <% products.forEach(function(item) { %>
+                    <tr>
+                      <td>
+                        <a href="#"><%= item.product.productName %></a>
+                      </td>
+                      <td>&#x20B9;<%= item.totalPrice %></td>
+                    </tr>
+                    <% }); %>
+
+                    <tr class="summary-subtotal">
+                      <td>Subtotal:</td>
+                      <td>&#x20B9;<%= subtotal%></td>
+                    </tr>
+                    <!-- End .summary-subtotal -->
+                    <tr>
+                      <td>Shipping:</td>
+                      <td>Free shipping</td>
+                    </tr>
+                    <tr class="summary-total">
+                      <td>Total:</td>
+                      <td>&#x20B9;<%= subtotal%></td>
+                    </tr>
+                    <!-- End .summary-total -->
+                  </tbody>
+                </table>
+                <!-- End .table table-summary -->
+
+                <div class="accordion-summary" id="accordion-payment">
+                  <%/*--
+                  <div class="card">
+                    <div class="card-header" id="heading-1">
+                      <h2 class="card-title">
+                        <a
+                          role="button"
+                          data-toggle="collapse"
+                          href="#collapse-1"
+                          aria-expanded="true"
+                          aria-controls="collapse-1"
+                        >
+                          Direct bank transfer
+                        </a>
+                      </h2>
+                    </div>
+                    <!-- End .card-header -->
+                    <div
+                      id="collapse-1"
+                      class="collapse show"
+                      aria-labelledby="heading-1"
+                      data-parent="#accordion-payment"
+                    >
+                      <div class="card-body">
+                        Make your payment directly into our bank account. Please
+                        use your Order ID as the payment reference. Your order
+                        will not be shipped until the funds have cleared in our
+                        account.
+                      </div>
+                      <!-- End .card-body -->
+                    </div>
+                    <!-- End .collapse -->
+                  </div>
+                  <!-- End .card -->
+                  --}} {{!--
+                  <div class="card">
+                    <div class="card-header" id="heading-2">
+                      <h2 class="card-title">
+                        <a
+                          class="collapsed"
+                          role="button"
+                          name="payment-method"
+                          data-toggle="collapse"
+                          href="#collapse-2"
+                          aria-expanded="false"
+                          aria-controls="collapse-2"
+                        >
+                          Cash on Delivery
+                        </a>
+                      </h2>
+                    </div>
+                    <!-- End .card-header -->
+                    <div
+                      id="collapse-2"
+                      class="collapse"
+                      aria-labelledby="heading-2"
+                      data-parent="#accordion-payment"
+                    >
+                      <div class="card-body"></div>
+                      <!-- End .card-body -->
+                    </div>
+                    <!-- End .collapse -->
+                  </div>
+                  <!-- End .card -->
+
+                  <div class="card">
+                    <div class="card-header" id="heading-4">
+                      <h2 class="card-title">
+                        <a
+                          class="collapsed"
+                          role="button"
+                          name="payment-method"
+                          data-toggle="collapse"
+                          href="#collapse-4"
+                          aria-expanded="false"
+                          aria-controls="collapse-4"
+                        >
+                          RazorPay
+                        </a>
+                      </h2>
+                    </div>
+                    <!-- End .card-header -->
+                    <div
+                      id="collapse-4"
+                      class="collapse"
+                      aria-labelledby="heading-4"
+                      data-parent="#accordion-payment"
+                    >
+                      <div class="card-body"></div>
+                      <!-- End .card-body -->
+                    </div>
+                    <!-- End .collapse -->
+                  </div>
+                  <!-- End .card -->
+                  --}} {{!--
+                  <div class="card">
+                    <div class="card-header" id="heading-5">
+                      <h2 class="card-title">
+                        <a
+                          class="collapsed"
+                          role="button"
+                          data-toggle="collapse"
+                          href="#collapse-5"
+                          aria-expanded="false"
+                          aria-controls="collapse-5"
+                        >
+                          Credit Card (Stripe)
+                          <img
+                            src="assets/images/payments-summary.png"
+                            alt="payments cards"
+                          />
+                        </a>
+                      </h2>
+                    </div>
+                    <!-- End .card-header -->
+                    <div
+                      id="collapse-5"
+                      class="collapse"
+                      aria-labelledby="heading-5"
+                      data-parent="#accordion-payment"
+                    >
+                      <div class="card-body">
+                        Donec nec justo eget felis facilisis fermentum.Lorem
+                        ipsum dolor sit amet, consectetuer adipiscing elit.
+                        Donec odio. Quisque volutpat mattis eros. Lorem ipsum
+                        dolor sit ame.
+                      </div>
+                      <!-- End .card-body -->
+                    </div>
+                    <!-- End .collapse -->
+                  </div>
+                  <!-- End .card -->
+                </div>
+                <!-- End .accordion -->
+                --*/%>
+                <h5>Payment method</h5>
+                <div class="custom-control custom-radio">
+                  <input
+                    id="cod"
+                    value="cash_on_delivery"
+                    name="paymentMethod"
+                    type="radio"
+                    class="custom-control-input"
+                  />
+                  <label class="custom-control-label" for="cod"
+                    >Cash On Delivery</label
+                  >
+                </div>
+                <div class="custom-control custom-radio">
+                  <input
+                    id="online-payment"
+                    value="stripe"
+                    name="paymentMethod"
+                    type="radio"
+                    class="custom-control-input"
+                  />
+                  <label class="custom-control-label" for="online-payment"
+                    >Stripe</label
+                  >
+                </div>
+                <button id="stripe-pay-button" class="btn btn-outline-primary-2 btn-order btn-block" style="display: none;">
+                  <span class="btn-text">Pay with Stripe</span>
+                  <span class="btn-hover-text">Proceed to Checkout</span>
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-outline-primary-2 btn-order btn-block"
+                  id="order-button"
+                  style="display: none";
+                >
+                  <span class="btn-text">Place Order</span>
+                  <span class="btn-hover-text">Proceed to Checkout</span>
+                </button>
+              </div>
+              <!-- End .summary -->
+            </aside>
+            <!-- End .col-lg-3 -->
+          </div>
+          <!-- End .row -->
+        </form>
+      </div>
+      <!-- End .container -->
+    </div>
+    <!-- End .checkout -->
+  </div>
+  <!-- End .page-content -->
+</main>
+<!-- End .main -->
+<script>
+  // get the radio buttons with name "paymentMethod"
+const paymentMethodRadioButtons = document.querySelectorAll('input[name="paymentMethod"]');
+
+// add event listener to each radio button
+paymentMethodRadioButtons.forEach((radioButton) => {
+  radioButton.addEventListener('change', () => {
+    // check if the selected value is "stripe"
+    if (radioButton.value === "stripe") {
+      // show the Stripe pay button
+      document.getElementById("stripe-pay-button").style.display = "block";
+      document.getElementById("order-button").style.display = "none";
+
+      const stripe = Stripe('your_stripe_public_key_here');
+      const checkoutButton = document.getElementById("stripe-pay-button");
+      
+    
+    } else {
+      // hide the Stripe pay button
+      document.getElementById("stripe-pay-button").style.display = "none";
+      document.getElementById("order-button").style.display = "block";
+
+    }
+  });
+});
+
+  $("#checkout-form").on("submit", (event) => {
+    event.preventDefault();
+
+    $.ajax({
+      url: "/place-order",
+      method: "post",
+      data: $("#checkout-form").serialize(), //send the entire data from the form
+      success: (response) => {
+        if (response.status) {
+          Swal.fire({
+          title: "Order Placed!",
+          icon: "success",
+
+         confirmButtonText: "OK",
+        }).then((results)=>{
+          if(results.isConfirmed){
+            location.href = "/order-success";
+          }
+        })
+         
+        }
+      },
+    });
+  });
+</script>
+<%- include('includes/footerpartial') -%>

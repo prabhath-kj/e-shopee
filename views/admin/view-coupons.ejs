@@ -1,0 +1,57 @@
+<%- include('../adincludes/header') %>
+
+<section class="content-main">
+  <div class="content-header">
+    <div class="content-title card-title">
+      <h2 class="content-title card-title">Coupons</h2>
+    </div>
+    <div>
+      <a href="/admin/add-coupon" class="btn btn-primary btn-sm rounded">Add</a>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4">
+      <% coupons.forEach((element,index) => {%>
+
+      <div class="col">
+        <div class="card card-user">
+          <div class="card-header">
+            <h5 class="card-title mt-3 mb-0"><%=element.code%></h5>
+            <i
+              class="icon material-icons md-stars"
+              style="font-size: 24px; color: #f8c72d"
+            ></i>
+          </div>
+          <div class="card-body">
+            <div class="card-text text-muted">
+              <p class="mt-2">Discount:<%=element.discount%>%</p>
+              <p>MaxDiscount:&#x20B9;<%=element.maxdiscount%></p>
+              <p>
+                Expiry Date <%=new
+                Date(element.expirationDate).toLocaleString('en-IN', {
+                dateStyle: 'short', timeStyle: 'short' })%>
+              </p>
+              <input type="hidden" id="couponId" value="<%=element._id%>" />
+
+              <button
+                class="btn btn-sm btn-brand rounded font-sm mt-3"
+                type="button"
+                onclick="removeCoupon('<%=element._id%>')"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- col.// -->
+      <% }) %>
+    </div>
+    <!-- row.// -->
+  </div>
+  <!-- card-body end// -->
+</section>
+
+<!-- content-main end// -->
+<%- include('../adincludes/footer') %>

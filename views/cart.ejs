@@ -64,7 +64,7 @@
                     <td class="quantity-col">
                       <button
                         class="btn-remove"
-                        onclick="changeQuantity('<%= user._id %>','<%= product.product._id %>', -1)"
+                        onclick="changeQuantity('<%= user._id %>','<%= product.product._id %>', -1,'<%= product.quantity %>')"
                       >
                         <i class="icon-minus"></i>
                       </button>
@@ -73,7 +73,7 @@
                       >
                       <button
                         class="btn-remove"
-                        onclick="changeQuantity('<%= user._id %>','<%= product.product._id %>', 1)"
+                        onclick="changeQuantity('<%= user._id %>','<%= product.product._id %>', 1,)"
                       >
                         <i class="icon-plus"></i>
                       </button>
@@ -122,7 +122,7 @@
                           <label
                             class="custom-control-label"
                             for="free-shipping"
-                            >Cash on Delivery</label
+                            >Free Shipping</label
                           >
                         </div>
                         <!-- End .custom-control -->
@@ -131,6 +131,7 @@
                     </tr>
                     <!-- End .summary-shipping-row -->
 
+                    <%/*
                     <tr class="summary-shipping-row">
                       <td>
                         <div class="custom-control custom-radio">
@@ -150,6 +151,7 @@
                       </td>
                       <td></td>
                     </tr>
+
                     <!-- End .summary-shipping-row -->
 
                     <tr class="summary-shipping-row">
@@ -171,12 +173,13 @@
                       </td>
                       <td></td>
                     </tr>
+                    */%>
                     <!-- End .summary-shipping-row -->
 
                     <tr class="summary-shipping-estimate">
                       <td>
                         Estimate for Your Country<br />
-                        <a href="dashboard.html">Change address</a>
+                        <a href="/edit-profile">Change address</a>
                       </td>
                       <td>&nbsp;</td>
                     </tr>

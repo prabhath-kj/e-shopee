@@ -1,6 +1,8 @@
 import User from "../models/user.js";
 import Category from "../models/category.js";
 import Product from "../models/product.js";
+import { Order, Address, OrderItem } from "../models/order.js";
+import Coupon from "../models/coupon.js";
 
 export default {
   adminLogin: (admindata) => {
@@ -86,15 +88,14 @@ export default {
   addCategory: async (category) => {
     try {
       const existingCategory = await Category.findOne({
-        CategoryName: category.CategoryName,
+        CategoryName: category.CategoryName.toUpperCase(),
       });
 
       if (existingCategory) {
         const updatedCategory = await Category.findByIdAndUpdate(
           existingCategory._id,
           {
-            CategoryName: category.CategoryName,
-            CategoryDescription: category.CategoryDescription,
+            CategoryName: category.CategoryName.toUpperCase(),
           },
           { new: true }
         );
@@ -113,10 +114,45 @@ export default {
       console.error("Error updating category:", error);
     }
   },
+  editCategory: async (categoryName, id) => {
+    console.log(id);
+    try {
+      const existingCategory = await Category.findByIdAndUpdate(
+        id,
+        {
+          CategoryName: categoryName.toUpperCase(),
+        },
+        { new: true }
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  },
 
   delete: async (categoryId) => {
     try {
-      await Category.findByIdAndDelete(categoryId);
+      await Category.findByIdAndUpdate(
+        categoryId,
+        {
+          isListed: false,
+        },
+        { new: true }
+      );
+      return;
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  list: async (categoryId) => {
+    try {
+      await Category.findByIdAndUpdate(
+        categoryId,
+        {
+          isListed: true,
+        },
+        { new: true }
+      );
       return;
     } catch (err) {
       console.error(err);
@@ -145,7 +181,7 @@ export default {
       });
 
       await newProducts.save();
-      return true
+      return true;
     } catch (err) {
       console.error(err);
       return false;
@@ -208,6 +244,88 @@ export default {
         { productStatus: "Unlisted" },
         { new: true }
       );
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  getOrderDetails: async () => {
+    try {
+      const order = await Order.find({})
+        .populate("address")
+        .populate("items.product_id")
+        .exec();
+      if (order.length === 0) {
+        console.log("No orders found for user", userId);
+      } else {
+        return order;
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  getSpecificOrder: async (id) => {
+    try {
+      const order = await Order.findById(id).populate("address").exec();
+      const productDetails = [];
+
+      for (const item of order.items) {
+        const productId = item.product_id;
+        const product = await Product.findOne({ _id: productId });
+        productDetails.push({
+          name: product.productName,
+          price: item.unit_price,
+          quantity: item.quantity,
+          total: item.unit_price * item.quantity,
+          image: product.productImage[0],
+        });
+      }
+
+      return { order, productDetails };
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  updateOrderStatus: async (orderId, orderStatus) => {
+    try {
+      const order = await Order.findByIdAndUpdate(
+        orderId,
+        {
+          order_status: orderStatus,
+        },
+        {
+          new: true,
+        }
+      );
+      if (!order) {
+        return null;
+      }
+      return order;
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  generateCoupon: async (coupon) => {
+    try {
+      const { couponCode, couponDiscount, expiryDate, maxDiscount } = coupon;
+      const newCoupon = new Coupon({
+        code: couponCode,
+        discount: couponDiscount,
+        maxdiscount: maxDiscount,
+        expirationDate: expiryDate,
+      });
+      await newCoupon.save();
+      return newCoupon;
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  getCoupons: async () => {
+    try {
+      const coupons = await Coupon.find();
+      return coupons;
     } catch (err) {
       console.error(err);
     }

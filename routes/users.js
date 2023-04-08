@@ -45,22 +45,57 @@ router.get("/logout", userController.logOut);
 router.get("/productsList", userController.listProductCategory);
 
 //Product View Page
-router.get("/product-view/:id",isUser, userController.productView);
+router.get("/product-view/:id", userController.productView);
 
 //add To Cart
 router.get("/add-to-cart/:id", isUser, userController.addToCart);
 
 //remove product
-
 router.post(
   "/remove-product-from-cart",
   isUser,
   userController.removeProdctFromCart
 );
 
-router.post("/change-product-quantity",userController.changeProductQuantity)
+router.post("/change-product-quantity", userController.changeProductQuantity);
 
 //Cart Page
 router.get("/cart", isUser, userController.cartPage);
 
+//Edit profile
+router.get("/edit-profile", (req, res) => {
+  let user = req.session.user;
+  res.render("editProfile", { user });
+});
+
+//checkout
+router.get("/checkout", isUser, userController.checkOut);
+
+router.get("/address", isUser, userController.selectAddress);
+
+router.get("/add-address", isUser, userController.addAddress);
+
+router.post("/add-address", isUser, userController.addAddressPost);
+
+router.get("/select-address/:id", isUser, userController.select);
+
+router.get("/delete-address/:id",isUser,userController.deleteAddress)
+
+//place order
+router.post("/place-order", isUser, userController.placeOrderPost);
+
+router.get("/order-success", isUser, userController.orderSuccess);
+
+router.get("/orders", isUser, userController.getOrderDetails);
+
+router.get("/view-order-products/:id", isUser, userController.viewOrder);
+
+router.post("/cancelOrder", isUser, userController.removeOrder);
+
+router.put("/returnOrder", isUser, userController.returnOrder);
+
+
+// All coupons
+
+router.get("/all-coupons",isUser,userController.getAllCoupons)
 export default router;

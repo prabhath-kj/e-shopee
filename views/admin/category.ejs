@@ -30,8 +30,6 @@
               />
             </div>
 
-            
-
             <div class="d-grid">
               <button class="btn btn-primary">Create category</button>
             </div>
@@ -45,6 +43,7 @@
                   <th>Category</th>
 
                   <th class="text-end">Action</th>
+                  <th class="text-end">Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -53,6 +52,7 @@
                   <td>
                     <b><%= category.CategoryName %></b>
                   </td>
+
                   <td class="text-end">
                     <div class="dropdown">
                       <a
@@ -63,16 +63,45 @@
                         <i class="material-icons md-more_horiz"></i>
                       </a>
                       <div class="dropdown-menu">
-                        <%# <a class="dropdown-item" href="#">View detail</a>
-
+                        <%# <a class="dropdown-item" href="#">View detail</a>%>
+                        <button
+                          class="dropdown-item"
+                          style="color: darkgreen"
+                          href=""
+                          onclick="editCategory('<%= category._id %>')"
+                          event.preventDefault()
                         >
-                        <a class="dropdown-item" href="#">Edit info</a>%>
-                        <a
+                          Edit info
+                        </button>
+                        <% if(category.isListed){%>
+                        <button
                           class="dropdown-item text-danger"
-                          href="/admin/delete-category/<%= category._id %>"
-                          onclick="return confirm('do you want to delete <%= category.CategoryName %>')"
-                          >Unlist</a
+                          href=""
+                          onclick="unListCategory('<%= category._id %>')"
+                          event.preventDefault()
                         >
+                          Unlist
+                        </button>
+                        <%} else {%>
+                        <button
+                          class="dropdown-item text-danger"
+                          href=""
+                          onclick="ListCategory('<%= category._id %>')"
+                          event.preventDefault()
+                        >
+                          List
+                        </button>
+                        <%}%> <% if(category.isListed){%>
+
+                        <td class="text-end">
+                          <b style="color: green">Active</b>
+                        </td>
+                        <%} else {%>
+
+                        <td class="text-end">
+                          <b style="color: red">Not active</b>
+                        </td>
+                        <%}%>
                       </div>
                     </div>
                     <!-- dropdown //end -->
@@ -91,6 +120,80 @@
   </div>
   <!-- card .// -->
 </section>
-<!-- content-main end// -->
-<!-- content-main end// -->
+<script>
+  function editCategory(id) {
+    Swal.fire({
+      title: "Edit Category",
+      input: "text",
+      inputValue: "",
+      showCancelButton: true,
+      confirmButtonText: "Save Changes",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const newCategory = result.value;
+        $.ajax({
+          url: `/admin/edit-category/${id}`,
+          method: "post",
+          data: { category: newCategory },
+          success: (response) => {
+            location.reload();
+            console.log("Category edited successfully");
+          },
+          error: (error) => {
+            console.log(`Error: ${error}`);
+          },
+        });
+      }
+    });
+  }
+
+  function unListCategory(id) {
+    Swal.fire({
+      title: `Are you sure you want to unlist category?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, remove it!",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: `/admin/delete-category/${id}`,
+          method: "get",
+          success: (response) => {
+            location.reload();
+            console.log("Category edited successfully");
+          },
+          error: (error) => {
+            console.log(`Error: ${error}`);
+          },
+        });
+      }
+    });
+  }
+
+  function ListCategory(id) {
+    Swal.fire({
+      title: `Are you sure you want to list category?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: `/admin/list-category/${id}`,
+          method: "get",
+          success: (response) => {
+            location.reload();
+            console.log("Category edited successfully");
+          },
+          error: (error) => {
+            console.log(`Error: ${error}`);
+          },
+        });
+      }
+    });
+  }
+</script>
 <%- include('../adincludes/footer') %>

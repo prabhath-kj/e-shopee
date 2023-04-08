@@ -1,0 +1,113 @@
+<%- include('includes/header') -%> <%- include('includes/user-header') -%>
+<main class="main">
+  <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
+    <div class="container">
+      <h1 class="page-title">Addresses.</h1>
+    </div><!-- End .container -->
+  </div><!-- End .page-header -->
+  <nav aria-label="breadcrumb" class="breadcrumb-nav">
+    <div class="container">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/checkout">checkout</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Addresses</li>
+      </ol>
+    </div><!-- End .container -->
+  </nav><!-- End .breadcrumb-nav -->
+
+  <div class="page-content">
+    <div class="dashboard">
+      <div class="container">
+        <div class="header-left">
+          <div class="btn-wrap">
+            <a href="/add-address" class="btn btn-outline-primary"><span>Add New</span><i class="icon-plus"></i></a>
+          </div>
+        </div>
+        <div class="row">
+          <% if (address && address.length > 0) { %>
+          <% address.forEach(function(address, index) { %>
+          <div class="col-lg-6 mb-4">
+            <div class="card h-100 card-dashboard">
+              <div class="address-section">
+                <div class="existing-address">
+               <button   onclick="deleteAddress('<%=address._id%>')"class="btn btn-primary ">   <svg id="deleteIcon" hover xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
+                    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
+                  </svg></button>
+                  <div class="address-box p-3 <%= address.default_address ? "default-address" : "" %>">
+                    <label for="address<%= index %>"><%= address.full_name %> <%= address.street_name %> <%= address.apartment_number %>,<br><%= address.city %>, <%= address.state %>, <%= address.postal_code %><br><%= address.mobile_Number %></label>
+                    
+                    
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer">
+                <a href="/edit-address/<%= address._id %>" class="btn btn-outline-primary me-2"><i class="icon-edit"></i> Edit</a>
+                <button type="submit" onclick="selectAddress('<%= address._id %>')" class="btn btn-outline-primary btn-round">Select</button>
+              </div>
+            </div>
+          </div>
+          <% }); %>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div><!-- End .container -->
+</div><!-- End .dashboard -->
+</div><!-- End .page-content -->
+</main><!-- End .main -->
+
+<style>
+  .default-address {
+    background-color: #ebd1aa;
+  }
+  </style>
+<script>
+    function selectAddress (addressID){
+    console.log(addressID, 'address id in select address');
+    $.ajax({
+        url: '/select-address/' + addressID,
+        method: 'get',
+        success: (response) => {
+            if (response) {
+    Swal.fire({
+      title: `Address Selected!`,
+      icon: "success",
+      timer: 4000,
+    })
+    .then(() => {
+      location.reload()
+      // window.location.href = "/checkout";
+    });
+  }
+        }
+    })
+}
+function deleteAddress(addressID){
+  Swal.fire({
+      title: `Are sure you want to delete!`,
+      icon: "error",
+      timer: 4000,
+    })
+    .then((response) => {
+      if(response.isConfirmed){
+        $.ajax({
+        url:`/delete-address/${addressID}` ,
+        method: 'get',
+        success: (response) => {
+            if (response) {
+              Swal.fire({
+            title: `Deleted`,
+            icon: "success",
+    }).then((response)=>{
+      if(response.isConfirmed){
+        location.reload()
+      }
+    })
+  }
+ }
+})
+}
+});
+}
+</script>
+<%- include('includes/footerpartial') -%>

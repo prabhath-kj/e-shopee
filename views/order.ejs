@@ -1,0 +1,111 @@
+<%- include('includes/header') -%> <%- include('includes/user-header') -%>
+
+<section class="orders-section">
+    <main class="main">
+      <div class="page-header text-center"
+        style="background-image: url('assets/images/page-header-bg.jpg')"
+      >
+        <div class="container">
+          <h1 class="page-title">Orders</h1>
+        </div>
+        <!-- End .container -->
+      </div>
+      <!-- End .page-header -->
+  
+      <nav aria-label="breadcrumb" class="breadcrumb-nav">
+        <div class="container">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Orders</li>
+          </ol>
+        </div>
+        <!-- End .container -->
+      </nav>
+      <!-- End .breadcrumb-nav -->
+  
+      <div class="page-content">
+        <div class="container">
+          <div class="table-responsive">
+            <table class="table table-hover table-striped">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Address</th>
+                  <th>Total Amount</th>
+                  <th>Payment Method</th>
+                 
+                  <th>Action</th>
+                </tr>
+              </thead>
+  
+              <tbody>
+                <% orderDetails.forEach(function(order) { %>
+                <tr>
+                  <td class="align-middle">
+                    <%= new Date(order.order_date).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' }) %>
+                    <br>
+                    <% if (order.order_status === "Placed") { %>
+                      <span class="badge rounded-pill bg-primary">
+                        <%= order.order_status %>
+                      </span>
+                    <% } else if (order.order_status === "Shipped") { %>
+                      <span class="badge rounded-pill bg-success">
+                        <%= order.order_status %>
+                      </span>
+                    <% } else if (order.order_status === "Delivered") { %>
+                      <span class="badge rounded-pill bg-info">
+                        <%= order.order_status %>
+                      </span>
+                    <% } else if (order.order_status === "Cancelled") { %>
+                      <span class="badge rounded-pill bg-danger">
+                        <%= order.order_status %>
+                      </span>
+                    <% } else if (order.order_status === "Returned") { %>
+                      <span class="badge rounded-pill bg-warning">
+                        <%= order.order_status %>
+                      </span>
+                    <% } %>
+                    
+  
+                  <td class="align-middle">
+                    <%= order.address.street_name %>, <%= order.address.city %>, <%=
+                    order.address.state %>, <%= order.address.postal_code %>,<%= order.address.mobile_Number %>
+                  </td>
+                  <td class="align-middle">&#x20B9;<%= order.total_amount %></td>
+                  <% if (order.payment_method==="cash_on_delivery") { %>
+                  <td class="align-middle">COD</td>
+                  <% } else if (order.payment_method==="stripe") { %>
+                    <td class="align-middle">Online Payment</td>
+                  <% } %>
+                 
+                  <td class="align-middle">
+                    <a class="btn btn-outline-primary mx-3"
+                      href="/view-order-products/<%= order._id %>">
+                      <i class="icon-cart-plus"></i>View Products
+                    </a>
+                    <% if (order.order_status === "Placed" || order.order_status === "Shipped") { %>
+                      <button class="btn btn-primary mx-3 my-3" onclick="cancelOrder('<%= order._id %>','<%=order?.items.product_id%>')">
+                        Cancel <i class="icon-close"></i>
+                      </button>
+                    <% }else if(order.order_status==="Delivered") {%>
+                      <button class="btn btn-primary mx-3 my-3" onclick="returnOrder('<%= order._id %>')">
+                        Return <i class="icon-close"></i>
+                      </button>
+                      <% } %>
+                  </td>
+                </tr>
+                <% }); %>
+              </tbody>
+            </table>
+            </div>
+          <!-- End .table-responsive -->
+        </div>
+        <!-- End .container -->
+      </div>
+      <!-- End .page-content -->
+    </main>
+    <!-- End .main -->
+  </section
+  
+
+<%- include('includes/footerpartial') -%>

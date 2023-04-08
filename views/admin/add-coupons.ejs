@@ -1,0 +1,108 @@
+<%- include('../adincludes/header') %>
+<section class="content-main">
+  <div class="row">
+    <form action="" id="add-coupon">
+      <div class="col-9">
+        <div class="content-header">
+          <div>
+            <h2 class="content-title card-title">Add Coupon.</h2>
+          </div>
+          <div>
+            <button
+              class="btn btn-md rounded font-sm hover-up"
+              onclick="checkForErrors()"
+              type="button"
+            >
+              Publish</button
+            ><br />
+            <%/*if (couponNotAdded) { %>
+            <label class="text-center" style="color: rgb(180, 17, 17)"
+              >Coupon added already!</label
+            >
+            <% } %> <% if (couponAdded) { %>
+            <label class="text-center" style="color: rgb(22, 131, 22)"
+              >Coupon added Successfully!</label
+            >
+            <% } */%>
+            <div class="text-center">
+              <span class="text-danger text-center" id="addCouponError"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="mb-4">
+              <label for="couponCode" class="form-label">Coupon Code</label>
+              <div class="input-group">
+                <input
+                  type="text"
+                  placeholder="Coupon Code"
+                  class="form-control"
+                  id="couponCode"
+                  name="couponCode"
+                  readonly
+                  required
+                />
+                <button
+                  class="btn btn-primary"
+                  type="button"
+                  onclick="generateCouponCode()"
+                >
+                  Generate Coupon Code
+                </button>
+              </div>
+            </div>
+            <div class="mb-4">
+              <label for="couponDiscount" class="form-label">Discount</label>
+              <input
+                type="number"
+                placeholder="Discount"
+                class="form-control"
+                id="couponDiscount"
+                name="couponDiscount"
+                required
+              />
+            </div>
+            <div class="mb-4">
+              <label for="maxDiscount" class="form-label"
+                >Maximum Discount</label
+              >
+              <input
+                type="number"
+                placeholder="Maximum Discount"
+                class="form-control"
+                id="maxDiscount"
+                name="maxDiscount"
+              />
+            </div>
+            <div class="">
+              <div class="col-md-4">
+                <label for="expiryDate" class="form-label">Expiry Date</label>
+                <input
+                  type="date"
+                  placeholder="Type here"
+                  class="form-control"
+                  id="expiryDate"
+                  name="expiryDate"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- card end// -->
+      </div>
+    </form>
+  </div>
+</section>
+
+<script>
+  document
+    .getElementById("couponDiscount")
+    .addEventListener("input", function () {
+      autoGenerateMaxDiscount();
+    });
+</script>
+
+<%- include('../adincludes/footer') %>

@@ -2,6 +2,7 @@ import userHelper from "../helpers/userHelper.js";
 import twilioFunctions from "../config/twilio.js";
 import sendMail from "../config/nodeMailer.js";
 import dotenv from "dotenv";
+import adminHelper from "../helpers/adminHelper.js";
 dotenv.config();
 
 export default {
@@ -41,7 +42,7 @@ export default {
       res.render("productList", { user: false, products });
     } catch (err) {
       console.error(err);
-      res.json({ message: "succeess" });
+      res.json({ message: "error" });
     }
   },
 
@@ -331,15 +332,11 @@ export default {
     // });
   },
   productView: async (req, res) => {
-    let user = req.session.user;
+    let user = req.session?.user;
     try {
       var products = await userHelper.getProductDetails(req.params.id);
 
-      if (user) {
-        res.render("product-view", { user, products });
-      } else {
-        res.render("product-view", { user, products });
-      }
+      res.render("product-view", { user, products });
     } catch (err) {
       console.error(err);
     }
@@ -350,12 +347,14 @@ export default {
       let user = req.session.user;
 
       const items = await userHelper.getCartProducts(req.session.user._id);
-      const { cartItems: products, subtotal } = items;
-
-      if (!items) {
-        res.render("cart", { user, products, total: subtotal });
+      console.log(items);
+      if (items === null) {
+        console.log("hey");
+        res.render("emptyCart", { user });
         return;
       }
+      const { cartItems: products, subtotal } = items;
+
       res.render("cart", { user, products, total: subtotal });
     } catch (err) {
       console.error();
@@ -374,13 +373,12 @@ export default {
   },
   changeProductQuantity: async (req, res) => {
     try {
-      const [userId, productId,  count] = req.body.product;
+      const [userId, productId, count] = req.body.product;
       await userHelper.updateQuantity(userId, productId, count);
-      res.json({status:"success"})
+      res.json({ status: "success" });
     } catch (err) {
       console.error(err);
-      res.json({status:"error"})
-
+      res.json({ status: "error" });
     }
   },
 
@@ -392,6 +390,134 @@ export default {
         status: "success",
         message: "product added to cart",
       });
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  checkOut: async (req, res) => {
+    try {
+      let user = req.session.user;
+
+      const items = await userHelper.getCartProducts(req.session.user._id);
+      const address = await userHelper.getDefaultAddress(req.session.user._id);
+      console.log(address);
+      const { cartItems: products, subtotal } = items;
+      res.render("checkout", { user, products, subtotal, address });
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  placeOrderPost: async (req, res) => {
+    try {
+      const { userId, paymentMethod } = req.body;
+
+      const response = await userHelper.placeOrder(
+        userId,
+        paymentMethod,
+        req.body
+      );
+      console.log(response);
+      res.json({ status: "success" });
+    } catch (err) {
+      console.error(err);
+      res.json({ status: "error" });
+    }
+  },
+
+  addAddress: async (req, res) => {
+    try {
+      res.render("add-address", { user: req.session.user });
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  selectAddress: async (req, res) => {
+    try {
+      const address = await userHelper.getAddress(req.session.user._id);
+      res.render("address", { user: req.session.user, address });
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  addAddressPost: async (req, res) => {
+    try {
+      let { userId } = req.body;
+      let address = req.body;
+      await userHelper.addAddressPost(userId, address);
+      res.redirect("/address");
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  select: async (req, res) => {
+    try {
+      await userHelper.updateAddress(req.params.id, req.session.user._id);
+      res.json({ status: "success" });
+    } catch (err) {
+      console.error(err);
+    }
+    // res.json({ status: "success" });
+  },
+
+  deleteAddress: async (req, res) => {
+    try {
+      await userHelper.deleteAddress(req.params.id);
+      res.json({ status: "success" });
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  getOrderDetails: async (req, res) => {
+    try {
+      const orderHistory = await userHelper.getOrderHistory(
+        req.session.user._id
+      );
+
+      const orderDetails = orderHistory.reverse();
+      res.render("order", { user: req.session.user, orderDetails });
+    } catch (err) {
+      console.log(err);
+    }
+  },
+  orderSuccess: async (req, res) => {
+    res.render("placeOrderSuccess", { user: req.session.user });
+  },
+  viewOrder: async (req, res) => {
+    try {
+      const currentOrder = await adminHelper.getSpecificOrder(req.params.id);
+      const { productDetails } = currentOrder;
+      res.render("view-order", { user: req.session.user, productDetails });
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  removeOrder: async (req, res) => {
+    try {
+      await userHelper.cancelOrder(req.body.arguments[0]);
+      res.json({ status: "success" });
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  returnOrder: async (req, res) => {
+    try {
+      await userHelper.returnOrder(req.body.orderId);
+      res.json({ status: "success" });
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  getAllCoupons: async (req, res) => {
+    try {
+      res.render("all-coupons", { user: req.session.user });
     } catch (err) {
       console.error(err);
     }

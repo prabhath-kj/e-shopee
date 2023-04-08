@@ -64,16 +64,16 @@ export default {
 
   logOut: (req, res) => {
     // Destroy the session
-    req.session.loggedInad = false;
-    res.redirect("/admin");
+    // req.session.loggedInad = false;
+    // res.redirect("/admin");
 
-    // req.session.destroy((err) => {
-    //   if (err) {
-    //     console.log(err);
-    //   } else {
-    //     res.redirect("/admin");
-    //   }
-    // });
+    req.session.destroy((err) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.redirect("/admin");
+      }
+    });
   },
 
   blockUser: async (req, res) => {
@@ -124,14 +124,39 @@ export default {
     }
   },
 
-  deleteCategory: async (req, res) => {
-    let categoryId = req.params.id;
-    console.log(categoryId);
+  editCategory: async (req, res) => {
+    const { category: categoryName } = req.body;
+    const id = req.params.id;
+
     try {
-      await adminHelper.delete(categoryId);
-      res.redirect("/admin/category");
+      await adminHelper.editCategory(categoryName, id);
+      res.json({ status: "success" });
     } catch (err) {
       console.error(err);
+    }
+  },
+
+  deleteCategory: async (req, res) => {
+    let categoryId = req.params.id;
+
+    try {
+      await adminHelper.delete(categoryId);
+      res.json({ status: "success" });
+    } catch (err) {
+      console.error(err);
+      res.json({ status: "error" });
+    }
+  },
+
+  listCategory: async (req, res) => {
+    let categoryId = req.params.id;
+
+    try {
+      await adminHelper.list(categoryId);
+      res.json({ status: "success" });
+    } catch (err) {
+      console.error(err);
+      res.json({ status: "error" });
     }
   },
 
@@ -278,6 +303,75 @@ export default {
     try {
       await adminHelper.unlistProduct(req.params.id);
       res.redirect("/admin/products");
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  orderDetails: async (req, res) => {
+    try {
+      const orders = await adminHelper.getOrderDetails();
+      if (orders) {
+        res.render("admin/order-management", { orders });
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  viewOrder: async (req, res) => {
+    try {
+      const SpecificOrder = await adminHelper.getSpecificOrder(req.params.id);
+      if (SpecificOrder) {
+        const { order, productDetails } = SpecificOrder;
+
+        res.render("admin/order-details", { order, productDetails });
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  updateOrderStatus: async (req, res) => {
+    try {
+      console.log(req.body.orderId);
+      console.log(req.body.status);
+
+      const valid = await adminHelper.updateOrderStatus(
+        req.body.orderId,
+        req.body.status
+      );
+      if (!valid) {
+        return res.json({ error: "error" });
+      }
+      res.json({ status: "success" });
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  addCoupon: async (req, res) => {
+    try {
+      console.log(req.body);
+      res.render("admin/add-coupons");
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  addCouponPost: async (req, res) => {
+    try {
+      await adminHelper.generateCoupon(req.body);
+      res.json({ status: "success" });
+    } catch (err) {
+      console.error(err);
+      res.json({ status: "error" });
+    }
+  },
+
+  viewCoupon: async (req, res) => {
+    try {
+      const coupons = await adminHelper.getCoupons();
+      res.render("admin/view-coupons", { coupons });
     } catch (err) {
       console.error(err);
     }

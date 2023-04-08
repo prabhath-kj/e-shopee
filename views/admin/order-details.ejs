@@ -1,0 +1,208 @@
+<%- include('../adincludes/header') %>
+
+<link href="../adminassets/css/main.css" rel="stylesheet" type="text/css" />
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Order details.</h2>
+            <p>Details for Order ID: <%=order._id%></p>
+        </div>
+    </div>
+    <div class="card">
+        <header class="card-header">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
+                    <span>
+                        <i class="material-icons md-calendar_today"></i> <b><%=new Date(order.order_date).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })%></b>
+                    </span> <br>
+                    <small class="text-muted">Order ID: <%=order._id%></small>
+                </div>
+                <div class="col-lg-6 col-md-6 ms-auto text-md-end">
+                    
+                    <a class="btn btn-secondary print ms-2" href="#"><i class="icon material-icons md-print"></i></a>
+                </div>
+            </div>
+        </header> <!-- card-header end// -->
+        <div class="card-body">
+            <div class="row mb-50 mt-20 order-info-wrap">
+                <div class="col-md-4">
+                    <article class="icontext align-items-start">
+                        <span class="icon icon-sm rounded-circle bg-primary-light">
+                            <i class="text-primary material-icons md-person"></i>
+                        </span>
+                        <div class="text">
+                            <h6 class="mb-1">Customer</h6>
+                            <p class="mb-1">
+                                <%=order?.address.full_name%> <br> 
+                                <%=order?.address.mobile_Number%>
+                            </p>
+                           
+                        </div>
+                    </article>
+                </div> <!-- col// -->
+                <div class="col-md-4">
+                    <article class="icontext align-items-start">
+                        <span class="icon icon-sm rounded-circle bg-primary-light">
+                            <i class="text-primary material-icons md-local_shipping"></i>
+                        </span>
+                        <div class="text">
+                            <h6 class="mb-1">Order info</h6>
+                            <p class="mb-1">
+                                Shipping: eshopee Logistics <br> Pay method:<%=order?.payment_method%><br> Status:
+                                <%=order?.order_status%>
+                            </p>
+                          
+                        </div>
+                    </article>
+                </div> <!-- col// -->
+                <div class="col-md-4">
+                    <article class="icontext align-items-start">
+                        <span class="icon icon-sm rounded-circle bg-primary-light">
+                            <i class="text-primary material-icons md-place"></i>
+                        </span>
+                        <div class="text">
+                            <h6 class="mb-1">Deliver to</h6>
+                            <p class="mb-1">
+                                <%=order?.address.street_name %>, <%= order?.address.apartment_number %>, <%=order?.address.city %>, <%= order?.address.state %> - <%=order?.address.postal_code %><br> 
+                            </p>
+                          
+                        </div>
+                    </article>
+                </div> <!-- col// -->
+            </div> <!-- row // -->
+            <div class="row">
+                <div class="col-lg-7">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th width="40%">Product</th>
+                                    <th width="20%">Unit Price</th>
+                                    <th width="20%">Quantity</th>
+                                    <th width="20%" class="text-end">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% productDetails.forEach(function(product) { %>
+                                    <tr>
+                                        <td>
+                                            <a class="itemside" href="">
+                                                <div class="left">
+                                                    <img src="<%= product.image %>"
+                                                    width="40" height="40" class="img-xs" alt="Item">
+                                                </div>
+                                                <div class="info"><%= product.name %></div>
+                                            </a>
+                                        </td>
+                                        <td> &#x20B9;<%= product.price %> </td>
+                                        <td><%= product.quantity %></td>
+                                        <td class="text-end">&#x20B9;<%= product.quantity * product.price %> </td>
+                                    </tr>
+                                  <% }); %>
+                                 
+                                <tr>
+                                    <td colspan="4">
+                                        <article class="float-end">
+                                           
+                                            <dl class="dlist">
+                                                <dt>Shipping cost:</dt>
+                                                <dd>Free</dd>
+                                            </dl>
+                                            <dl class="dlist">
+                                                <dt>Grand total:</dt>
+                                                <dd> <b class="h5">&#x20B9; <%= order.total_amount%></b> </dd>
+                                            </dl>
+                                            <dl class="dlist">
+                                                <dt class="text-muted">Status:</dt>
+                                                <dd>
+                                                    <span class="badge rounded-pill alert-success text-success">Payment
+                                                        done</span>
+                                                </dd>
+                                            </dl>
+                                        </article>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div> <!-- table-responsive// -->
+                </div> <!-- col// -->
+                <div class="col-lg-1"></div>
+                <div class="col-lg-3">
+                    <div class="box shadow-sm bg-light">
+
+                        <div class="mb-4">
+                            <input type="text" id="orderId" value="<%=order._id%>" hidden>
+                            <label class="mb-2 form-check form-check-inline" style="width: 60%;">
+                                <input class="form-check-input" name="status" id="shipped" type="radio" value="Shipped">
+                                <span class="form-check-label">Shipped</span>
+                            </label>
+                            <label class="mb-2 form-check form-check-inline" style="width: 60%;">
+                                <input class="form-check-input" name="status" id="delivered" type="radio" value="Delivered">
+                                <span class="form-check-label">Delivered</span>
+                            </label>
+                            <label class="mb-2 form-check form-check-inline" style="width: 60%;">
+                                <input class="form-check-input" name="status" id="cancelled" type="radio" value="Cancelled">
+                                <span class="form-check-label">Cancel</span>
+                            </label>
+                        </div>
+                        <button class="btn btn-primary" type="button" onclick="validateForm()">Change Status</button>
+                    </div> <!-- col// -->
+                    
+            </div>
+                    </form>
+                </div>
+            </div> <!-- card-body end// -->
+        </div> <!-- card end// -->
+</section> <!-- content-main end// -->
+
+<script>
+    function validateForm(){
+    let orderId = document.getElementById('orderId').value
+    if(document.getElementById('shipped').checked){
+        let status = document.getElementById('shipped').value;
+        updateOrderStatus(status, orderId);
+    }else if(document.getElementById('delivered').checked){
+        let status = document.getElementById('delivered').value;
+        updateOrderStatus(status, orderId);
+    }else if(document.getElementById('cancelled').checked){
+        let status = document.getElementById('cancelled').value;
+        updateOrderStatus(status, orderId);
+    }else{
+        alert("Select Order status to update");
+    }
+	
+}	
+function updateOrderStatus  (status, orderId) {
+    console.log(status, 'ORder Statsu scchaggerd');
+    $.ajax({
+        url: '/admin/update-order-status',
+        method: 'post',
+        data: {
+            status: status,
+            orderId: orderId
+        },
+        success: (response)=>{
+            if(response.status){
+                Swal.fire({
+                    title: 'Updated!',
+                    text: 'Order status has been updated.',
+                    icon: 'success',
+                }).then((result) => {
+                    location.reload();
+                });
+            }else{
+                Swal.fire({
+                    title: 'Oops!',
+                    text: 'Order status could not update.',
+                    icon: 'error',
+                }).then((result) => {
+                    location.reload();
+                });
+            }
+        }
+    })
+}
+</script>
+
+
+<%- include('../adincludes/footer') %>

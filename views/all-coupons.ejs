@@ -1,0 +1,68 @@
+
+<%- include('includes/header') -%> <%- include('includes/user-header') -%>
+
+<section>
+
+    <main class="main">
+        <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
+            <div class="container">
+                <h1 class="page-title">All Coupons.</span></h1>
+            </div><!-- End .container -->
+        </div><!-- End .page-header -->
+        <nav aria-label="breadcrumb" class="breadcrumb-nav">
+            <div class="container">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/checkout">checkout</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Coupons</li>
+                </ol>
+            </div><!-- End .container -->
+        </nav><!-- End .breadcrumb-nav -->
+
+        <div class="page-content">
+            <div class="dashboard">
+                <div class="container">
+                    <div class="header-left">
+	                		
+                        </div>
+                    <div class="row">
+                        
+
+                        <div class="col-md-8 col-lg-9">
+                            <div class="tab-content">
+
+                                <div class="tab-pane fade show active" id="tab-address" role="tabpanel"
+                                    aria-labelledby="tab-address-link">
+        
+                                    <div class="row">
+                                        {{#each coupons}}
+                                        <div class="col-lg-6">
+                                            <div class="card card-dashboard">
+                                                
+                                                <div class="card-body">
+                                                    <h3 class="card-title">{{this.couponCode}}</h3><!-- End .card-title -->
+                                                    <p>{{this.couponDiscount}}% Discount</p>
+                                                        <p>Maximum Discount:  &#x20B9;{{this.maxDiscount}}</p>
+                                                        <p>Expires: {{this.expiryDate}}</p>
+
+                                                        <div class="row">
+                                                        
+                                                        </div>
+                                                </div><!-- End .card-body -->
+                                                
+                                            </div><!-- End .card-dashboard -->
+                                        </div><!-- End .col-lg-6 -->
+                                        {{/each}}
+                                    </div><!-- End .row -->
+                                    
+                                </div><!-- .End .tab-pane -->
+
+                            </div>
+                        </div><!-- End .col-lg-9 -->
+                    </div><!-- End .row -->
+                </div><!-- End .container -->
+            </div><!-- End .dashboard -->
+        </div><!-- End .page-content -->
+    </main><!-- End .main -->
+
+</section>
+<%- include('includes/footerpartial') -%>

@@ -4,19 +4,26 @@ $(document).ready(function () {
   addToCartLink.click(function (event) {
     event.preventDefault();
 
-    const productId = addToCartLink.data("product-id");
+    const user = addToCartLink.data("user-id");
+    if (user) {
+      const productId = addToCartLink.data("product-id");
 
-    $.get(`/add-to-cart/${productId}`)
-      .done(function (response) {
-        Swal.fire({
-          title: "Product added to cart!",
-          icon: "success",
-          confirmButtonText: "OK",
+      $.get(`/add-to-cart/${productId}`)
+        .done(function (response) {
+          Swal.fire({
+            title: "Product added to cart!",
+            icon: "success",
+            confirmButtonText: "OK",
+          });
+        })
+        .fail(function (error) {
+          console.log(error);
         });
-      })
-      .fail(function (error) {
-        console.log(error);
-      });
+    } else {
+      // User is not logged in, redirect to login page
+      window.location.href = "/login";
+      return;
+    }
   });
 });
 
@@ -54,15 +61,115 @@ function removeCartProduct(cartId, productId, productName) {
 }
 
 function changeQuantity() {
-  $.ajax({
-    url: "/change-product-quantity",
-    method: "post",
-    data: {
-      product: arguments,
-    },
-    success: (response) => {
-      console.log(response);
-      location.reload();
-    },
+  if (parseInt(arguments[3]) + parseInt(arguments[2]) == 0) {
+    Swal.fire({
+      title: "Are you sure,want to remove?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, remove it!",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: "/change-product-quantity",
+          method: "post",
+          data: {
+            product: arguments,
+          },
+          success: (response) => {
+            if (response) {
+              Swal.fire({
+                title: `Product removed from cart!`,
+                icon: "success",
+                timer: 4000,
+              }).then((result) => {
+                location.reload();
+              });
+            }
+          },
+        });
+      }
+    });
+  } else {
+    $.ajax({
+      url: "/change-product-quantity",
+      method: "post",
+      data: {
+        product: arguments,
+      },
+      success: (response) => {
+        location.reload();
+      },
+    });
+  }
+}
+
+function cancelOrder() {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3cc75c",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, Cancel The Order!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.ajax({
+        url: "/cancelOrder",
+        data: {
+          arguments,
+        },
+        method: "post",
+        success: (response) => {
+          if (response.status) {
+            Swal.fire({
+              title: `Cancelled`,
+              icon: "success",
+              timer: 4000,
+            }).then((response) => {
+              if (response.isConfirmed) {
+                location.reload();
+              }
+            });
+          }
+        },
+      });
+    }
+  });
+}
+
+function returnOrder(orderId) {
+  Swal.fire({
+    icon: "warning",
+    title: "Are you sure",
+    text: "You won't be able to revert this!",
+    showDenyButton: true,
+    confirmButtonText: "Yes, Return",
+    denyButtonText: `No`,
+  }).then((result) => {
+    /* Read more about isConfirmed, isDenied below */
+    if (result.isConfirmed) {
+      $.ajax({
+        url: "/returnOrder",
+        method: "put",
+        data: {
+          orderId: orderId,
+        },
+        success: (response) => {
+          if (response.status) {
+            Swal.fire("Returned!", "", "success").then(() => {
+              location.reload();
+            });
+          } else {
+            Swal.fire(
+              "The Product Return validity expired",
+              "",
+              "warning"
+            ).then(() => {});
+          }
+        },
+      });
+    }
   });
 }

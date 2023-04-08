@@ -66,10 +66,11 @@
               <div class="col-md-4 mb-3">
                 <label for="product_size" class="form-label">Quantity</label>
                 <input
-                  type="text"
+                  type="number"
                   placeholder="Type here"
                   class="form-control"
                   id="product_size"
+                  min="0"
                   name="productQuantity"
                 />
               </div>
@@ -99,6 +100,7 @@
                 class="form-control"
                 type="file"
                 name="productImage"
+                accept="image/jpeg,image/png"
                 onchange="previewImage(event)"
               />
               <img class="preview" style="width: 300px; height: inherit" />
@@ -106,6 +108,7 @@
                 class="form-control"
                 type="file"
                 name="productImage"
+                accept="image/jpeg,image/png"
                 onchange="previewImage(event)"
               />
               <img class="preview" style="width: 300px; height: inherit" />
@@ -113,6 +116,7 @@
                 class="form-control"
                 type="file"
                 name="productImage"
+                accept="image/jpeg,image/png"
                 onchange="previewImage(event)"
               />
               <img class="preview" style="width: 300px; height: inherit" />
@@ -120,6 +124,7 @@
                 class="form-control"
                 type="file"
                 name="productImage"
+                accept="image/jpeg,image/png"
                 onchange="previewImage(event)"
               />
               <img class="preview" style="width: 300px; height: inherit" />
@@ -133,10 +138,11 @@
             <div class="mb-4">
               <label class="form-label">Price</label>
               <input
-                type="text"
+                type="number"
                 placeholder="Type here"
                 class="form-control"
                 name="productPrice"
+                min="0"
                 required
               />
             </div>
@@ -182,10 +188,10 @@
             >Product Successfully Uploaded</label
           >
           <% } %> <% if (productUploadedErr) { %>
-            <label class="text-center" style="color: rgb(22, 131, 22)"
-              >Product Not Uploaded</label
-            >
-            <% } %>
+          <label class="text-center" style="color: rgb(22, 131, 22)"
+            >Product Not Uploaded</label
+          >
+          <% } %>
         </div>
       </div>
     </form>

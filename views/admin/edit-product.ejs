@@ -56,24 +56,23 @@
               </div>
               */%>
               <div class="col-md-4 mb-3">
-             
-                
                 <input
                   class="jscolor form-control"
                   type="text"
                   id="color product_color"
-                   name="productColor"
-                   style="background-color:<%=product.productColor%>"
-                /> 
+                  name="productColor"
+                  style="background-color: <%=product.productColor%>"
+                />
               </div>
               <div class="col-md-4 mb-3">
                 <label for="product_size" class="form-label">Quantity</label>
                 <input
-                  type="text"
+                  type="number"
                   placeholder="Type here"
                   class="form-control"
                   id="product_size"
                   value="<%= product.productQuantity %>"
+                  min="0"
                   name="productQuantity"
                 />
               </div>
@@ -108,10 +107,30 @@
                 style="width: 100px; height: auto"
               />
               <%})%>
-              <input class="form-control" type="file" name="productImage" />
-              <input class="form-control" type="file" name="productImage" />
-              <input class="form-control" type="file" name="productImage" />
-              <input class="form-control" type="file" name="productImage" />
+              <input
+                class="form-control"
+                type="file"
+                name="productImage"
+                accept="image/jpeg,image/png"
+              />
+              <input
+                class="form-control"
+                type="file"
+                name="productImage"
+                accept="image/jpeg,image/png"
+              />
+              <input
+                class="form-control"
+                type="file"
+                name="productImage"
+                accept="image/jpeg,image/png"
+              />
+              <input
+                class="form-control"
+                type="file"
+                name="productImage"
+                accept="image/jpeg,image/png"
+              />
             </div>
           </div>
         </div>
@@ -122,11 +141,12 @@
             <div class="mb-4">
               <label class="form-label">Price</label>
               <input
-                type="text"
+                type="number"
                 placeholder="Type here"
                 class="form-control"
                 value="<%= product.productPrice %>"
                 name="productPrice"
+                min="0"
                 required
               />
             </div>
@@ -165,7 +185,7 @@
                 <%= category.CategoryName %>
               </label>
             </div>
-            <%  */%>
+            <% */%>
           </div>
         </div>
         <!-- card end// -->

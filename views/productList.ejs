@@ -94,8 +94,9 @@
                     <a
                       href="#"
                       class="btn-product btn-cart"
-                      id="add-to-cart"
-                      data-product-id="<%=products._id %>"
+                      id="cart"
+                      data-product-id="<%=product?._id %>"
+                      data-user-id="<%=user?._id %>"
                       ><span>add to cart</span></a
                     >
                   </div>
@@ -468,21 +469,33 @@
 </main>
 <!-- End .main -->
 <script>
-  const addToCartLink = $("#add-to-cart");
+  $(document).ready(function () {
+    const addToCartLink = $("#cart");
 
-  addToCartLink.click(function (event) {
-    event.preventDefault();
+    addToCartLink.click(function (event) {
+      event.preventDefault();
 
-    const productId = addToCartLink.data("product-id");
+      const user = addToCartLink.data("user-id");
+      if (user) {
+        const productId = addToCartLink.data("product-id");
 
-    $.get(`/add-to-cart/${productId}`)
-      .done(function (response) {
-        alert("Product added to Cart");
-        location.reload();
-      })
-      .fail(function (error) {
-        console.log(error);
-      });
+        $.get(`/add-to-cart/${productId}`)
+          .done(function (response) {
+            Swal.fire({
+              title: "Product added to cart!",
+              icon: "success",
+              confirmButtonText: "OK",
+            });
+          })
+          .fail(function (error) {
+            console.log(error);
+          });
+      } else {
+        // User is not logged in, redirect to login page
+        window.location.href = "/login";
+        return;
+      }
+    });
   });
 </script>
 <%- include('includes/footerpartial') -%>
