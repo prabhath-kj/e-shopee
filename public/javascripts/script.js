@@ -148,28 +148,74 @@ function returnOrder(orderId) {
     confirmButtonText: "Yes, Return",
     denyButtonText: `No`,
   }).then((result) => {
-    /* Read more about isConfirmed, isDenied below */
     if (result.isConfirmed) {
-      $.ajax({
-        url: "/returnOrder",
-        method: "put",
-        data: {
-          orderId: orderId,
-        },
-        success: (response) => {
-          if (response.status) {
-            Swal.fire("Returned!", "", "success").then(() => {
-              location.reload();
-            });
-          } else {
-            Swal.fire(
-              "The Product Return validity expired",
-              "",
-              "warning"
-            ).then(() => {});
-          }
-        },
+      Swal.fire({
+        title: "Reason for returning",
+        input: "text",
+        inputValue: "",
+        showCancelButton: true,
+        confirmButtonText: "Save Changes",
+        cancelButtonText: "Cancel",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const return_reason = result.value;
+          $.ajax({
+            url: "/returnOrder",
+            method: "put",
+            data: {
+              orderId: orderId,
+              reason: return_reason,
+            },
+            success: (response) => {
+              if (response.status) {
+                Swal.fire("Returned!", "", "success").then(() => {
+                  location.reload();
+                });
+              } else {
+                Swal.fire(
+                  "The Product Return validity expired",
+                  "",
+                  "warning"
+                ).then(() => {});
+              }
+            },
+          });
+        }
       });
     }
   });
 }
+
+//coupon
+
+function applyCoupon(total) {
+  let couponCode = document.getElementById("couponCode").value;
+  document.getElementById("couponCodeInput").value = couponCode;
+
+  $.ajax({
+    url: "/apply-coupon",
+    data: {
+      code: couponCode,
+      total: total,
+    },
+    method: "post",
+    success: (response) => {
+      console.log(response.couponCode, "Response in ajax script");
+      if (response.status) {
+        const couponDisAmount = document.getElementById("couponDisAmount");
+        couponDisAmount.innerHTML = "-" + response.disAmount;
+        $("#couponSuccess").html("Coupon added");
+        document.getElementById("totalPrice").innerHTML =
+          "&#x20B9;" + response.disPrice;
+        document.getElementById("paypalAmount").value = response.disPrice;
+      } else {
+        $("#couponErr").html("Invalid Coupon");
+        document.getElementById("couponSuccess").innerHTML = "";
+      }
+    },
+  });
+}
+
+$(document).ready(function () {
+  $("#myTable").DataTable();
+});

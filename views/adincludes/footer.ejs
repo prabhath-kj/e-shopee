@@ -25,15 +25,20 @@
 <script
   src="../adminassets///js/custom-chart.js"
   type="text/javascript"
->
-
-</script>
+></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+   
 <script>
   function handleChange(event) {
     const status = event.target.value;
     const url = `/admin/view-user?status=${status}`;
     window.location.href = url;
   }
+
+  $(document).ready(function () {
+    $("#myTable").DataTable();
+  });
 </script>
 </body>
 

@@ -3,6 +3,7 @@ import Category from "../models/category.js";
 import Product from "../models/product.js";
 import { Order, Address, OrderItem } from "../models/order.js";
 import Coupon from "../models/coupon.js";
+import moment from "moment/moment.js";
 
 export default {
   adminLogin: (admindata) => {
@@ -104,8 +105,7 @@ export default {
       } else {
         // Create a new category
         const newCategory = new Category({
-          CategoryName: category.CategoryName,
-          CategoryDescription: category.CategoryDescription,
+          CategoryName: category.CategoryName.toUpperCase(),
         });
         await newCategory.save();
         return;
@@ -290,23 +290,80 @@ export default {
 
   updateOrderStatus: async (orderId, orderStatus) => {
     try {
-      const order = await Order.findByIdAndUpdate(
-        orderId,
-        {
-          order_status: orderStatus,
-        },
-        {
-          new: true,
+      let order;
+      if (orderStatus === "Delivered") {
+        order = await Order.findById(orderId);
+        if (!order) {
+          throw new Error("Order not found");
         }
-      );
-      if (!order) {
-        return null;
+
+        order.order_status = "Delivered";
+        if (order.payment_method === "cash_on_delivery") {
+          order.payment_status = "paid";
+        }
+
+        // Save the updated order in the database
+        const updatedOrder = await order.save();
+        return updatedOrder;
+      } else if (orderStatus === "approved" || orderStatus === "rejected") {
+        if (orderStatus === "approved") {
+          // Retrieve updated order
+          order = await Order.findOneAndUpdate(
+            { _id: orderId },
+            {
+              return_status: orderStatus,
+              refund: "success",
+            },
+            { new: true }
+          );
+
+          // Retrieve user
+          const userId = order.user_id;
+          const user = await User.findOne({ _id: userId });
+
+          if (!user) {
+            throw new Error("User not found");
+          }
+
+          if (user.wallet) {
+            user.wallet += order.total_amount;
+          } else {
+            user.wallet = order.total_amount;
+          }
+
+          // Save updated user object
+          await user.save();
+          return order;
+        } else {
+          order = await Order.findOneAndUpdate(
+            { _id: orderId },
+            {
+              return_status: orderStatus,
+              refund: "failure",
+            },
+            { new: true }
+          );
+          return order;
+        }
+      } else {
+        order = await Order.findByIdAndUpdate(
+          { _id: orderId },
+          {
+            order_status: orderStatus,
+          },
+          { new: true }
+        );
+        if (!order) {
+          throw new Error("Order not found");
+        }
+        return order;
       }
-      return order;
     } catch (err) {
       console.error(err);
+      throw err; // Rethrow the error for further handling
     }
   },
+
   generateCoupon: async (coupon) => {
     try {
       const { couponCode, couponDiscount, expiryDate, maxDiscount } = coupon;
@@ -322,10 +379,25 @@ export default {
       console.error(err);
     }
   },
+
+  removeCoupon: async (couponId) => {
+    try {
+      await Coupon.findByIdAndDelete(couponId);
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
   getCoupons: async () => {
     try {
       const coupons = await Coupon.find();
-      return coupons;
+      const couponsWithDaysRemaining = coupons.map((coupon) => {
+        const current_date = moment();
+        const expiration_date = moment(coupon.expirationDate);
+        coupon.days_remaining = expiration_date.diff(current_date, "days");
+        return coupon;
+      });
+      return couponsWithDaysRemaining;
     } catch (err) {
       console.error(err);
     }

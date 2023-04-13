@@ -75,6 +75,8 @@ router
   .get(isloggedInad, adminController.addCoupon)
   .post(isloggedInad, adminController.addCouponPost);
 
+router.post("/remove-coupon",isloggedInad,adminController.removeCoupon)
+
 router.get("/view-coupon", isloggedInad, adminController.viewCoupon);
 
 export default router;

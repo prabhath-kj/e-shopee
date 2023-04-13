@@ -310,8 +310,10 @@ export default {
 
   orderDetails: async (req, res) => {
     try {
-      const orders = await adminHelper.getOrderDetails();
-      if (orders) {
+      const Orders = await adminHelper.getOrderDetails();
+      if (Orders) {
+        const orders = Orders.reverse();
+        console.log(orders);
         res.render("admin/order-management", { orders });
       }
     } catch (err) {
@@ -333,8 +335,7 @@ export default {
   },
   updateOrderStatus: async (req, res) => {
     try {
-      console.log(req.body.orderId);
-      console.log(req.body.status);
+     
 
       const valid = await adminHelper.updateOrderStatus(
         req.body.orderId,
@@ -361,6 +362,15 @@ export default {
   addCouponPost: async (req, res) => {
     try {
       await adminHelper.generateCoupon(req.body);
+      res.json({ status: "success" });
+    } catch (err) {
+      console.error(err);
+      res.json({ status: "error" });
+    }
+  },
+  removeCoupon: async (req, res) => {
+    try {
+      await adminHelper.removeCoupon(req.body.id);
       res.json({ status: "success" });
     } catch (err) {
       console.error(err);

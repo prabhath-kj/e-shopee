@@ -28,12 +28,15 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
     
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
     <script src="/javascripts/script.js"></script>
 
     
 
     <!-- Plugins CSS File -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
 
     <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/css/plugins/owl-carousel/owl.carousel.css">
@@ -56,7 +59,28 @@
     .resend-link:hover {
       color: #007bff;
     }
-    
+    .wallet-card {
+  background-color: #e3cd6b;
+  border-radius: 10px;
+  padding: 20px;
+  width: 300px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 10px;
+  display: none; /* hide initially */
+}
+
+.wallet-card h3 {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.wallet-card .wallet-amount {
+  font-size: 32px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
 </style>
    
       

@@ -3,6 +3,10 @@ import twilioFunctions from "../config/twilio.js";
 import sendMail from "../config/nodeMailer.js";
 import dotenv from "dotenv";
 import adminHelper from "../helpers/adminHelper.js";
+import instance from "../config/paymentGateway.js";
+import CryptoJS from "crypto-js";
+import mongoose from "mongoose";
+
 dotenv.config();
 
 export default {
@@ -29,6 +33,10 @@ export default {
       }
     } catch (err) {
       console.error(err);
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
     }
   },
   listProductCategory: async (req, res) => {
@@ -42,7 +50,10 @@ export default {
       res.render("productList", { user: false, products });
     } catch (err) {
       console.error(err);
-      res.json({ message: "error" });
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
     }
   },
 
@@ -95,6 +106,10 @@ export default {
       res.redirect("/");
     } catch (err) {
       console.error(err);
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
     }
   },
 
@@ -167,6 +182,10 @@ export default {
       }
     } catch (err) {
       console.error(err);
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
     }
   },
   resendOTp: async (req, res) => {
@@ -188,6 +207,10 @@ export default {
       })
       .catch((error) => {
         console.error(error);
+        res.render("catchError", {
+          message: error.message,
+          user: req.session.user,
+        });
       });
   },
 
@@ -216,10 +239,17 @@ export default {
         })
         .catch((error) => {
           console.error(error);
-          res.status(500).send("Internal server error");
+          res.render("catchError", {
+            message: error.message,
+            user: req.session.user,
+          });
         });
     } catch (err) {
       console.error(err);
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
     }
   },
 
@@ -263,6 +293,10 @@ export default {
         });
     } catch (err) {
       console.log(err);
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
     }
   },
 
@@ -300,6 +334,10 @@ export default {
         });
     } catch (err) {
       console.error(err);
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
     }
   },
 
@@ -339,6 +377,10 @@ export default {
       res.render("product-view", { user, products });
     } catch (err) {
       console.error(err);
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
     }
   },
 
@@ -347,9 +389,7 @@ export default {
       let user = req.session.user;
 
       const items = await userHelper.getCartProducts(req.session.user._id);
-      console.log(items);
       if (items === null) {
-        console.log("hey");
         res.render("emptyCart", { user });
         return;
       }
@@ -357,7 +397,10 @@ export default {
 
       res.render("cart", { user, products, total: subtotal });
     } catch (err) {
-      console.error();
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
     }
   },
   addToCart: async (req, res) => {
@@ -369,6 +412,10 @@ export default {
       });
     } catch (err) {
       console.error(err);
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
     }
   },
   changeProductQuantity: async (req, res) => {
@@ -391,35 +438,58 @@ export default {
         message: "product added to cart",
       });
     } catch (err) {
-      console.error(err);
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
     }
   },
 
   checkOut: async (req, res) => {
     try {
       let user = req.session.user;
-
+      console.log(user);
       const items = await userHelper.getCartProducts(req.session.user._id);
       const address = await userHelper.getDefaultAddress(req.session.user._id);
-      console.log(address);
       const { cartItems: products, subtotal } = items;
       res.render("checkout", { user, products, subtotal, address });
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      res.render("catchError", {
+        message: error?.message,
+        user: req.session.user,
+      });
     }
   },
 
   placeOrderPost: async (req, res) => {
     try {
-      const { userId, paymentMethod } = req.body;
+      console.log(req.body);
+      const { userId, paymentMethod, totalAmount, couponCode } = req.body;
 
       const response = await userHelper.placeOrder(
         userId,
         paymentMethod,
+        totalAmount,
+        couponCode,
         req.body
       );
-      console.log(response);
-      res.json({ status: "success" });
+      if (response.payment_method == "cash_on_delivery") {
+        res.json({ codstatus: "success" });
+      } else if (response.payment_method == "online_payment") {
+        // const order = generatePaymenetGateway(response);
+        const paymentOptions = {
+          amount: response.total_amount * 100,
+          currency: "INR",
+          receipt: "" + response._id,
+          payment_capture: 1,
+        };
+
+        const order = await instance.orders.create(paymentOptions);
+        console.log(order);
+        res.json(order);
+      } else if (response.payment_method == "wallet") {
+        res.json({ codstatus: "success" });
+      }
     } catch (err) {
       console.error(err);
       res.json({ status: "error" });
@@ -430,7 +500,10 @@ export default {
     try {
       res.render("add-address", { user: req.session.user });
     } catch (err) {
-      console.error(err);
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
     }
   },
 
@@ -439,7 +512,10 @@ export default {
       const address = await userHelper.getAddress(req.session.user._id);
       res.render("address", { user: req.session.user, address });
     } catch (err) {
-      console.error(err);
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
     }
   },
 
@@ -450,7 +526,10 @@ export default {
       await userHelper.addAddressPost(userId, address);
       res.redirect("/address");
     } catch (err) {
-      console.error(err);
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
     }
   },
   select: async (req, res) => {
@@ -458,7 +537,10 @@ export default {
       await userHelper.updateAddress(req.params.id, req.session.user._id);
       res.json({ status: "success" });
     } catch (err) {
-      console.error(err);
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
     }
     // res.json({ status: "success" });
   },
@@ -468,7 +550,10 @@ export default {
       await userHelper.deleteAddress(req.params.id);
       res.json({ status: "success" });
     } catch (err) {
-      console.error(err);
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
     }
   },
 
@@ -481,19 +566,44 @@ export default {
       const orderDetails = orderHistory.reverse();
       res.render("order", { user: req.session.user, orderDetails });
     } catch (err) {
-      console.log(err);
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
     }
   },
   orderSuccess: async (req, res) => {
-    res.render("placeOrderSuccess", { user: req.session.user });
+    try {
+      res.render("placeOrderSuccess", { user: req.session.user });
+    } catch (err) {
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
+    }
   },
+
+  orderFailed: async (req, res) => {
+    try {
+      res.render("payment-failure", { user: req.session.user });
+    } catch (err) {
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
+    }
+  },
+  
   viewOrder: async (req, res) => {
     try {
       const currentOrder = await adminHelper.getSpecificOrder(req.params.id);
       const { productDetails } = currentOrder;
       res.render("view-order", { user: req.session.user, productDetails });
     } catch (err) {
-      console.error(err);
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
     }
   },
 
@@ -502,24 +612,111 @@ export default {
       await userHelper.cancelOrder(req.body.arguments[0]);
       res.json({ status: "success" });
     } catch (err) {
-      console.error(err);
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
     }
   },
 
   returnOrder: async (req, res) => {
     try {
-      await userHelper.returnOrder(req.body.orderId);
+      await userHelper.returnOrder(req.body.orderId, req.body.reason);
       res.json({ status: "success" });
     } catch (err) {
-      console.error(err);
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
     }
   },
 
   getAllCoupons: async (req, res) => {
     try {
-      res.render("all-coupons", { user: req.session.user });
+      const coupons = await userHelper.getCoupons(req.session.user._id);
+      res.render("all-coupons", { user: req.session.user, coupons });
+    } catch (err) {
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
+    }
+  },
+
+  applyCoupon: async (req, res) => {
+    try {
+      const { code, total } = req.body;
+      const response = await userHelper.applyCoupon(
+        code,
+        total,
+        req.session.user._id
+      );
+      res.json(response);
+    } catch (err) {
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
+    }
+  },
+
+  profile: async (req, res) => {
+    try {
+      throw new Error();
     } catch (err) {
       console.error(err);
+      res.render("catchError", {
+        message: err?.message,
+        user: req.session.user,
+      });
+    }
+  },
+  verifyPayment: async (req, res) => {
+    try {
+      const { payment, order } = req.body;
+
+      const razorpayOrderId = payment.razorpay_order_id;
+      const razorpayPaymentId = payment.razorpay_payment_id;
+      const razorpaySecret = "smzhEAy0eORV067XwguH5L4h";
+      const razorpaySignature = payment.razorpay_signature;
+
+      // Concatenate order_id and payment_id
+      const message = razorpayOrderId + "|" + razorpayPaymentId;
+
+      // Generate a HMAC SHA256 hash of the message using the secret key
+      const generatedSignature = CryptoJS.HmacSHA256(
+        message,
+        razorpaySecret
+      ).toString(CryptoJS.enc.Hex);
+
+      // Compare the generated signature with the received signature
+      if (razorpaySignature === generatedSignature) {
+        await userHelper.changeOnlinePaymentStatus(order.receipt);
+        res.json({ status: "success" });
+      } else {
+        res.json({ error: "error" });
+      }
+      console.log(payment);
+      console.log(order);
+    } catch (err) {
+      console.error(err);
+      res.render("catchError", {
+        message: err?.message,
+        user: req.session.user,
+      });
+    }
+  },
+  search: async (req, res) => {
+    try {
+      const search = req.query.search;
+      const products = await userHelper.searchQuery(search);
+      res.render("productList", { user: req.session.user, products });
+    } catch (err) {
+      console.error(err);
+      res.render("catchError", {
+        message: err?.message,
+        user: req.session.user,
+      });
     }
   },
 };

@@ -1,12 +1,14 @@
 function generateCouponCode() {
   // Logic for generating the coupon code
-  var couponCode = "COUPON" + Math.floor(Math.random() * 10000); // Generate a random number for the coupon code
+  let couponCode = "COUPON" + Math.floor(Math.random() * 10000);
+   // Generate a random number for the coupon code
+
   document.getElementById("couponCode").value = couponCode;
 }
 
 function autoGenerateMaxDiscount() {
-  var discount = document.getElementById("couponDiscount").value;
-  var maxDiscount = discount * 10; // Change this calculation as per your requirement
+  let discount = document.getElementById("couponDiscount").value;
+  let maxDiscount = discount * 10; // Change this calculation as per your requirement
   document.getElementById("maxDiscount").value = maxDiscount;
 }
 function checkForErrors() {
@@ -61,4 +63,39 @@ function submitCoupon(code, discount, expiryDate, maxDiscount) {
       }
     },
   });
+}
+
+let removeCoupon = (couponId) => {
+    Swal.fire({
+        title: "Are you sure want to remove this coupon?",
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3c0d51',
+        cancelButtonColor: '#bb321f',
+        confirmButtonText: 'Remove',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/admin/remove-coupon',
+                data: {
+                    id: couponId,
+                },
+                method: 'post',
+                success: (response) => {
+                    if (response.status) {
+                        Swal.fire({
+                            title: 'Removed!',
+                            text: 'Coupon has been removed.',
+                            icon: 'success',
+                        }).then((result) => {
+                            location.reload();
+                        });
+                    }
+                }
+
+            })
+        }
+    })
+
 }

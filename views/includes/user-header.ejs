@@ -24,20 +24,14 @@
                 <a href="#" class="search-toggle" role="button"
                   ><i class="icon-search"></i
                 ></a>
-                <form action="#" method="get">
+                <form action="/product-search/?search" method="get">
                   <div class="header-search-wrapper search-wrapper-wide">
                     <label for="q" class="sr-only">Search</label>
+                    <input type="search" class="form-control" name="search" id="product-search"
+                    placeholder="Search product ...">
                     <button class="btn btn-primary" type="submit">
                       <i class="icon-search"></i>
                     </button>
-                    <input
-                      type="search"
-                      class="form-control"
-                      name="q"
-                      id="q"
-                      placeholder="Search product ..."
-                      required
-                    />
                   </div>
                   <!-- End .header-search-wrapper -->
                 </form>
@@ -57,6 +51,13 @@
 
                     <div class="dropdown-menu dropdown-menu-right">
                         <div class="dropdown-cart-products">
+                          <div class="product">
+                            <div class="product-cart-details">
+                                <h4 class="product-title">
+                                    <a href="/edit-profile">Edit Profile</a>
+                                </h4>
+                            </div><!-- End .product-cart-details -->
+                        </div><!-- End .product -->
                             <div class="product">
                                 <div class="product-cart-details">
                                     <h4 class="product-title">

@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import User from "../models/user.js";
 import CryptoJS from "crypto-js";
 import Token from "../models/token.js";
@@ -6,9 +5,9 @@ import crypto from "crypto";
 import Product from "../models/product.js";
 import Category from "../models/category.js";
 import Cart from "../models/cart.js";
-import product from "../models/product.js";
 import { Order, Address, OrderItem } from "../models/order.js";
-import { error } from "console";
+import Coupon from "../models/coupon.js";
+import moment from "moment";
 
 export default {
   doSignUp: (body) => {
@@ -364,10 +363,16 @@ export default {
     }
   },
 
-  placeOrder: async (userId, PaymentMethod, address) => {
+  placeOrder: async (
+    userId,
+    PaymentMethod,
+    totalAmount,
+    couponCode,
+    address
+  ) => {
     try {
       let id = address.addressId;
-
+      //updating address
       const isAddressExist = await Address.findById(id);
 
       if (isAddressExist) {
@@ -405,25 +410,46 @@ export default {
         };
       });
 
+      //extracting totalamount
       let subtotal = 0;
-      cartItems.forEach((item) => {
-        subtotal += item.product.productPrice * item.quantity;
-      });
-
+      if (isNaN(totalAmount)) {
+        cartItems.forEach((item) => {
+          subtotal += item.product.productPrice * item.quantity;
+        });
+      } else {
+        subtotal = totalAmount;
+        const coupon = await Coupon.findOne({ code: couponCode });
+        if (coupon) {
+          coupon.usedBy.push(userId);
+          await coupon.save();
+        }
+      }
       // Create a new order
 
-      let status =
-        address.paymentMethod === "cash_on_delivery"
-          ? "Placed"
-          : "Payment Pending";
+      let status = "";
+      if (PaymentMethod === "cash_on_delivery") {
+        status = "Placed";
+      } else if (PaymentMethod === "wallet") {
+        const user = await User.findById(userId);
 
-      console.log(status);
+        if (user.wallet >= subtotal) {
+          user.wallet -= parseInt(subtotal);
+          await user.save();
+          status = "Placed";
+          var paymentStatus = "paid";
+        } else {
+          status = "Payment Pending";
+        }
+      } else {
+        status = "Payment Pending";
+      }
 
       const newOrder = new Order({
         user_id: userId,
         total_amount: subtotal,
         address: id,
         payment_method: PaymentMethod,
+        payment_status: paymentStatus,
         order_status: status,
         items: [],
       });
@@ -445,7 +471,25 @@ export default {
       const savedOrder = await newOrder.save();
 
       await Cart.deleteMany({ user: userId });
+
       return savedOrder;
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  changeOnlinePaymentStatus: async (orderId) => {
+    try {
+      await Order.findByIdAndUpdate(
+        orderId,
+        {
+          payment_status: "paid",
+          order_status: "Placed",
+        },
+        {
+          new: true,
+        }
+      );
     } catch (err) {
       console.error(err);
     }
@@ -481,7 +525,7 @@ export default {
 
       // Update user's wallet balance (if payment method is 'onlinePayment')
 
-      if (order.payment_method === "Paypal") {
+      if (order.payment_method === "online_payment") {
         if (user.wallet) {
           user.wallet += order.total_amount;
         } else {
@@ -494,28 +538,85 @@ export default {
     }
   },
 
-  returnOrder: async (orderId) => {
+  returnOrder: async (orderId, reason) => {
     try {
-      await Order.updateOne(
+      await Order.updateMany(
         { _id: orderId },
-        { $set: { order_status: "Returned" } }
+        {
+          $set: {
+            order_status: "Returned",
+            return_status: "pending",
+            return_reason: reason,
+          },
+        }
       );
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  getCoupons: async (userId) => {
+    try {
+      const coupons = await Coupon.find();
+      const unusedCouponsWithDaysRemaining = coupons
+        .filter((coupon) => !coupon.usedBy.includes(userId)) // Filter out coupons with usedBy field
+        .map((coupon) => {
+          const current_date = moment();
+          const expiration_date = moment(coupon.expirationDate);
+          coupon.days_remaining = expiration_date.diff(current_date, "days");
+          return coupon;
+        });
+      return unusedCouponsWithDaysRemaining;
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  applyCoupon: async (couponCode, totalAmount, userId) => {
+    try {
+      const coupon = await Coupon.findOne({ code: couponCode });
+      if (coupon) {
+        if (coupon.usedBy.includes(userId)) {
+          var discountAmount = {};
+          discountAmount.status = false;
+          return discountAmount;
+        }
 
-      // Retrieve updated order
-      const order = await Order.findOne({ _id: orderId });
-
-      // Retrieve user
-      const userId = order.user_id;
-
-      const user = await User.findOne({ _id: userId });
-
-      // Update user's wallet balance (if payment method is 'onlinePayment')
-      if (user.wallet) {
-        user.wallet += order.total_amount;
-      } else {
-        user.wallet = order.total_amount;
+        let discount = (totalAmount / coupon.discount) * 100;
+        let maxdiscount = coupon.maxdiscount;
+        if (maxdiscount < discount) {
+          var discountAmount = {};
+          let disPrice = totalAmount - maxdiscount;
+          discountAmount.couponCode = coupon.code;
+          discountAmount.disAmount = maxdiscount;
+          discountAmount.disPrice = disPrice;
+          discountAmount.status = true;
+          return discountAmount;
+        } else {
+          var discountAmount = {};
+          let disPrice = totalAmount - discount;
+          discountAmount.couponCode = coupon.code;
+          discountAmount.disAmount = maxdiscount;
+          discountAmount.disPrice = disPrice;
+          discountAmount.status = true;
+          return discountAmount;
+        }
       }
-      await user.save(); // Save updated user object
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  searchQuery: async (query) => {
+    try {
+      const products = await Product.find({
+        $or: [
+          { productName: { $regex: query, $options: "i" } },
+          { productModel: { $regex: query, $options: "i" } },
+          { productDescription: { $regex: query, $options: "i" } },
+        ],
+      }).populate("category");
+      if (products.length > 0) {
+        return products;
+      }
+      return null;
     } catch (err) {
       console.error(err);
     }

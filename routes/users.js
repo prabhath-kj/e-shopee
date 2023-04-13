@@ -63,10 +63,10 @@ router.post("/change-product-quantity", userController.changeProductQuantity);
 router.get("/cart", isUser, userController.cartPage);
 
 //Edit profile
-router.get("/edit-profile", (req, res) => {
-  let user = req.session.user;
-  res.render("editProfile", { user });
-});
+// router.get("/edit-profile", (req, res) => {
+//   let user = req.session.user;
+//   res.render("editProfile", { user });
+// });
 
 //checkout
 router.get("/checkout", isUser, userController.checkOut);
@@ -79,12 +79,15 @@ router.post("/add-address", isUser, userController.addAddressPost);
 
 router.get("/select-address/:id", isUser, userController.select);
 
-router.get("/delete-address/:id",isUser,userController.deleteAddress)
+router.get("/delete-address/:id", isUser, userController.deleteAddress);
 
 //place order
 router.post("/place-order", isUser, userController.placeOrderPost);
 
 router.get("/order-success", isUser, userController.orderSuccess);
+
+router.get("/order-failed", isUser, userController.orderFailed);
+
 
 router.get("/orders", isUser, userController.getOrderDetails);
 
@@ -94,8 +97,22 @@ router.post("/cancelOrder", isUser, userController.removeOrder);
 
 router.put("/returnOrder", isUser, userController.returnOrder);
 
+//edit profile
+
+router.get("/edit-profile", isUser, userController.profile);
 
 // All coupons
 
-router.get("/all-coupons",isUser,userController.getAllCoupons)
+router.get("/all-coupons", isUser, userController.getAllCoupons);
+
+router.post("/apply-coupon", isUser, userController.applyCoupon);
+
+router.post("/verify-payment",isUser,userController.verifyPayment)
+
+
+//search
+
+router.get("/product-search",userController.search)
+
+
 export default router;
