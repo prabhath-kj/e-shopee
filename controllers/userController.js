@@ -5,7 +5,6 @@ import dotenv from "dotenv";
 import adminHelper from "../helpers/adminHelper.js";
 import instance from "../config/paymentGateway.js";
 import CryptoJS from "crypto-js";
-import mongoose from "mongoose";
 
 dotenv.config();
 
@@ -593,7 +592,7 @@ export default {
       });
     }
   },
-  
+
   viewOrder: async (req, res) => {
     try {
       const currentOrder = await adminHelper.getSpecificOrder(req.params.id);
@@ -677,7 +676,7 @@ export default {
 
       const razorpayOrderId = payment.razorpay_order_id;
       const razorpayPaymentId = payment.razorpay_payment_id;
-      const razorpaySecret = "smzhEAy0eORV067XwguH5L4h";
+      const razorpaySecret = process.env.KEYSECRET;
       const razorpaySignature = payment.razorpay_signature;
 
       // Concatenate order_id and payment_id

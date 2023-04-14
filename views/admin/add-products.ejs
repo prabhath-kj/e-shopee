@@ -101,33 +101,50 @@
                 type="file"
                 name="productImage"
                 accept="image/jpeg,image/png"
-                onchange="previewImage(event)"
+                id="image1"
+                onchange="previewImage(event, 'croppedImageContainer1')"
+                <!--
+                Add
+                onchange
+                event
+                handler
+                with
+                respective
+                cropped
+                image
+                container
+                id
+                --
               />
-              <img class="preview" style="width: 300px; height: inherit" />
               <input
                 class="form-control"
                 type="file"
                 name="productImage"
                 accept="image/jpeg,image/png"
-                onchange="previewImage(event)"
+                id="image2"
+                onchange="previewImage(event, 'croppedImageContainer2')"
               />
-              <img class="preview" style="width: 300px; height: inherit" />
+              <!-- Container element for the cropped image -->
+              <div id="croppedImageContainer1"></div>
+              <!-- Add respective unique id for each cropped image container -->
               <input
                 class="form-control"
                 type="file"
                 name="productImage"
                 accept="image/jpeg,image/png"
-                onchange="previewImage(event)"
+                id="image3"
+                onchange="previewImage(event, 'croppedImageContainer3')"
               />
-              <img class="preview" style="width: 300px; height: inherit" />
               <input
                 class="form-control"
                 type="file"
                 name="productImage"
                 accept="image/jpeg,image/png"
-                onchange="previewImage(event)"
+                id="image4"
+                onchange="previewImage(event, 'croppedImageContainer4')"
               />
-              <img class="preview" style="width: 300px; height: inherit" />
+              <!-- "Crop" button for triggering the cropping process -->
+              <button onclick="cropImage()">Crop</button>
             </div>
           </div>
         </div>

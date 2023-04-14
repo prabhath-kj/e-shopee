@@ -28,6 +28,8 @@
 ></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js" integrity="sha384-GXRiS9OkY5BvVM5SY5Q5ih5K4TVanWquTE3qA4xtsknU6L9ibW6ySeITvAP5Q/7A" crossorigin="anonymous"></script>
+
    
 <script>
   function handleChange(event) {
@@ -39,6 +41,30 @@
   $(document).ready(function () {
     $("#myTable").DataTable();
   });
+
+  function cropImage() {
+  // Get the Cropper instance for each input field
+  var cropper1 = $("#image1").cropper("getCropperData");
+  var cropper2 = $("#image2").cropper("getCropperData");
+  var cropper3 = $("#image3").cropper("getCropperData");
+  var cropper4 = $("#image4").cropper("getCropperData");
+
+  // Get the cropped image data for each input field as a base64-encoded JPEG image
+  var croppedImageDataURL1 = $("#image1").cropper("getCroppedCanvas").toDataURL("image/jpeg");
+  var croppedImageDataURL2 = $("#image2").cropper("getCroppedCanvas").toDataURL("image/jpeg");
+  var croppedImageDataURL3 = $("#image3").cropper("getCroppedCanvas").toDataURL("image/jpeg");
+  var croppedImageDataURL4 = $("#image4").cropper("getCroppedCanvas").toDataURL("image/jpeg");
+
+  // Update the input fields with the cropped image data
+  $("#image1").val(croppedImageDataURL1);
+  $("#image2").val(croppedImageDataURL2);
+  $("#image3").val(croppedImageDataURL3);
+  $("#image4").val(croppedImageDataURL4);
+}
+
+
+ 
+
 </script>
 </body>
 
