@@ -1,249 +1,271 @@
 <%- include('includes/header') -%> <%- include('includes/user-header') -%>
-<main class="main">
-  <div
-    class="page-header text-center"
-    style="background-image: url('assets/images/page-header-bg.jpg')"
-  >
-    <div class="container">
-      <h1 class="page-title">My Account<span>Shop</span></h1>
-    </div>
-    <!-- End .container -->
-  </div>
-  <!-- End .page-header -->
-  <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
-    <div class="container">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-        <li class="breadcrumb-item"><a href="#">Shop</a></li>
-        <li class="breadcrumb-item active" aria-current="page">My Account</li>
-      </ol>
-    </div>
-    <!-- End .container -->
-  </nav>
-  <!-- End .breadcrumb-nav -->
-
-  <div class="page-content">
-    <div class="dashboard">
+<section>
+  <main class="main">
+    <div
+      class="page-header text-center"
+      style="background-image: url('assets/images/page-header-bg.jpg')"
+    >
       <div class="container">
-        <div class="row">
-          <aside class="col-md-4 col-lg-3">
-            <ul
-              class="nav nav-dashboard flex-column mb-3 mb-md-0"
-              role="tablist"
-            >
-              <li class="nav-item">
-                <a
-                  class="nav-link active"
-                  id="tab-dashboard-link"
-                  data-toggle="tab"
-                  href="#tab-dashboard"
-                  role="tab"
-                  aria-controls="tab-dashboard"
-                  aria-selected="true"
-                  >Dashboard</a
-                >
-              </li>
-              <li class="nav-item">
-                <a
-                  class="nav-link"
-                  id="tab-orders-link"
-                  data-toggle="tab"
-                  href="#tab-orders"
-                  role="tab"
-                  aria-controls="tab-orders"
-                  aria-selected="false"
-                  >Orders</a
-                >
-              </li>
-
-              <li class="nav-item">
-                <a
-                  class="nav-link"
-                  id="tab-address-link"
-                  data-toggle="tab"
-                  href="#tab-address"
-                  role="tab"
-                  aria-controls="tab-address"
-                  aria-selected="false"
-                  >Adresses</a
-                >
-              </li>
-              <li class="nav-item">
-                <a
-                  class="nav-link"
-                  id="tab-account-link"
-                  data-toggle="tab"
-                  href="#tab-account"
-                  role="tab"
-                  aria-controls="tab-account"
-                  aria-selected="false"
-                  >Account Details</a
-                >
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Sign Out</a>
-              </li>
-            </ul>
-          </aside>
-          <!-- End .col-lg-3 -->
-
-          <div class="col-md-8 col-lg-9">
-            <div class="tab-content">
-              <div
-                class="tab-pane fade show active"
-                id="tab-dashboard"
-                role="tabpanel"
-                aria-labelledby="tab-dashboard-link"
-              >
-                <p>
-                  Hello
-                  <span class="font-weight-normal text-dark">User</span> (not
-                  <span class="font-weight-normal text-dark">User</span>?
-                  <a href="#">Log out</a>)
-                  <br />
-                  From your account dashboard you can view your
-                  <a href="#tab-orders" class="tab-trigger-link link-underline"
-                    >recent orders</a
-                  >, manage your
-                  <a href="#tab-address" class="tab-trigger-link"
-                    >shipping and billing addresses</a
-                  >, and
-                  <a href="#tab-account" class="tab-trigger-link"
-                    >edit your password and account details</a
-                  >.
-                </p>
-              </div>
-              <!-- .End .tab-pane -->
-
-              <div
-                class="tab-pane fade"
-                id="tab-orders"
-                role="tabpanel"
-                aria-labelledby="tab-orders-link"
-              >
-                <p>No order has been made yet.</p>
-                <a href="category.html" class="btn btn-outline-primary-2"
-                  ><span>GO SHOP</span><i class="icon-long-arrow-right"></i
-                ></a>
-              </div>
-              <!-- .End .tab-pane -->
-
-              <div
-                class="tab-pane fade"
-                id="tab-address"
-                role="tabpanel"
-                aria-labelledby="tab-address-link"
-              >
-                <p>
-                  The following addresses will be used on the checkout page by
-                  default.
-                </p>
-
-                <div class="row">
-                  <div class="col-lg-6">
-                    <div class="card card-dashboard">
-                      <div class="card-body">
-                        <h3 class="card-title">Billing Address</h3>
-                        <!-- End .card-title -->
-
-                        <p>
-                          User Name<br />
-                          User Company<br />
-                          John str<br />
-                          New York, NY 10001<br />
-                          1-234-987-6543<br />
-                          yourmail@mail.com<br />
-                          <a href="#">Edit <i class="icon-edit"></i></a>
-                        </p>
-                      </div>
-                      <!-- End .card-body -->
-                    </div>
-                    <!-- End .card-dashboard -->
-                  </div>
-                  <!-- End .col-lg-6 -->
-
-                  <div class="col-lg-6">
-                    <div class="card card-dashboard">
-                      <div class="card-body">
-                        <h3 class="card-title">Shipping Address</h3>
-                        <!-- End .card-title -->
-
-                        <p>
-                          You have not set up this type of address yet.<br />
-                          <a href="#">Edit <i class="icon-edit"></i></a>
-                        </p>
-                      </div>
-                      <!-- End .card-body -->
-                    </div>
-                    <!-- End .card-dashboard -->
-                  </div>
-                  <!-- End .col-lg-6 -->
-                </div>
-                <!-- End .row -->
-              </div>
-              <!-- .End .tab-pane -->
-
-              <div
-                class="tab-pane fade"
-                id="tab-account"
-                role="tabpanel"
-                aria-labelledby="tab-account-link"
-              >
-                <form action="#">
-                  <div class="row">
-                    <div class="col-sm-6">
-                      <label>First Name *</label>
-                      <input type="text" class="form-control" required />
-                    </div>
-                    <!-- End .col-sm-6 -->
-
-                    <div class="col-sm-6">
-                      <label>Last Name *</label>
-                      <input type="text" class="form-control" required />
-                    </div>
-                    <!-- End .col-sm-6 -->
-                  </div>
-                  <!-- End .row -->
-
-                  <label>Display Name *</label>
-                  <input type="text" class="form-control" required />
-                  <small class="form-text"
-                    >This will be how your name will be displayed in the account
-                    section and in reviews</small
-                  >
-
-                  <label>Email address *</label>
-                  <input type="email" class="form-control" required />
-
-                  <label
-                    >Current password (leave blank to leave unchanged)</label
-                  >
-                  <input type="password" class="form-control" />
-
-                  <label>New password (leave blank to leave unchanged)</label>
-                  <input type="password" class="form-control" />
-
-                  <label>Confirm new password</label>
-                  <input type="password" class="form-control mb-2" />
-
-                  <button type="submit" class="btn btn-outline-primary-2">
-                    <span>SAVE CHANGES</span>
-                    <i class="icon-long-arrow-right"></i>
-                  </button>
-                </form>
-              </div>
-              <!-- .End .tab-pane -->
-            </div>
-          </div>
-          <!-- End .col-lg-9 -->
-        </div>
-        <!-- End .row -->
+        <h1 class="page-title">User Profile</h1>
       </div>
       <!-- End .container -->
     </div>
-    <!-- End .dashboard -->
-  </div>
-  <!-- End .page-content -->
-</main>
-<!-- End .main -->
+    <!-- End .page-header -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+      <div class="container">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">My Account</li>
+        </ol>
+      </div>
+      <!-- End .container -->
+    </nav>
+    <!-- End .breadcrumb-nav -->
+
+    <div class="page-content">
+      <div class="dashboard">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-8 col-lg-9">
+              <div class="tab-content">
+                <div
+                  class="tab-pane fade show active"
+                  id="tab-account"
+                  role="tabpanel"
+                  aria-labelledby="tab-account-link"
+                >
+                  <form action="" method="post">
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="name"><b>Name</b></label>
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="name"
+                            value="<%=user?.username%>"
+                          />
+                        </div>
+                        <!-- End .form-group -->
+                      </div>
+                      <!-- End .col-sm-6 -->
+                    </div>
+                    <!-- End .row -->
+
+                    <div class="form-group">
+                      <label for="display-name"><b>Display Name*</b></label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="display-name"
+                        value="<%=user?.username%>"
+                        name="updateName"
+                        required
+                      />
+                      <small class="form-text"
+                        >This will be displayed as your Username</small
+                      >
+                    </div>
+                    <!-- End .form-group -->
+
+                    <div class="form-group">
+                      <label for="gender"><b>Gender</b></label>
+                      <div class="custom-control custom-radio">
+                        <input
+                          id="male"
+                          value="male"
+                          name="gender"
+                          type="radio"
+                          class="custom-control-input"
+                        />
+                        <label class="custom-control-label" for="male"
+                          >Male</label
+                        >
+                      </div>
+                      <!-- End .custom-control -->
+                      <div class="custom-control custom-radio">
+                        <input
+                          id="female"
+                          value="female"
+                          name="gender"
+                          type="radio"
+                          class="custom-control-input"
+                        />
+                        <label class="custom-control-label" for="female"
+                          >Female</label
+                        >
+                      </div>
+                      <!-- End .custom-control -->
+                    </div>
+                    <!-- End .form-group -->
+
+                    <div class="form-group">
+                      <label for="email"><b>Email address*</b></label>
+                      <input
+                        type="email"
+                        class="form-control"
+                        id="email"
+                        value="<%=user.email%>"
+                        name="updateEmail"
+                        required
+                      />
+                    </div>
+                    <!-- End .form-group -->
+
+                    <div class="form-group">
+                      <label for="phone-number"><b>Phone Number*</b></label>
+                      <input
+                        type="phone-number"
+                        class="form-control"
+                        id="phone-number"
+                        value="<%=user.mobnumber%>"
+                        <div
+                        class="col-md-6"
+                      />
+                    </div>
+                    <!-- End .col-md-6 -->
+
+                    <button type="submit" class="btn btn-outline-primary-2">
+                      <span>SAVE CHANGES</span>
+                      <i class="icon-long-arrow-right"></i>
+                    </button>
+                    <label
+                      id="submit-error"
+                      class="errorLabel text-danger"
+                      for="registerPassword"
+                    ></label>
+                    <!-- {{#if pwdErr}}
+                    <label class="errorLabel text-danger"
+                      >Enter Correct Password</label
+                    >
+                    {{/if}}
+
+                    {{#if updated}}
+                    <label class="errorLabel text-success"
+                      >Updated Successfully!</label
+                    >
+                    {{/if}} -->
+                  </form>
+                </div>
+                <!-- End .tab-pane -->
+              </div>
+              <!-- End .tab-content -->
+            </div>
+            <!-- End .col-md-8 col-lg-9 -->
+
+            <aside class="sidebar col-md-4 col-lg-3">
+              <div class="widget widget-dashboard">
+                <h3 class="widget-title">My Account</h3>
+
+                <ul class="list">
+                  <li class="active">
+                    <a href="/edit-profile" data-toggle="tab"
+                      >Account Dashboard</a
+                    >
+                  </li>
+                  <li><a href="/orders" data-toggle="tab">My Orders</a></li>
+                  <li>
+                    <a
+                      class="collapsed"
+                      role="button"
+                      data-toggle="collapse"
+                      href=""
+                      aria-expanded="false"
+                      aria-controls="collapse-2"
+                      onclick="changePassword('<%=user._id %>');event.preventDefault();"
+                    >
+                      Change Password
+                    </a>
+                  </li>
+
+                  <li><a href="/logout">Logout</a></li>
+                </ul>
+              </div>
+              <!-- End .widget -->
+            </aside>
+            <!-- End .col-md-4 col-lg-3 -->
+          </div>
+          <!-- End .row -->
+        </div>
+        <!-- End .container -->
+      </div>
+      <!-- End .dashboard -->
+    </div>
+    <!-- End .page-content -->
+  </main>
+  <!-- End .main -->
+</section>
+<!-- End .section -->
+<script>
+  function changePassword(id) {
+    Swal.fire({
+      title: "Change Password",
+      html:
+        '<input type="password" id="currentPassword" class="swal2-input " placeholder="Current Password" required>' +
+        '<input type="password" id="newPassword" class="swal2-input " placeholder="New Password" required>' +
+        '<input type="password" id="confirmPassword" class="swal2-input " placeholder="Confirm Password" required>',
+
+      focusConfirm: false,
+      preConfirm: () => {
+        const currentPassword =
+          document.getElementById("currentPassword").value;
+        const newPassword = document.getElementById("newPassword").value;
+        const confirmPassword =
+          document.getElementById("confirmPassword").value;
+
+        // Perform validation on the inputs
+        if (!currentPassword || !newPassword || !confirmPassword) {
+          Swal.showValidationMessage("All fields are required");
+          return false;
+        }
+
+        if (newPassword !== confirmPassword) {
+          Swal.showValidationMessage(
+            "New Password and Confirm Password do not match"
+          );
+          return false;
+        }
+
+        // Make a POST request to the backend API to change the password
+        return fetch("/edit-password", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: id,
+            currentPassword: currentPassword,
+            newPassword: newPassword,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.status === "success") {
+              Swal.fire({
+                title: "Password Changed",
+                text: "Your password has been successfully changed",
+                icon: "success",
+                timer: 4000,
+              }).then(() => {
+                location.reload();
+              });
+            } else {
+              Swal.fire({
+                title: "Error",
+                text: "Failed to change password. Please try again",
+                icon: "error",
+              });
+            }
+          })
+          .catch((error) => {
+            Swal.fire({
+              title: "Error",
+              text: "Failed to change password. Please try again",
+              icon: "error",
+            });
+          });
+      },
+    });
+  }
+</script>
 <%- include('includes/footerpartial') -%>

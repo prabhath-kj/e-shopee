@@ -8,6 +8,7 @@ import Cart from "../models/cart.js";
 import { Order, Address, OrderItem } from "../models/order.js";
 import Coupon from "../models/coupon.js";
 import moment from "moment";
+import { log } from "console";
 
 export default {
   doSignUp: (body) => {
@@ -164,7 +165,7 @@ export default {
       console.error(err);
     }
   },
-  getAllProductsForList: async (categoryId) => {
+  getAllProductsForList: async (categoryId, userId) => {
     try {
       const productsQuery = Product.find({ category: categoryId }).populate(
         "category"
@@ -172,19 +173,48 @@ export default {
 
       const products = await productsQuery.exec();
 
+      const cart = await Cart?.findOne({ user: userId });
+
+      if (cart) {
+        for (const product of products) {
+          const isProductInCart = cart.products.some((prod) =>
+            prod.productId.equals(product._id)
+          );
+          product.isInCart = isProductInCart; // Add a boolean flag to indicate if the product is in the cart
+        }
+      }
+
       return products;
     } catch (err) {
       console.error(err);
     }
   },
-  getProductDetails: async (proId) => {
+
+  getProductDetails: async (proId, userId) => {
     try {
       const product = await Product.findById(proId);
+
+      if (!product) {
+        throw new Error("Product not found"); // Handle case where product does not exist
+      }
+
+      const cart = await Cart.findOne({
+        user: userId,
+        "products.productId": proId,
+      });
+
+      if (cart) {
+        product.isInCart = true; // Add a boolean flag to indicate if the product is in the cart
+      } else {
+        product.isInCart = false; // Add a boolean flag to indicate if the product is in the cart
+      }
+
       return product;
     } catch (err) {
       console.error(err);
     }
   },
+
   getCartProducts: async (userId) => {
     try {
       const cart = await Cart.findOne({ user: userId }).populate(
@@ -198,6 +228,7 @@ export default {
         const { _id, productName, productModel, productPrice, productImage } =
           productId;
         const totalPrice = productPrice * quantity;
+
         return {
           item: _id,
           quantity,
@@ -215,7 +246,59 @@ export default {
       cartItems.forEach((item) => {
         subtotal += item.product.productPrice * item.quantity;
       });
-      let cartCount = 0;
+
+      return { cartItems, subtotal };
+    } catch (err) {
+      console.error(err);
+      throw new Error("Error getting cart products");
+    }
+  },
+
+  getCheckoutProducts: async (userId) => {
+    try {
+      const cart = await Cart.findOne({ user: userId }).populate(
+        "products.productId"
+      );
+      if (!cart || cart.products.length <= 0) {
+        return null;
+      }
+      let isAllProductsInStock = true;
+      const cartItems = cart.products.map((item) => {
+        const { productId, quantity } = item;
+        const {
+          _id,
+          productName,
+          productModel,
+          productPrice,
+          productImage,
+          productQuantity: stock,
+        } = productId;
+        const totalPrice = productPrice * quantity;
+
+        if (quantity > stock) {
+          isAllProductsInStock = false;
+        }
+        return {
+          item: _id,
+          quantity,
+          totalPrice,
+          product: {
+            _id,
+            productName,
+            productModel,
+            productPrice,
+            productImage,
+          },
+        };
+      });
+      let subtotal = 0;
+      cartItems.forEach((item) => {
+        subtotal += item.product.productPrice * item.quantity;
+      });
+      console.log(isAllProductsInStock);
+      if (!isAllProductsInStock) {
+        return false;
+      }
 
       return { cartItems, subtotal };
     } catch (err) {
@@ -225,23 +308,30 @@ export default {
   },
 
   addToCart: async (productId, userId) => {
-    const isProductExist = await Cart.findOne({
-      user: userId,
-      "products.productId": productId,
-    });
+    // Find product
+    const product = await Product.findById(productId);
 
-    if (isProductExist) {
-      await Cart.updateOne(
-        { user: userId, "products.productId": productId },
-        { $inc: { "products.$.quantity": 1 } }
-      );
-    } else {
-      await Cart.updateOne(
-        { user: userId },
-        { $push: { products: { productId, quantity: 1 } } },
-        { upsert: true }
-      );
+    if (!product) {
+      throw new Error("Product not found");
     }
+
+    const quantity = product.productQuantity;
+
+    if (quantity <= 0) {
+      return false;
+    }
+
+    await Cart.updateOne(
+      { user: userId },
+      { $push: { products: { productId, quantity: 1 } } },
+      { upsert: true }
+    );
+
+    // Update product quantity in the database
+    // await Product.findByIdAndUpdate(productId, {
+    //   $inc: { productQuantity: -1 },
+    // });
+    return true;
   },
 
   updateQuantity: async (userId, productId, count) => {
@@ -250,39 +340,91 @@ export default {
       const product = cart.products.find(
         (p) => p.productId.toString() === productId
       );
-      if (product.quantity === 1 && parseInt(count) === -1) {
-        // await cart.products.id(product._id).delete();
-        // await cart.save();
+      if (!product) {
+        throw new Error("Product not found in cart");
+      }
+      // Calculate new quantity
+      const newQuantity = product.quantity + parseInt(count);
+
+      if (newQuantity < 0) {
+        return false;
+      }
+
+      // Update product quantity in the database
+      const productToUpdate = await Product.findById(productId);
+      const updatedProductQuantity =
+        count === "1"
+          ? productToUpdate.productQuantity - 1
+          : productToUpdate.productQuantity + 1;
+
+      if (updatedProductQuantity < 0) {
+        return false;
+      }
+
+      if (newQuantity === 0) {
+        // If new quantity is 0, remove product from cart
         await Cart.findOneAndUpdate(
           { user: userId },
           { $pull: { products: { productId: productId } } },
           { new: true }
         );
       } else {
-        cart.products.id(product._id).quantity += parseInt(count);
+        // Otherwise, update product quantity in cart and save cart
+        cart.products.id(product._id).quantity = newQuantity;
         await cart.save();
       }
+
+      // await Product.findByIdAndUpdate(productId, {
+      //   $set: { productQuantity: updatedProductQuantity },
+      // });
+
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  },
+
+  removeProductFromCart: async ({ cart, product }) => {
+    try {
+      const cartDoc = await Cart.findOne({ user: cart }); // Find the cart document
+      if (!cartDoc) {
+        throw new Error("Cart not found");
+      }
+      // Find the product document
+      const productDoc = await Product.findById(product);
+      console.log(productDoc);
+      if (!productDoc) {
+        throw new Error("Product not found");
+      }
+
+      // // Find the index of the product in the cart
+      const productIndex = cartDoc.products.findIndex(
+        (p) => p.productId.toString() === product
+      );
+      // console.log(productIndex);
+
+      if (productIndex === -1) {
+        throw new Error("Product not found in cart");
+      }
+      // // Get the quantity of the product in the cart
+      // const productQuantity = cartDoc.products[productIndex].quantity;
+      // console.log(productQuantity);
+      // // Update the product quantity in the product collection
+      // // Increment the product quantity by the quantity in the cart
+      // await Product.findByIdAndUpdate(product, {
+      //   $inc: { productQuantity: productQuantity },
+      // });
+
+      // // Remove the product from the cart
+      cartDoc.products.splice(productIndex, 1);
+      await cartDoc.save();
+      return;
     } catch (err) {
       console.error(err);
     }
   },
-  removeProdctFromCart: async ({ cart, product }) => {
-    try {
-      const updatedCart = await Cart.findOneAndUpdate(
-        { user: cart },
-        { $pull: { products: { productId: product } } },
-        { new: true }
-      );
-      if (!updatedCart) {
-        throw new Error("Cart not found");
-      }
 
-      console.log(`Product ${product} removed from cart ${cart}`);
-      return;
-    } catch (error) {
-      console.error(error.message);
-    }
-  },
   getCartCount: async (userId) => {
     try {
       const cartCount = await Cart.findOne({ user: userId });
@@ -457,11 +599,22 @@ export default {
       const orderedItems = await Promise.all(
         cartItems.map(async (item) => {
           const orderedItem = new OrderItem({
+            productName:item.product.productName,
             product_id: item.product._id,
             quantity: item.quantity,
             unit_price: item.totalPrice,
           });
-          return orderedItem.save();
+          await orderedItem.save();
+
+          // Update product quantity in product collection
+          const product = await Product.findById(item.product._id);
+          if (product) {
+            // Subtract ordered quantity from product quantity
+            product.productQuantity -= item.quantity;
+            await product.save();
+          }
+
+          return orderedItem;
         })
       );
 
@@ -604,7 +757,43 @@ export default {
       console.error(err);
     }
   },
-  searchQuery: async (query) => {
+
+  editPasswordUpdate: async (id, currentPassword, newPassword) => {
+    try {
+      // Find the user by id
+      const user = await User.findById(id);
+
+      if (!user) {
+        // User not found
+        return false;
+      }
+
+      // Decrypt the stored password and compare with the current password
+      const decryptedPassword = CryptoJS.AES.decrypt(
+        user.password,
+        process.env.Secret_PassPhrase
+      ).toString(CryptoJS.enc.Utf8);
+
+      if (decryptedPassword !== currentPassword) {
+        // Current password does not match
+        return false;
+      }
+
+      // Encrypt and update the new password
+      user.password = CryptoJS.AES.encrypt(
+        newPassword,
+        process.env.Secret_PassPhrase
+      ).toString();
+      await user.save();
+
+      return user; // Return the updated user object
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  },
+
+  searchQuery: async (query, userId) => {
     try {
       const products = await Product.find({
         $or: [
@@ -614,6 +803,16 @@ export default {
         ],
       }).populate("category");
       if (products.length > 0) {
+        const cart = await Cart?.findOne({ user: userId });
+
+        if (cart) {
+          for (const product of products) {
+            const isProductInCart = cart.products.some((prod) =>
+              prod.productId.equals(product._id)
+            );
+            product.isInCart = isProductInCart; // Add a boolean flag to indicate if the product is in the cart
+          }
+        }
         return products;
       }
       return null;

@@ -76,7 +76,7 @@
                 <div class="col-dropdown text-end">
                   <a href="/admin/edit-product/<%= product._id %>" class="btn btn-md rounded font-sm">Edit</a>
                   <% if (product.productStatus === 'Listed') { %>
-                    <a href="/admin/unlist-product/<%= product._id %>" class="btn btn-danger font-sm mt-2">Unlist</a>
+                    <a href="" class="btn btn-danger font-sm mt-2" onclick="unlistProduct('<%= product._id %>');event.preventDefault();">Unlist</a>
                   <% } %>
                 </div>
               </td>

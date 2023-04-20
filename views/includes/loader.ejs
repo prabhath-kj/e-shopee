@@ -1,0 +1,23 @@
+<section>
+  <div id="loader-wrapper">
+    <div id="loader"></div>
+    <p>Loading...</p>
+  </div>
+</section>
+
+<script>
+  const loader = new Spinner({
+    color: "#ff6b6b", // customize the color
+    lines: 12, // number of lines in the spinner
+    length: 6, // length of lines
+    width: 4, // width of lines
+    radius: 10, // radius of the spinner
+    speed: 1, // animation speed
+  }).spin(document.getElementById("loader")); // target the loader element
+  const isLoading = true; // Example flag indicating data is being loaded
+  if (isLoading) {
+    document.getElementById("loader-wrapper").style.display = "flex"; // Show the loader
+  } else {
+    document.getElementById("loader-wrapper").style.display = "none"; // Hide the loader
+  }
+</script>

@@ -90,15 +90,20 @@
                     <!-- End .rating-container -->
 
                     <!-- End .product-action -->
+                    <% if (product?.isInCart) { %>
+                    <a href="/cart" class="btn-product btn-cart" id="cart"
+                      ><span>view cart</span></a
+                    >
 
+                    <% }else{ %>
                     <a
                       href="#"
                       class="btn-product btn-cart"
                       id="cart"
-                      data-product-id="<%=product?._id %>"
-                      data-user-id="<%=user?._id %>"
+                      onclick="addToCart('<%=product?._id %>', '<%=user?._id %>'); return false;"
                       ><span>add to cart</span></a
                     >
+                    <%}%>
                   </div>
                   <!-- End .product-list-action -->
                 </div>
@@ -468,34 +473,39 @@
   <!-- End .page-content -->
 </main>
 <!-- End .main -->
+
 <script>
-  $(document).ready(function () {
-    const addToCartLink = $("#cart");
-
-    addToCartLink.click(function (event) {
-      event.preventDefault();
-
-      const user = addToCartLink.data("user-id");
-      if (user) {
-        const productId = addToCartLink.data("product-id");
-
-        $.get(`/add-to-cart/${productId}`)
-          .done(function (response) {
+  function addToCart(productId, userId) {
+    if (userId) {
+      $.get(`/add-to-cart/${productId}`)
+        .done(function (response) {
+          if (response.status) {
             Swal.fire({
               title: "Product added to cart!",
               icon: "success",
               confirmButtonText: "OK",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                location.reload();
+              }
             });
-          })
-          .fail(function (error) {
-            console.log(error);
+            return;
+          }
+          Swal.fire({
+            title: "Out of stock!",
+            icon: "success",
+            confirmButtonText: "OK",
           });
-      } else {
-        // User is not logged in, redirect to login page
-        window.location.href = "/login";
-        return;
-      }
-    });
-  });
+        })
+        .fail(function (error) {
+          console.log(error);
+        });
+    } else {
+      // User is not logged in, redirect to login page
+      window.location.href = "/login";
+      return;
+    }
+  }
 </script>
+
 <%- include('includes/footerpartial') -%>

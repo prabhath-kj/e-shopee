@@ -62,12 +62,6 @@ router.post("/change-product-quantity", userController.changeProductQuantity);
 //Cart Page
 router.get("/cart", isUser, userController.cartPage);
 
-//Edit profile
-// router.get("/edit-profile", (req, res) => {
-//   let user = req.session.user;
-//   res.render("editProfile", { user });
-// });
-
 //checkout
 router.get("/checkout", isUser, userController.checkOut);
 
@@ -101,6 +95,8 @@ router.put("/returnOrder", isUser, userController.returnOrder);
 
 router.get("/edit-profile", isUser, userController.profile);
 
+router.post("/edit-password",isUser,userController.editPassword)
+
 // All coupons
 
 router.get("/all-coupons", isUser, userController.getAllCoupons);
@@ -114,5 +110,13 @@ router.post("/verify-payment",isUser,userController.verifyPayment)
 
 router.get("/product-search",userController.search)
 
+//download invoice
 
+router.get('/download-invoice/:id',isUser,userController.downloadInvoice)
+
+router.get('/mail-invoice/:id',isUser,userController.mailInvoice)
+
+//wish list
+
+router.get('/wishlist',isUser,userController.wishlist)
 export default router;

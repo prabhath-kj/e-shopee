@@ -3,6 +3,7 @@ import Category from "../models/category.js";
 import Product from "../models/product.js";
 import { Order, Address, OrderItem } from "../models/order.js";
 import Coupon from "../models/coupon.js";
+import Banner from "../models/banner.js";
 import moment from "moment/moment.js";
 
 export default {
@@ -30,6 +31,70 @@ export default {
       }
     });
   },
+
+  findTotalRevenue: async () => {
+    try {
+      const result = await Order.aggregate([
+        {
+          $match: {
+            order_status: "Delivered", // Filter only delivered orders
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            totalRevenue: { $sum: "$total_amount" }, // Calculate the sum of total_amount field
+          },
+        },
+      ]);
+      return result[0].totalRevenue;
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  orderStatusData: async () => {
+    try {
+      const orderData = await Order.aggregate([
+        {
+          $group: {
+            _id: "$order_status",
+            count: { $sum: 1 },
+          },
+        },
+      ]);
+      const counts = {};
+      for (const order of orderData) {
+        counts[order._id] = order.count;
+      }
+
+      return counts;
+    } catch (err) {
+      console.log(err);
+    }
+  },
+
+  paymentStatitics: async () => {
+    try {
+      const paymentData = await Order.aggregate([
+        {
+          $group: {
+            _id: "$payment_method",
+            count: { $sum: 1 },
+          },
+        },
+      ]);
+      const counts = {};
+      for (const payment of paymentData) {
+        counts[payment._id] = payment.count;
+      }
+
+      return counts;
+    } catch (err) {
+      console.log(err);
+    }
+  },
+
   getAllUsers: (status) => {
     return new Promise(async (resolve, reject) => {
       if (status) {
@@ -58,6 +123,7 @@ export default {
   blockUser: async (userId) => {
     try {
       const user = await User.findById(userId);
+      console.log(user);
       user.status = false;
       await user.save();
       console.log(`User with ID ${userId} has been blocked`);
@@ -256,7 +322,7 @@ export default {
         .populate("items.product_id")
         .exec();
       if (order.length === 0) {
-        console.log("No orders found for user", userId);
+        console.log("No orders found for user");
       } else {
         return order;
       }
@@ -333,6 +399,20 @@ export default {
 
           // Save updated user object
           await user.save();
+
+          // Iterate over order items
+          const orderItems = order?.items;
+          await Promise.all(
+            orderItems.map(async (item) => {
+              const product = await Product.findById(item.product_id);
+              if (product) {
+                // Add returned quantity to product quantity
+                product.productQuantity += item.quantity;
+                await product.save();
+              }
+            })
+          );
+
           return order;
         } else {
           order = await Order.findOneAndUpdate(
@@ -398,6 +478,96 @@ export default {
         return coupon;
       });
       return couponsWithDaysRemaining;
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  addBanner: async (data) => {
+    try {
+      const newBanner = new Banner({
+        headline: data.headline,
+        image: data.Image,
+        category: data.Category,
+        additionalInfo: data.productDescription,
+      });
+      await newBanner.save();
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  getAllBanner: async () => {
+    try {
+      const banners = await Banner.find({}).populate("category");
+      return banners;
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  removeBanner: async (id) => {
+    try {
+      const banner = await Banner.findByIdAndUpdate(
+        id,
+        { status: false },
+        { new: true }
+      );
+      return banner;
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  listBanner: async (id) => {
+    try {
+      const banner = await Banner.findByIdAndUpdate(
+        id,
+        { status: true },
+        { new: true }
+      );
+      return banner;
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  getReportDetails: async () => {
+    try {
+      // Query the orders collection based on the order_date field
+      const query = { order_status: "Delivered" };
+      const orders = await Order.find(query).populate("address");
+      return orders;
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  getReport: async (startDate, endDate) => {
+    try {
+      const query = [
+        {
+          $match: {
+            order_status: "Delivered",
+          },
+        },
+        {
+          $match: {
+            $and: [
+              { order_date: { $gte: new Date(startDate) } },
+              { order_date: { $lte: new Date(endDate) } },
+            ],
+          },
+        },
+        {
+          $sort: {
+            date: -1,
+          },
+        },
+      ];
+
+      const orders = await Order.aggregate(query);
+
+      return orders;
     } catch (err) {
       console.error(err);
     }

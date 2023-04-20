@@ -3,7 +3,7 @@
       
       
       <div class="col-sm-6">
-        <script data-cfasync="false" src="../../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        <script>
           document.write(new Date().getFullYear())
           </script>
         ©, e shopee</div>
@@ -19,7 +19,6 @@
 <script src="../adminassets///js/vendors/select2.min.js"></script>
 <script src="../adminassets///js/vendors/perfect-scrollbar.js"></script>
 <script src="../adminassets///js/vendors/jquery.fullscreen.min.js"></script>
-<script src="../adminassets///js/vendors/chart.js"></script>
 <!-- Main Script -->
 <script src="../adminassets///js/main.js" type="text/javascript"></script>
 <script
@@ -28,38 +27,73 @@
 ></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js" integrity="sha384-GXRiS9OkY5BvVM5SY5Q5ih5K4TVanWquTE3qA4xtsknU6L9ibW6ySeITvAP5Q/7A" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsreport-browser-client-dist/2.10.0/jsreport.browser-client.min.js"></script>
 
-   
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
+
 <script>
-  function handleChange(event) {
-    const status = event.target.value;
-    const url = `/admin/view-user?status=${status}`;
-    window.location.href = url;
+  $(document).ready(function() {
+        $('#myTable').DataTable( {
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'print'
+            ]
+        } );
+    } );
+// Use the order data in your script
+ 
+
+  document.getElementById("filter").addEventListener("change", function() {
+  // Get the selected value from the select element
+  var selectedValue = document.getElementById("filter").value;
+  
+  // Use the selected value for further processing or submission
+  // For example, you can send it to a server using AJAX or perform other actions
+  console.log("Selected value: " + selectedValue);
+});
+
+// Function to crop image using Cropper.js
+// Function to crop images using Cropper.js
+function cropImages() {
+  // Get all input file elements with class 'image-input'
+  var inputElements = document.getElementsByClassName('image-input');
+  // Loop through all input file elements
+  for (var i = 0; i < inputElements.length; i++) {
+    var inputElement = inputElements[i];
+    // Create a FileReader object for the current input element
+    var reader = new FileReader();
+    // Set the onload event handler for the FileReader object
+    reader.onload = function(event) {
+      // Create an image element
+      var image = new Image();
+      // Set the onload event handler for the image element
+      image.onload = function() {
+        // Create a canvas element
+        var canvas = document.createElement('canvas');
+        // Set the canvas width and height to the cropped size
+        canvas.width = 300; // Set your desired width here
+        canvas.height = 300; // Set your desired height here
+        // Get the 2d drawing context of the canvas
+        var context = canvas.getContext('2d');
+        // Draw the cropped image on the canvas
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        // Get the data URL of the cropped image
+        var croppedImageDataUrl = canvas.toDataURL('image/jpeg');
+        // Set the data URL as the source of the cropped image container
+        var croppedImageContainer = document.getElementById('croppedImageContainer' + i);
+        croppedImageContainer.innerHTML = '<img src="' + croppedImageDataUrl + '" />';
+      };
+      // Set the source of the image element to the data URL of the input file
+      image.src = event.target.result;
+    };
+    // Read the input file as data URL
+    reader.readAsDataURL(inputElement.files[0]);
   }
-
-  $(document).ready(function () {
-    $("#myTable").DataTable();
-  });
-
-  function cropImage() {
-  // Get the Cropper instance for each input field
-  var cropper1 = $("#image1").cropper("getCropperData");
-  var cropper2 = $("#image2").cropper("getCropperData");
-  var cropper3 = $("#image3").cropper("getCropperData");
-  var cropper4 = $("#image4").cropper("getCropperData");
-
-  // Get the cropped image data for each input field as a base64-encoded JPEG image
-  var croppedImageDataURL1 = $("#image1").cropper("getCroppedCanvas").toDataURL("image/jpeg");
-  var croppedImageDataURL2 = $("#image2").cropper("getCroppedCanvas").toDataURL("image/jpeg");
-  var croppedImageDataURL3 = $("#image3").cropper("getCroppedCanvas").toDataURL("image/jpeg");
-  var croppedImageDataURL4 = $("#image4").cropper("getCroppedCanvas").toDataURL("image/jpeg");
-
-  // Update the input fields with the cropped image data
-  $("#image1").val(croppedImageDataURL1);
-  $("#image2").val(croppedImageDataURL2);
-  $("#image3").val(croppedImageDataURL3);
-  $("#image4").val(croppedImageDataURL4);
 }
 
 

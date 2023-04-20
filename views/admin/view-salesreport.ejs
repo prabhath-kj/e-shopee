@@ -2,8 +2,16 @@
 <section class="content-main">
   <div class="content-header">
     <div>
-      <h2 class="content-title card-title">Order Management.</h2>
-      <p>Manage Orders</p>
+      <h2 class="content-title card-title">Sales Report.</h2>
+      <p></p>
+    </div>
+    <div>
+      <a
+        href="#"
+        class="btn btn-primary"
+        onclick="createReport(); event.preventDefault();"
+        ><i class="text-muted material-icons md-post_add"></i>Create report</a
+      >
     </div>
   </div>
   <div class="card mb-4">
@@ -22,25 +30,33 @@
         </div> -->
       </div>
     </header>
+    <form method="POST" action="/admin/sales-report">
+      <label for="start-date">Start Date:</label>
+      <input type="date" id="start-date" name="startDate" />
+
+      <label for="end-date">End Date:</label>
+      <input type="date" id="end-date" name="endDate" />
+
+      <button class="btn btn-primary" type="submit">Filter</button>
+    </form>
     <div class="card-body">
       <div class="table-responsive">
         <table id="myTable" class="table table-hover display">
           <thead>
             <tr>
-              <th>#ID</th>
-              <th scope="col">Name</th>
+              <th>#Order Id</th>
+              <th scope="col">User Id</th>
               <th scope="col">Amount</th>
               <th scope="col">Payment Method</th>
               <th scope="col">Status</th>
               <th scope="col">Date</th>
-              <th scope="col" class="text-end">Action</th>
             </tr>
           </thead>
           <tbody>
             <% orders.forEach(function(order) { %>
             <tr>
               <td><%= order._id %></td>
-              <td><b><%= order.address.full_name %></b></td>
+              <td><b><%= order?.user_id %></b></td>
               <td>&#x20B9;<%= order.total_amount %></td>
               <td><%= order.payment_method %></td>
               <td>
@@ -72,13 +88,6 @@
                 <%= new Date(order.order_date).toLocaleDateString('en-GB', {
                 day: '2-digit', month: '2-digit', year: 'numeric', hour:
                 '2-digit', minute: '2-digit', }).replace(/\//g, '-') %>
-              </td>
-              <td class="text-end">
-                <a
-                  href="/admin/view-order/<%= order._id %>"
-                  class="btn btn-md rounded font-sm"
-                  >View Order</a
-                >
               </td>
             </tr>
             <% }); %>

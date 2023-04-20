@@ -57,7 +57,24 @@ router.post(
 
 router.get("/unlist-product/:id", isloggedInad, adminController.unlistProduct);
 
-router.get("/add-banner", isloggedInad, adminController.addBanner);
+//banner
+router
+  .route("/add-banner")
+  .get(isloggedInad, adminController.addBanner)
+  .post(
+    isloggedInad,
+    upload.single("productImage"),
+    adminController.addBannerPost
+  );
+
+//view banner
+router.get("/banner-list", isloggedInad, adminController.viewBanner);
+
+//remove banner
+router.get("/remove-banner/:id", isloggedInad, adminController.removeBanner);
+
+//list banner
+router.get("/list-banner/:id", isloggedInad, adminController.ListBanner);
 
 //order-management
 router.get("/order-management", isloggedInad, adminController.orderDetails);
@@ -75,8 +92,14 @@ router
   .get(isloggedInad, adminController.addCoupon)
   .post(isloggedInad, adminController.addCouponPost);
 
-router.post("/remove-coupon",isloggedInad,adminController.removeCoupon)
+router.post("/remove-coupon", isloggedInad, adminController.removeCoupon);
 
 router.get("/view-coupon", isloggedInad, adminController.viewCoupon);
+
+//sales report
+
+router.get("/sales-report",isloggedInad, adminController.viewReport)
+
+router.post("/sales-report",isloggedInad, adminController.viewReportByDate);
 
 export default router;

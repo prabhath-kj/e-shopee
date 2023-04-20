@@ -16,6 +16,10 @@ const bannerSchema = new mongoose.Schema({
   additionalInfo: {
     type: String,
   },
+  status: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const Banner = mongoose.model("Banner", bannerSchema);

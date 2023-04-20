@@ -1,5 +1,4 @@
 <%- include('includes/header') -%> <%- include('includes/user-header') -%>
-
 <section>
   <main class="main">
     <div
@@ -7,7 +6,7 @@
       style="background-image: url('assets/images/page-header-bg.jpg')"
     >
       <div class="container">
-        <h1 class="page-title">Ordered Products.</h1>
+        <h1 class="page-title">Ordered Products</h1>
       </div>
     </div>
     <nav aria-label="breadcrumb" class="breadcrumb-nav">
@@ -20,7 +19,26 @@
         </ol>
       </div>
     </nav>
-
+    <% if (order?.order_status == "Delivered" || order?.order_status ==
+    "Returned") { %>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 text-right mb-1">
+          <a
+            href=""
+            class="btn btn-primary"
+            onclick="mail('<%=order._id %>');event.preventDefault();"
+            >Mail Invoice</a
+          >
+        </div>
+        <div class="col-md-12 text-right">
+          <a href="/download-invoice/<%=order._id %>" class="btn btn-primary"
+            >Download Invoice</a
+          >
+        </div>
+      </div>
+    </div>
+    <% } %>
     <div class="page-content">
       <div class="container">
         <div class="table-responsive">
@@ -30,6 +48,7 @@
                 <th>Product</th>
                 <th>Price</th>
                 <th>Quantity</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -57,7 +76,32 @@
       </div>
     </div>
   </main>
-  <!-- End .main -->
 </section>
-
+<script>
+  function mail(orderId) {
+    // Make a GET request to the server endpoint with the orderId as a parameter
+    $.ajax({
+      url: `/mail-invoice/${orderId}`,
+      method: "GET",
+      success: function (response) {
+        if (response.status) {
+          Swal.fire({
+            title: `Sended Check Mail`,
+            icon: "success",
+            timer: 4000,
+          }).then((response) => {
+            if (response.isConfirmed) {
+              location.reload();
+            }
+          });
+        } else {
+          window.location.href("/orders");
+        }
+      },
+      error: function (xhr, status, error) {
+        window.location.href("/orders");
+      },
+    });
+  }
+</script>
 <%- include('includes/footerpartial') -%>

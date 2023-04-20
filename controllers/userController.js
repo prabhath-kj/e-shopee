@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 import adminHelper from "../helpers/adminHelper.js";
 import instance from "../config/paymentGateway.js";
 import CryptoJS from "crypto-js";
+import { generateInvoice, generateSalesReport } from "../config/pdfKit.js";
+import { sendInvoiceByEmail } from "../config/nodeMailer.js";
 
 dotenv.config();
 
@@ -42,7 +44,10 @@ export default {
     try {
       let user = req.session.user;
       const categoryId = req.query.category;
-      const products = await userHelper.getAllProductsForList(categoryId);
+      const products = await userHelper.getAllProductsForList(
+        categoryId,
+        user?._id
+      );
       if (user) {
         res.render("productList", { user, products });
       }
@@ -371,7 +376,10 @@ export default {
   productView: async (req, res) => {
     let user = req.session?.user;
     try {
-      var products = await userHelper.getProductDetails(req.params.id);
+      var products = await userHelper.getProductDetails(
+        req.params.id,
+        user?._id
+      );
 
       res.render("product-view", { user, products });
     } catch (err) {
@@ -404,11 +412,21 @@ export default {
   },
   addToCart: async (req, res) => {
     try {
-      await userHelper.addToCart(req.params.id, req.session.user._id);
-      res.json({
-        status: "success",
-        message: "product added to cart",
-      });
+      const response = await userHelper.addToCart(
+        req.params.id,
+        req.session.user._id
+      );
+      if (response) {
+        res.json({
+          status: "success",
+          message: "product added to cart",
+        });
+      } else {
+        res.json({
+          error: "error",
+          message: "product added to cart",
+        });
+      }
     } catch (err) {
       console.error(err);
       res.render("catchError", {
@@ -420,7 +438,15 @@ export default {
   changeProductQuantity: async (req, res) => {
     try {
       const [userId, productId, count] = req.body.product;
-      await userHelper.updateQuantity(userId, productId, count);
+      const response = await userHelper.updateQuantity(
+        userId,
+        productId,
+        count
+      );
+      if (response === false) {
+        res.json({ error: "success" });
+        return;
+      }
       res.json({ status: "success" });
     } catch (err) {
       console.error(err);
@@ -430,8 +456,7 @@ export default {
 
   removeProdctFromCart: async (req, res) => {
     try {
-      console.log(req.body);
-      await userHelper.removeProdctFromCart(req.body);
+      await userHelper.removeProductFromCart(req.body);
       res.json({
         status: "success",
         message: "product added to cart",
@@ -448,7 +473,11 @@ export default {
     try {
       let user = req.session.user;
       console.log(user);
-      const items = await userHelper.getCartProducts(req.session.user._id);
+      const items = await userHelper.getCheckoutProducts(req.session.user._id);
+      if (!items) {
+        res.json({ items });
+      }
+
       const address = await userHelper.getDefaultAddress(req.session.user._id);
       const { cartItems: products, subtotal } = items;
       res.render("checkout", { user, products, subtotal, address });
@@ -596,8 +625,14 @@ export default {
   viewOrder: async (req, res) => {
     try {
       const currentOrder = await adminHelper.getSpecificOrder(req.params.id);
-      const { productDetails } = currentOrder;
-      res.render("view-order", { user: req.session.user, productDetails });
+      const { productDetails, order } = currentOrder;
+      console.log(order);
+
+      res.render("view-order", {
+        user: req.session.user,
+        productDetails,
+        order,
+      });
     } catch (err) {
       res.render("catchError", {
         message: err.message,
@@ -661,7 +696,7 @@ export default {
 
   profile: async (req, res) => {
     try {
-      throw new Error();
+      res.render("editProfile", { user: req.session.user });
     } catch (err) {
       console.error(err);
       res.render("catchError", {
@@ -670,6 +705,28 @@ export default {
       });
     }
   },
+
+  editPassword: async (req, res) => {
+    try {
+      const { id, currentPassword, newPassword } = req.body;
+      const response = await userHelper.editPasswordUpdate(
+        id,
+        currentPassword,
+        newPassword
+      );
+      if (response) {
+        res.json({ status: "success" });
+      }
+      res.json({ error: "success" });
+    } catch (err) {
+      console.error(err);
+      res.render("catchError", {
+        message: err?.message,
+        user: req.session.user,
+      });
+    }
+  },
+
   verifyPayment: async (req, res) => {
     try {
       const { payment, order } = req.body;
@@ -708,10 +765,78 @@ export default {
   search: async (req, res) => {
     try {
       const search = req.query.search;
-      const products = await userHelper.searchQuery(search);
+      const products = await userHelper.searchQuery(
+        search,
+        req.session.user?._id
+      );
+      console.log(products);
       res.render("productList", { user: req.session.user, products });
     } catch (err) {
       console.error(err);
+      res.render("catchError", {
+        message: err?.message,
+        user: req.session.user,
+      });
+    }
+  },
+
+  downloadInvoice: async (req, res) => {
+    try {
+      const order_id = req.params.id;
+      console.log(order_id);
+      // Generate the PDF invoice
+      const order = await adminHelper.getSpecificOrder(order_id);
+
+      const { order: invoiceData, productDetails } = order;
+      console.log(invoiceData);
+      const invoicePath = await generateInvoice(invoiceData, productDetails);
+
+      // Download the generated PDF
+      res.download(invoicePath, (err) => {
+        if (err) {
+          console.error("Failed to download invoice:", err);
+          res.render("catchError", {
+            message: err.message,
+            user: req.session.user,
+          });
+        }
+      });
+    } catch (error) {
+      console.error("Failed to download invoice:", error);
+      res.render("catchError", {
+        message: err?.message,
+        user: req.session.user,
+      });
+    }
+  },
+
+  mailInvoice: async (req, res) => {
+    try {
+      const order_id = req.params.id;
+      console.log(order_id);
+      // Generate the PDF invoice
+      const order = await adminHelper.getSpecificOrder(order_id);
+
+      const { order: invoiceData, productDetails } = order;
+      console.log(invoiceData);
+      const invoicePath = await generateInvoice(invoiceData, productDetails);
+      await sendInvoiceByEmail(invoicePath, "view.prabhath.kj@gmail.com");
+      // Download the generated PDF
+      res.json({ status: "success" });
+    } catch (error) {
+      console.error("Failed to download invoice:", error);
+      res.render("catchError", {
+        message: err?.message,
+        user: req.session.user,
+      });
+    }
+  },
+
+  wishlist: async (req, res) => {
+    try {
+      res.render("wishlist", { user: req.session.user });
+    } catch (err) {
+      console.error(TypeError);
       res.render("catchError", {
         message: err?.message,
         user: req.session.user,

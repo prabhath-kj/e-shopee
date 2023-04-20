@@ -10,9 +10,21 @@ $(document).ready(function () {
 
       $.get(`/add-to-cart/${productId}`)
         .done(function (response) {
+          if (response.status) {
+            Swal.fire({
+              title: "Product added to cart!",
+              icon: "success",
+              confirmButtonText: "OK",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                location.reload();
+              }
+            });
+            return;
+          }
           Swal.fire({
-            title: "Product added to cart!",
-            icon: "success",
+            title: "Out of stock!",
+            icon: "error",
             confirmButtonText: "OK",
           });
         })
@@ -98,7 +110,20 @@ function changeQuantity() {
         product: arguments,
       },
       success: (response) => {
-        location.reload();
+        if (response.status) {
+          location.reload();
+        } else {
+          Swal.fire({
+            title: "Out of stock!",
+            icon: "error",
+            confirmButtonText: "OK",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              location.reload();
+            }
+          });
+          return;
+        }
       },
     });
   }
@@ -113,12 +138,16 @@ function cancelOrder() {
     confirmButtonColor: "#3cc75c",
     cancelButtonColor: "#d33",
     confirmButtonText: "Yes, Cancel The Order!",
+    input: "text", // Add a text input field for cancel reason
+    inputPlaceholder: "Enter cancel reason", // Placeholder for the input field
   }).then((result) => {
     if (result.isConfirmed) {
+      const cancelReason = result.value; // Get the value entered in the input field
       $.ajax({
         url: "/cancelOrder",
         data: {
           arguments,
+          cancelReason: cancelReason, // Pass the cancel reason as data in the Ajax request
         },
         method: "post",
         success: (response) => {
@@ -219,3 +248,27 @@ function applyCoupon(total) {
 $(document).ready(function () {
   $("#myTable").DataTable();
 });
+
+function checkOut() {
+  $.ajax({
+    url: "/checkout",
+    method: "get",
+    success: (response) => {
+      if (response.items === false) {
+        // Cart products are out of stock
+        swal.fire(
+          "Out of Stock",
+          "Some products in your cart are out of stock",
+          "error"
+        );
+      } else {
+        // Cart products have stock, redirect to checkout page
+        window.location.href = "/checkout";
+      }
+    },
+    error: (error) => {
+      console.error(error);
+      // Handle error if needed
+    },
+  });
+}

@@ -7,9 +7,7 @@
         <h2 class="content-title card-title">Users List.</h2>
         <p>User Management.</p>
       </div>
-      <div>
-       
-      </div>
+      <div></div>
     </div>
     <div class="card mb-4">
       <header class="card-header">
@@ -62,10 +60,12 @@
                 </td>
                 <td class="text-end">
                   <a
-                    href="/admin/block-user/<%= user._id %>"
+                    href=""
                     class="btn btn-md rounded font-sm"
+                    onclick="BlockUser('<%= user._id %>'); event.preventDefault();"
                     >Block</a
                   >
+
                   <%#--
                   <div class="dropdown">
                     <a
@@ -91,8 +91,8 @@
                 </td>
                 <td class="text-end">
                   <a
-                    href="/admin/unblock-user/<%= user._id %>"
-                    class="btn btn-md rounded font-sm"
+                  onclick="unBlockUser('<%= user._id %>'); event.preventDefault();"
+                  class="btn btn-md rounded font-sm"
                     >Unblock</a
                   >
                   <%#--

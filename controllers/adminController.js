@@ -1,17 +1,41 @@
 import adminHelper from "../helpers/adminHelper.js";
 import convert from "color-convert";
 import cloudinary from "../config/cloudinary.js";
+import { generateInvoice, generateSalesReport } from "../config/pdfKit.js";
 
 export default {
   adminPage: (req, res) => {
-    res.render("admin/layout");
+    let admin = req.admin;
+  if(admin){
+    res.redirect("/admin/dashboard");
+  }
+  else{
+    res.redirect("/admin");
+
+  }
   },
 
-  dashboard: (req, res) => {
+  dashboard: async (req, res) => {
     let admin = req.admin;
 
     if (admin) {
-      res.render("admin/dashboard");
+      const totalRevenue = await adminHelper.findTotalRevenue();
+      const orders = await adminHelper.getOrderDetails();
+      const orderCount = orders.length;
+      const products = await adminHelper.getAllProducts();
+      const productsCount = products.length;
+      const users = await adminHelper.getAllUsers();
+      const usersCount = users.length;
+      const orderData = await adminHelper.orderStatusData();
+      const paymentStatitics = await adminHelper.paymentStatitics();
+      res.render("admin/dashboard", {
+        totalRevenue,
+        orderCount,
+        productsCount,
+        usersCount,
+        orderData,
+        paymentStatitics,
+      });
     } else {
       res.redirect("admin/login");
     }
@@ -79,9 +103,10 @@ export default {
   blockUser: async (req, res) => {
     if (req.admin) {
       let userId = req.params.id;
+      console.log(userId);
       try {
         await adminHelper.blockUser(userId);
-        res.redirect("/admin/view-user");
+        res.json({ status: "success" });
       } catch (error) {
         console.error(error);
       }
@@ -299,6 +324,51 @@ export default {
     }
   },
 
+  addBannerPost: async (req, res) => {
+    try {
+      const { path } = req.file;
+      const result = await cloudinary.uploader.upload(path);
+
+      const bannerData = req.body;
+
+      if (result) {
+        const Image = result.secure_url;
+        bannerData.Image = Image;
+      }
+      await adminHelper.addBanner(bannerData);
+      res.redirect("/admin/banner-list");
+    } catch (err) {
+      console.error(err);
+      req.session.productUploadError = true;
+
+      res.redirect("/admin/edit-product");
+    }
+  },
+  viewBanner: async (req, res) => {
+    try {
+      const banners = await adminHelper.getAllBanner();
+      res.render("admin/banner-list", { banners });
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  removeBanner: async (req, res) => {
+    try {
+      await adminHelper.removeBanner(req.params.id);
+      res.json({ status: "success" });
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  ListBanner: async (req, res) => {
+    try {
+      await adminHelper.listBanner(req.params.id);
+      res.json({ status: "success" });
+    } catch (err) {
+      console.error(err);
+    }
+  },
   unlistProduct: async (req, res) => {
     try {
       await adminHelper.unlistProduct(req.params.id);
@@ -335,8 +405,6 @@ export default {
   },
   updateOrderStatus: async (req, res) => {
     try {
-     
-
       const valid = await adminHelper.updateOrderStatus(
         req.body.orderId,
         req.body.status
@@ -382,6 +450,28 @@ export default {
     try {
       const coupons = await adminHelper.getCoupons();
       res.render("admin/view-coupons", { coupons });
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  viewReport: async (req, res) => {
+    try {
+      const orders = await adminHelper.getReportDetails();
+
+      res.render("admin/view-salesreport", { orders });
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  viewReportByDate: async (req, res) => {
+    try {
+      const { startDate, endDate } = req.body;
+      console.log(req.body);
+      const orders = await adminHelper.getReport(startDate, endDate);
+
+      res.render("admin/view-salesreport", { orders });
     } catch (err) {
       console.error(err);
     }

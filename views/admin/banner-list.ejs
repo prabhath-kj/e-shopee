@@ -1,0 +1,66 @@
+<%- include('../adincludes/header') %>
+<section class="content-main">
+  <div class="content-header">
+    <div>
+      <h2 class="content-title card-title">Banner List.</h2>
+      <p>View Banners, Edit and Delete</p>
+    </div>
+    <div>
+      <a href="/admin/add-banner" class="btn btn-primary btn-sm rounded">Add</a>
+    </div>
+  </div>
+  <div class="card mb-4">
+    <div class="card-body">
+      <table id="myTable" class="table table-bordered table-hover">
+        <thead>
+          <tr>
+            <th>Banner Image</th>
+            <th>Headline</th>
+            <th>Additional Info</th>
+            <th>Category</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% banners.forEach(element => { %>
+          <tr>
+            <td>
+              <img
+                src="<%= element.image %>"
+                class="img-sm"
+                alt="banner Image"
+                style="width: 5rem; height: auto"
+              />
+            </td>
+            <td><%= element.headline %></td>
+            <td><%= element.additionalInfo %></td>
+            <td><%= element.category?.CategoryName %></td>
+            <td>
+              <% if (element.status) { %>
+              <button
+                class="btn btn-danger font-sm mt-2"
+                type="button"
+                onclick="removeBanner('<%= element._id %>')"
+              >
+                Remove
+              </button>
+              <% }else{ %>
+
+              <button
+                class="btn btn-primary btn-md rounded font-sm"
+                type="button"
+                onclick="addBanner('<%= element._id %>')"
+              >
+                Add
+              </button>
+              <%}%>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<%- include('../adincludes/footer') %>
