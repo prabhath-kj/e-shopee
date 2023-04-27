@@ -1,9 +1,13 @@
 import mongoose from "mongoose";
-
+import slugify from "slugify";
 const productSchema = new mongoose.Schema({
   productName: {
     type: String,
     required: true,
+    unique: true,
+  },
+  slug: {
+    type: String,
     unique: true,
   },
   productModel: {
@@ -53,7 +57,17 @@ const productSchema = new mongoose.Schema({
     type: String,
   },
 });
+productSchema.pre("save", function (next) {
+  const product = this;
 
+  if (!product.isModified("productName")) {
+    return next();
+  }
+
+  const slug = slugify(product.productName, { lower: true });
+  product.slug = slug;
+  next();
+});
 const product = mongoose.model("Product", productSchema);
 
 export default product;

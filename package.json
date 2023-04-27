@@ -28,6 +28,7 @@
     "nodemailer": "^6.9.1",
     "pdfkit": "^0.13.0",
     "razorpay": "^2.8.6",
+    "slugify": "^1.6.6",
     "twilio": "^4.8.0"
   },
   "devDependencies": {

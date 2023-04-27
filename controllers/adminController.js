@@ -6,13 +6,11 @@ import { generateInvoice, generateSalesReport } from "../config/pdfKit.js";
 export default {
   adminPage: (req, res) => {
     let admin = req.admin;
-  if(admin){
-    res.redirect("/admin/dashboard");
-  }
-  else{
-    res.redirect("/admin");
-
-  }
+    if (admin) {
+      res.redirect("/admin/dashboard");
+    } else {
+      res.redirect("/admin/login");
+    }
   },
 
   dashboard: async (req, res) => {
@@ -56,11 +54,6 @@ export default {
         req.session.loggedInad = true;
 
         req.session.admin = response.validAdmin;
-        // if (req.body.Remember) {
-        //   req.session.cookie.maxAge = 600000;
-        // } else {
-        //   req.session.cookie.maxAge = 60000;
-        // }
 
         res.redirect("/admin/dashboard");
       } else {
@@ -88,16 +81,17 @@ export default {
 
   logOut: (req, res) => {
     // Destroy the session
-    // req.session.loggedInad = false;
-    // res.redirect("/admin");
+    req.session.loggedInad = false;
+    req.session.admin =false
+    res.redirect("/admin");
 
-    req.session.destroy((err) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.redirect("/admin");
-      }
-    });
+    // req.session.destroy((err) => {
+    //   if (err) {
+    //     console.log(err);
+    //   } else {
+    //     res.redirect("/admin");
+    //   }
+    // });
   },
 
   blockUser: async (req, res) => {

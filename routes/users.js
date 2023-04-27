@@ -45,7 +45,7 @@ router.get("/logout", userController.logOut);
 router.get("/productsList", userController.listProductCategory);
 
 //Product View Page
-router.get("/product-view/:id", userController.productView);
+router.get("/product-view/:slug", userController.productView);
 
 //add To Cart
 router.get("/add-to-cart/:id", isUser, userController.addToCart);
@@ -82,7 +82,6 @@ router.get("/order-success", isUser, userController.orderSuccess);
 
 router.get("/order-failed", isUser, userController.orderFailed);
 
-
 router.get("/orders", isUser, userController.getOrderDetails);
 
 router.get("/view-order-products/:id", isUser, userController.viewOrder);
@@ -95,7 +94,7 @@ router.put("/returnOrder", isUser, userController.returnOrder);
 
 router.get("/edit-profile", isUser, userController.profile);
 
-router.post("/edit-password",isUser,userController.editPassword)
+router.post("/edit-password", isUser, userController.editPassword);
 
 // All coupons
 
@@ -103,20 +102,44 @@ router.get("/all-coupons", isUser, userController.getAllCoupons);
 
 router.post("/apply-coupon", isUser, userController.applyCoupon);
 
-router.post("/verify-payment",isUser,userController.verifyPayment)
-
+router.post("/verify-payment", isUser, userController.verifyPayment);
 
 //search
 
-router.get("/product-search",userController.search)
+router.get("/product-search", userController.search);
 
 //download invoice
 
-router.get('/download-invoice/:id',isUser,userController.downloadInvoice)
+router.get("/download-invoice/:id", isUser, userController.downloadInvoice);
 
-router.get('/mail-invoice/:id',isUser,userController.mailInvoice)
+router.get("/mail-invoice/:id", isUser, userController.mailInvoice);
 
 //wish list
 
-router.get('/wishlist',isUser,userController.wishlist)
+router.post("/wishlist/add/", isUser, userController.addToWishList);
+
+router.get("/wishlist", isUser, userController.wishlist);
+
+router.put(
+  "/add-to-cartFromWishL/:id",
+  isUser,
+  userController.addToCartFromWish
+);
+
+router.delete(
+  "/remove-product-from-wishList",
+  isUser,
+  userController.removeProdctFromWishLIst
+);
+
+// code to retrieve cart count for currently authenticated user
+router.get("/cart/count", isUser, userController.getCartCount);
+
+// Example code to retrieve wishlist count for currently authenticated user
+router.get("/wishlist/count", isUser, userController.getWishCount);
+
+router.get("/data", userController.filterProducts);
+
+router.post("/editprofile", isUser, userController.updateProfile);
+
 export default router;

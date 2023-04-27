@@ -109,27 +109,21 @@
               <span class="text">Products</span>
             </a>
             <div class="submenu">
-              <a href="/admin/products">Products List</a>
+              <a href="/admin/products">Products</a>
               <a href="/admin/add-products">Add Products</a>
             </div>
           </li>
-          <li class="menu-item has-submenu">
-            <a class="menu-link" href="#">
+      
+          <li class="menu-item">
+            <a class="menu-link" href="/admin/view-user">
               <i class="icon material-icons md-person"></i>
               <span class="text">Users</span>
             </a>
-            <div class="submenu">
-              <a href="/admin/view-user">Users List</a>
-              <%#-- <a href="page-products-grid.html">Product grid</a>
-              <a href="page-products-grid-2.html">Product grid 2</a>
-              <a href="page-categories.html">Categories</a> --%>
-            </div>
           </li>
-
           <li class="menu-item">
             <a class="menu-link" href="/admin/category">
               <i class="icon material-icons md-store"></i>
-              <span class="text">Category Management</span>
+              <span class="text">Category</span>
             </a>
           </li>
           <li class="menu-item has-submenu">
@@ -137,17 +131,17 @@
                 <span class="text">Coupon</span> </a>
             </a>
             <div class="submenu">
-                <a href="/admin/view-coupon">Coupon List</a>
+                <a href="/admin/view-coupon">Coupons</a>
                 <a href="/admin/add-coupon">Add Coupon</a>
             </div>
         </li>
           <li class="menu-item has-submenu">
             <a class="menu-link" href="/admin/banner">
               <i class="icon material-icons md-shopping_bag"></i>
-              <span class="text">Banner Management</span>
+              <span class="text">Banner</span>
             </a>
             <div class="submenu">
-              <a href="/admin/banner-list">Banners List</a>
+              <a href="/admin/banner-list">Banners</a>
               <a href="/admin/add-banner">Add Banners</a>
             </div>
           </li>
@@ -155,7 +149,7 @@
           <li class="menu-item">
             <a class="menu-link" href="/admin/order-management">
               <i class="icon material-icons md-shopping_cart"></i>
-              <span class="text">Order Management</span>
+              <span class="text">Orders</span>
             </a>
           </li>
           
@@ -175,9 +169,9 @@
     </aside>
     <main class="main-wrap">
       <header class="main-header navbar">
-        <div class="col-search">
+       <div class="col-search">
           <form class="searchform">
-            <div class="input-group">
+           <%#  <div class="input-group">
               <input
                 list="search_terms"
                 type="text"
@@ -186,7 +180,7 @@
               />
               <button class="btn btn-light bg" type="button">
                 <i class="material-icons md-search"></i>
-              </button>
+              </button>%>
             </div>
             <datalist id="search_terms">
               <option value="Products"></option>
@@ -234,23 +228,6 @@
                 class="dropdown-menu dropdown-menu-end"
                 aria-labelledby="dropdownAccount"
               >
-                <a class="dropdown-item" href="#"
-                  ><i class="material-icons md-perm_identity"></i>Edit
-                  Profile</a
-                >
-                <a class="dropdown-item" href="#"
-                  ><i class="material-icons md-settings"></i>Account Settings</a
-                >
-                <a class="dropdown-item" href="#"
-                  ><i class="material-icons md-account_balance_wallet"></i
-                  >Wallet</a
-                >
-                <a class="dropdown-item" href="/admin/orders"
-                  ><i class="material-icons md-receipt"></i>Orders</a
-                >
-                <a class="dropdown-item" href="#"
-                  ><i class="material-icons md-help_outline"></i>Help center</a
-                >
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item text-danger" href="/admin/logout"
                   ><i class="material-icons md-exit_to_app"></i>Logout</a

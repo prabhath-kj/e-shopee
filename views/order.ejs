@@ -67,7 +67,11 @@
                       <span class="badge rounded-pill bg-danger">
                         <%= order.order_status %>
                       </span>
-                    <% }  else if (order.order_status === "Returned" && (
+                    <% }  else if (order.order_status === "Payment Pending") { %>
+                      <span class="badge rounded-pill bg-danger">
+                        Payment Failed
+                      </span>
+                    <% } else if (order.order_status === "Returned" && (
                       order.return_status === "pending"|| order.return_status ===
                       "approved"|| order.return_status === "rejected")) { %>
                       <span class="badge rounded-pill bg-warning">

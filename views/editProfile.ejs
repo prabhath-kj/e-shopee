@@ -34,7 +34,7 @@
                   role="tabpanel"
                   aria-labelledby="tab-account-link"
                 >
-                  <form action="" method="post">
+                  <form action="" method="post" id="edit-profile-form">
                     <div class="row">
                       <div class="col-sm-6">
                         <div class="form-group">
@@ -118,6 +118,7 @@
                         type="phone-number"
                         class="form-control"
                         id="phone-number"
+                        name="updateMobNumber"
                         value="<%=user.mobnumber%>"
                         <div
                         class="col-md-6"
@@ -125,7 +126,11 @@
                     </div>
                     <!-- End .col-md-6 -->
 
-                    <button type="submit" class="btn btn-outline-primary-2">
+                    <button
+                      type="submit"
+                      class="btn btn-outline-primary-2"
+                      id="save-changes-btn"
+                    >
                       <span>SAVE CHANGES</span>
                       <i class="icon-long-arrow-right"></i>
                     </button>
@@ -134,17 +139,6 @@
                       class="errorLabel text-danger"
                       for="registerPassword"
                     ></label>
-                    <!-- {{#if pwdErr}}
-                    <label class="errorLabel text-danger"
-                      >Enter Correct Password</label
-                    >
-                    {{/if}}
-
-                    {{#if updated}}
-                    <label class="errorLabel text-success"
-                      >Updated Successfully!</label
-                    >
-                    {{/if}} -->
                   </form>
                 </div>
                 <!-- End .tab-pane -->
@@ -197,6 +191,48 @@
 </section>
 <!-- End .section -->
 <script>
+  $(document).ready(function () {
+    // Handle button click
+    $("#save-changes-btn").click(function (event) {
+      // Prevent the form from submitting normally
+      event.preventDefault();
+
+      // Get form data
+      var formData = $("#edit-profile-form").serialize();
+
+      // Perform AJAX call
+      $.ajax({
+        url: "/editprofile",
+        type: "POST",
+        data: formData,
+        success: function (response) {
+          // Handle successful response
+          if (response.status === "success") {
+            Swal.fire({
+              title: "Success!",
+              text: "Your profile has been updated.",
+              icon: "success",
+              showConfirmButton: false,
+              timer: 2000, // time in milliseconds
+            });
+          } else {
+            Swal.fire({
+              title: "Success!",
+              text: "Your profile has been not updated.",
+              type: "error",
+              showConfirmButton: false,
+              timer: 2000, // time in milliseconds
+            });
+          }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          // Handle error response
+          console.log(textStatus + ": " + errorThrown);
+        },
+      });
+    });
+  });
+
   function changePassword(id) {
     Swal.fire({
       title: "Change Password",

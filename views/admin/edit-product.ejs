@@ -112,25 +112,33 @@
                 type="file"
                 name="productImage"
                 accept="image/jpeg,image/png"
+                onchange="previewImage(event)"
               />
+              <img class="preview" style="width: 300px; height: inherit" />
               <input
                 class="form-control"
                 type="file"
                 name="productImage"
                 accept="image/jpeg,image/png"
+                onchange="previewImage(event)"
               />
+              <img class="preview" style="width: 300px; height: inherit" />
               <input
                 class="form-control"
                 type="file"
                 name="productImage"
                 accept="image/jpeg,image/png"
+                onchange="previewImage(event)"
               />
+              <img class="preview" style="width: 300px; height: inherit" />
               <input
                 class="form-control"
                 type="file"
                 name="productImage"
                 accept="image/jpeg,image/png"
+                onchange="previewImage(event)"
               />
+              <img class="preview" style="width: 300px; height: inherit" />
             </div>
           </div>
         </div>
@@ -190,9 +198,6 @@
         </div>
         <!-- card end// -->
         <div>
-          <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">
-            Save to draft
-          </button>
           <button class="btn btn-md rounded font-sm hover-up">Publish</button
           ><br />
 
@@ -206,5 +211,21 @@
     </form>
   </div>
 </section>
+<script>
+  function previewImage(event) {
+    var input = event.target;
 
+    var preview = input.nextElementSibling;
+
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+
+      reader.onload = function () {
+        preview.src = reader.result;
+      };
+
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>
 <%- include('../adincludes/footer') %>

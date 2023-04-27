@@ -285,7 +285,7 @@ export default {
 
           productPrice: productData.productPrice,
 
-          productDescription: productData.productDescription,
+          productDescription: productData.productDescription.trim(),
 
           productQuantity: productData.productQuantity,
 
@@ -572,4 +572,5 @@ export default {
       console.error(err);
     }
   },
+ 
 };

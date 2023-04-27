@@ -56,46 +56,10 @@
   // For example, you can send it to a server using AJAX or perform other actions
   console.log("Selected value: " + selectedValue);
 });
-
-// Function to crop image using Cropper.js
-// Function to crop images using Cropper.js
-function cropImages() {
-  // Get all input file elements with class 'image-input'
-  var inputElements = document.getElementsByClassName('image-input');
-  // Loop through all input file elements
-  for (var i = 0; i < inputElements.length; i++) {
-    var inputElement = inputElements[i];
-    // Create a FileReader object for the current input element
-    var reader = new FileReader();
-    // Set the onload event handler for the FileReader object
-    reader.onload = function(event) {
-      // Create an image element
-      var image = new Image();
-      // Set the onload event handler for the image element
-      image.onload = function() {
-        // Create a canvas element
-        var canvas = document.createElement('canvas');
-        // Set the canvas width and height to the cropped size
-        canvas.width = 300; // Set your desired width here
-        canvas.height = 300; // Set your desired height here
-        // Get the 2d drawing context of the canvas
-        var context = canvas.getContext('2d');
-        // Draw the cropped image on the canvas
-        context.drawImage(image, 0, 0, canvas.width, canvas.height);
-        // Get the data URL of the cropped image
-        var croppedImageDataUrl = canvas.toDataURL('image/jpeg');
-        // Set the data URL as the source of the cropped image container
-        var croppedImageContainer = document.getElementById('croppedImageContainer' + i);
-        croppedImageContainer.innerHTML = '<img src="' + croppedImageDataUrl + '" />';
-      };
-      // Set the source of the image element to the data URL of the input file
-      image.src = event.target.result;
-    };
-    // Read the input file as data URL
-    reader.readAsDataURL(inputElement.files[0]);
+function handleChange(event) {
+    const selectedValue = event.target.value;
+    window.location.href = "admin/view-user?status=" + selectedValue;
   }
-}
-
 
  
 

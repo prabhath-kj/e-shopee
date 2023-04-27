@@ -8,16 +8,28 @@ import Cart from "../models/cart.js";
 import { Order, Address, OrderItem } from "../models/order.js";
 import Coupon from "../models/coupon.js";
 import moment from "moment";
+import Wishlist from "../models/wishlist.js";
 import { log } from "console";
+import mongoose from "mongoose";
+import Banner from "../models/banner.js";
 
 export default {
   doSignUp: (body) => {
     return new Promise(async (resolve, reject) => {
       try {
         var oldUser = await User.findOne({ email: body.registerEmail });
+        var mobileUser = await User.findOne({
+          mobnumber: body.registerMobileno,
+        }); // New query to check if mobile number already exists
+
         if (oldUser) {
           // If an existing user is found, return an object with status=true
           resolve({ status: true });
+          return;
+        } else if (mobileUser) {
+          // If an existing user is found with the provided mobile number, return an object with status=true
+          resolve({ status: true });
+          return;
         } else {
           // Otherwise, create a new user, save it to the database, and return an object with status=false and the saved user object
           const newUser = new User({
@@ -149,6 +161,15 @@ export default {
       console.error(err);
     }
   },
+  getListedBanner: async () => {
+    try {
+      const banners = await Banner.find({ status: true }, { image: 1, _id: 0 });
+      return banners;
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
   getAllProducts: async (userId) => {
     try {
       const products = await Product.find({
@@ -165,11 +186,15 @@ export default {
       console.error(err);
     }
   },
-  getAllProductsForList: async (categoryId, userId) => {
+  getAllProductsForList: async (categoryId, sort, userId) => {
     try {
-      const productsQuery = Product.find({ category: categoryId }).populate(
-        "category"
-      );
+      let sortOption = { productPrice: -1 };
+      if (sort == "price-asc") {
+        sortOption = { productPrice: 1 };
+      }
+      const productsQuery = Product.find({ category: categoryId })
+        .populate("category")
+        .sort(sortOption);
 
       const products = await productsQuery.exec();
 
@@ -190,9 +215,9 @@ export default {
     }
   },
 
-  getProductDetails: async (proId, userId) => {
+  getProductDetails: async (slug, userId) => {
     try {
-      const product = await Product.findById(proId);
+      const product = await Product.findOne({ slug: slug });
 
       if (!product) {
         throw new Error("Product not found"); // Handle case where product does not exist
@@ -200,7 +225,7 @@ export default {
 
       const cart = await Cart.findOne({
         user: userId,
-        "products.productId": proId,
+        "products.productId": product._id,
       });
 
       if (cart) {
@@ -295,7 +320,6 @@ export default {
       cartItems.forEach((item) => {
         subtotal += item.product.productPrice * item.quantity;
       });
-      console.log(isAllProductsInStock);
       if (!isAllProductsInStock) {
         return false;
       }
@@ -331,6 +355,33 @@ export default {
     // await Product.findByIdAndUpdate(productId, {
     //   $inc: { productQuantity: -1 },
     // });
+    return true;
+  },
+  addToCartFromWish: async (productId, userId) => {
+    // Find product
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      throw new Error("Product not found");
+    }
+
+    const quantity = product.productQuantity;
+
+    if (quantity <= 0) {
+      return false;
+    }
+
+    await Cart.updateOne(
+      { user: userId },
+      { $push: { products: { productId, quantity: 1 } } },
+      { upsert: true }
+    ).then(() => {
+      return Wishlist.findOneAndUpdate(
+        { userId: userId },
+        { $pull: { items: { productId: productId } } },
+        { new: true }
+      );
+    });
     return true;
   },
 
@@ -407,18 +458,22 @@ export default {
       if (productIndex === -1) {
         throw new Error("Product not found in cart");
       }
-      // // Get the quantity of the product in the cart
-      // const productQuantity = cartDoc.products[productIndex].quantity;
-      // console.log(productQuantity);
-      // // Update the product quantity in the product collection
-      // // Increment the product quantity by the quantity in the cart
-      // await Product.findByIdAndUpdate(product, {
-      //   $inc: { productQuantity: productQuantity },
-      // });
-
-      // // Remove the product from the cart
+      // Remove the product from the cart
       cartDoc.products.splice(productIndex, 1);
       await cartDoc.save();
+      return;
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  removeProdctFromWishLIst: async (userId, productId) => {
+    try {
+      const response = await Wishlist.findOneAndUpdate(
+        { userId: userId },
+        { $pull: { items: { productId: productId } } },
+        { new: true }
+      );
+
       return;
     } catch (err) {
       console.error(err);
@@ -429,6 +484,19 @@ export default {
     try {
       const cartCount = await Cart.findOne({ user: userId });
       const productCount = cartCount?.products.length;
+      if (!productCount) return 0;
+
+      return productCount;
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  countWish: async (userId) => {
+    try {
+      const wishCount = await Wishlist.findOne({ userId: userId });
+      const productCount = wishCount?.items.length;
+      if (!productCount) return 0;
       return productCount;
     } catch (err) {
       console.error(err);
@@ -513,20 +581,40 @@ export default {
     address
   ) => {
     try {
-      let id = address.addressId;
-      //updating address
-      const isAddressExist = await Address.findById(id);
+      let id = address?.addressId;
 
-      if (isAddressExist) {
-        isAddressExist.full_name = address.name;
-        isAddressExist.street_name = address.Streetaddress;
-        isAddressExist.apartment_number = address.appartments;
-        isAddressExist.city = address.city;
-        isAddressExist.state = address.state;
-        isAddressExist.postal_code = address.postalcode;
-        isAddressExist.mobile_Number = address.mobileNumber;
+      if (id) {
+        const isAddressExist = await Address.findById(id);
 
-        await isAddressExist.save();
+        if (isAddressExist) {
+          isAddressExist.full_name = address.name;
+          isAddressExist.street_name = address.Streetaddress;
+          isAddressExist.apartment_number = address.appartments;
+          isAddressExist.city = address.city;
+          isAddressExist.state = address.state;
+          isAddressExist.postal_code = address.postalcode;
+          isAddressExist.mobile_Number = address.mobileNumber;
+
+          await isAddressExist.save();
+        }
+      }
+      //create new  address
+      else {
+        const newAddress = new Address({
+          user_id: userId,
+          full_name: address.name,
+          street_name: address.Streetaddress,
+          apartment_number: address.appartments,
+          city: address.city,
+          state: address.state,
+          postal_code: address.postalcode,
+          mobile_Number: address.mobileNumber,
+          default_address: true,
+        });
+
+        const response = await newAddress.save();
+
+        id = response._id;
       }
 
       const cart = await Cart.findOne({ user: userId }).populate(
@@ -566,6 +654,7 @@ export default {
           await coupon.save();
         }
       }
+
       // Create a new order
 
       let status = "";
@@ -582,8 +671,36 @@ export default {
         } else {
           status = "Payment Pending";
         }
-      } else {
+      } else if (PaymentMethod == "online_payment") {
         status = "Payment Pending";
+        const newOrder = new Order({
+          user_id: userId,
+          total_amount: subtotal,
+          address: id,
+          payment_method: PaymentMethod,
+          payment_status: paymentStatus,
+          order_status: status,
+          items: [],
+        });
+
+        const orderedItems = await Promise.all(
+          cartItems.map(async (item) => {
+            const orderedItem = new OrderItem({
+              productName: item.product.productName,
+              product_id: item.product._id,
+              quantity: item.quantity,
+              unit_price: item.totalPrice,
+            });
+            await orderedItem.save();
+            return orderedItem;
+          })
+        );
+
+        newOrder.items = newOrder.items.concat(orderedItems);
+
+        // Save the new order to the database
+        const savedOrder = await newOrder.save();
+        return savedOrder;
       }
 
       const newOrder = new Order({
@@ -599,7 +716,7 @@ export default {
       const orderedItems = await Promise.all(
         cartItems.map(async (item) => {
           const orderedItem = new OrderItem({
-            productName:item.product.productName,
+            productName: item.product.productName,
             product_id: item.product._id,
             quantity: item.quantity,
             unit_price: item.totalPrice,
@@ -631,8 +748,20 @@ export default {
     }
   },
 
-  changeOnlinePaymentStatus: async (orderId) => {
+  changeOnlinePaymentStatus: async (orderId, userId) => {
     try {
+      const order = await Order.findById(orderId);
+      const orderItems = order?.items;
+      await Promise.all(
+        orderItems.map(async (item) => {
+          const product = await Product.findById(item.product_id);
+          if (product) {
+            // Add returned quantity to product quantity
+            product.productQuantity -= item.quantity;
+            await product.save();
+          }
+        })
+      );
       await Order.findByIdAndUpdate(
         orderId,
         {
@@ -643,6 +772,7 @@ export default {
           new: true,
         }
       );
+      await Cart.deleteMany({ user: userId });
     } catch (err) {
       console.error(err);
     }
@@ -816,6 +946,113 @@ export default {
         return products;
       }
       return null;
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  sortQuery: async (sort, userId) => {
+    try {
+      let sortOption = { productPrice: -1 }; // Default sort by productPrice in ascending order
+
+      if (sort === "price-desc") {
+        sortOption = { productPrice: 1 }; // Sort by productPrice in descending order
+      }
+
+      const products = await Product.find({})
+        .populate("category")
+        .sort(sortOption);
+      if (products.length > 0) {
+        const cart = await Cart?.findOne({ user: userId });
+
+        if (cart) {
+          for (const product of products) {
+            const isProductInCart = cart.products.some((prod) =>
+              prod.productId.equals(product._id)
+            );
+            product.isInCart = isProductInCart; // Add a boolean flag to indicate if the product is in the cart
+          }
+        }
+        return products;
+      }
+      return null;
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  addToWishListUpdate: async (userId, productId) => {
+    try {
+      const wishlistDoc = await Wishlist.findOne({ userId: userId });
+      if (!wishlistDoc) {
+        // If wishlist doesn't exist for user, create a new one
+        const newWishlist = new Wishlist({
+          userId: userId,
+          items: [
+            {
+              productId: productId,
+              addedAt: new Date(),
+            },
+          ],
+        });
+        await newWishlist.save();
+      } else {
+        // Check if the product is already present in the wishlist
+        const productIndex = wishlistDoc.items.findIndex(
+          (item) => item.productId.toString() === productId
+        );
+
+        if (productIndex !== -1) {
+          // If the product is already present, remove it and return 'removed' status
+          await Wishlist.findOneAndUpdate(
+            { userId: userId },
+            { $pull: { items: { productId: productId } } },
+            { new: true }
+          );
+          return "removed";
+        }
+
+        // If the product is not already present, add it to the wishlist
+        wishlistDoc.items.push({
+          productId: productId,
+          addedAt: new Date(),
+        });
+        await wishlistDoc.save();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  showWishlist: async (userId) => {
+    try {
+      const wishlistDoc = await Wishlist.findOne({ userId: userId }).populate({
+        path: "items.productId",
+        select:
+          "productName productModel productPrice productQuantity productImage _id",
+        populate: {
+          path: "category",
+          select: "categoryName _id",
+        },
+      });
+      if (!wishlistDoc) {
+        // If wishlist doesn't exist for user, return an empty array
+        return [];
+      } else {
+        // If wishlist exists, return the items array with product details
+        return wishlistDoc.items;
+      }
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
+  },
+  updataUserProfile: async (user_id, Name, gender, Email, Number) => {
+    try {
+      const user = await User.findByIdAndUpdate(user_id, {
+        username: Name,
+        mobnumber: Number,
+        email: Email,
+      });
+      return user;
     } catch (err) {
       console.error(err);
     }

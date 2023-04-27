@@ -6,115 +6,98 @@
       <h2 class="content-title card-title">Categories.</h2>
       <p>Add, edit or delete a category</p>
     </div>
+    <div class="d-grid">
+      <button
+        class="btn btn-primary"
+        onclick="editCategory();
+        event.preventDefault()"
+      >
+        Create category
+      </button>
+    </div>
   </div>
-  <div class="card">
-    <div class="card-body">
-      <div class="row">
-        <div class="col-md-3">
-          <form action="/admin/add-category" method="post">
-            <div class="mb-4">
-              <label for="product_name" class="form-label">Category</label>
-              <input
-                type="text"
-                placeholder="Type here"
-                class="form-control"
-                id="product_name"
-                name="CategoryName"
-              />
-            </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table id="myTable" class="table table-hover display">
+        <thead>
+          <tr>
+            <th>Category</th>
 
-            <div class="d-grid">
-              <button class="btn btn-primary">Create category</button>
-            </div>
-          </form>
-        </div>
-        <div class="col-md-9">
-          <div class="table-responsive">
-            <table id="myTable" class="table table-hover display">
-              <thead>
-                <tr>
-                  <th>Category</th>
+            <th class="text-end">Action</th>
+            <th class="text-end">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% viewCategory.forEach(function(category) { %>
+          <tr>
+            <td>
+              <b><%= category.CategoryName %></b>
+            </td>
 
-                  <th class="text-end">Action</th>
-                  <th class="text-end">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% viewCategory.forEach(function(category) { %>
-                <tr>
-                  <td>
-                    <b><%= category.CategoryName %></b>
-                  </td>
+            <td class="text-end">
+              <div class="dropdown">
+                <a
+                  href="#"
+                  data-bs-toggle="dropdown"
+                  class="btn btn-light rounded btn-sm font-sm"
+                >
+                  <i class="material-icons md-more_horiz"></i>
+                </a>
+                <div class="dropdown-menu">
+                  <%# <a class="dropdown-item" href="#">View detail</a>%>
+                  <button
+                    class="dropdown-item"
+                    style="color: darkgreen"
+                    href=""
+                    onclick="Category('<%= category._id %>')"
+                    event.preventDefault()
+                  >
+                    Edit info
+                  </button>
+                  <% if(category.isListed){%>
+                  <button
+                    class="dropdown-item text-danger"
+                    href=""
+                    onclick="unListCategory('<%= category._id %>')"
+                    event.preventDefault()
+                  >
+                    Unlist
+                  </button>
+                  <%} else {%>
+                  <button
+                    class="dropdown-item text-danger"
+                    href=""
+                    onclick="ListCategory('<%= category._id %>')"
+                    event.preventDefault()
+                  >
+                    List
+                  </button>
+                  <%}%> <% if(category.isListed){%>
 
                   <td class="text-end">
-                    <div class="dropdown">
-                      <a
-                        href="#"
-                        data-bs-toggle="dropdown"
-                        class="btn btn-light rounded btn-sm font-sm"
-                      >
-                        <i class="material-icons md-more_horiz"></i>
-                      </a>
-                      <div class="dropdown-menu">
-                        <%# <a class="dropdown-item" href="#">View detail</a>%>
-                        <button
-                          class="dropdown-item"
-                          style="color: darkgreen"
-                          href=""
-                          onclick="editCategory('<%= category._id %>')"
-                          event.preventDefault()
-                        >
-                          Edit info
-                        </button>
-                        <% if(category.isListed){%>
-                        <button
-                          class="dropdown-item text-danger"
-                          href=""
-                          onclick="unListCategory('<%= category._id %>')"
-                          event.preventDefault()
-                        >
-                          Unlist
-                        </button>
-                        <%} else {%>
-                        <button
-                          class="dropdown-item text-danger"
-                          href=""
-                          onclick="ListCategory('<%= category._id %>')"
-                          event.preventDefault()
-                        >
-                          List
-                        </button>
-                        <%}%> <% if(category.isListed){%>
-
-                        <td class="text-end">
-                          <b style="color: green">Active</b>
-                        </td>
-                        <%} else {%>
-
-                        <td class="text-end">
-                          <b style="color: red">Not active</b>
-                        </td>
-                        <%}%>
-                      </div>
-                    </div>
-                    <!-- dropdown //end -->
+                    <b style="color: green">Active</b>
                   </td>
-                </tr>
-                <%})%>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <!-- .col// -->
-      </div>
-      <!-- .row // -->
+                  <%} else {%>
+
+                  <td class="text-end">
+                    <b style="color: red">Not active</b>
+                  </td>
+                  <%}%>
+                </div>
+              </div>
+              <!-- dropdown //end -->
+            </td>
+          </tr>
+          <%})%>
+        </tbody>
+      </table>
     </div>
-    <!-- card body .// -->
+    <!-- .col// -->
   </div>
   <!-- card .// -->
 </section>
 <script>
-  function editCategory(id) {
+  function Category(id) {
     Swal.fire({
       title: "Edit Category",
       input: "text",
@@ -129,6 +112,33 @@
           url: `/admin/edit-category/${id}`,
           method: "post",
           data: { category: newCategory },
+          success: (response) => {
+            location.reload();
+            console.log("Category edited successfully");
+          },
+          error: (error) => {
+            console.log(`Error: ${error}`);
+          },
+        });
+      }
+    });
+  }
+
+  function editCategory() {
+    Swal.fire({
+      title: "New Category",
+      input: "text",
+      inputValue: "",
+      showCancelButton: true,
+      confirmButtonText: "Save",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const newCategory = result.value;
+        $.ajax({
+          url: `/admin/add-category`,
+          method: "post",
+          data: { CategoryName: newCategory },
           success: (response) => {
             location.reload();
             console.log("Category edited successfully");

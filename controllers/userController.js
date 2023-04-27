@@ -7,7 +7,6 @@ import instance from "../config/paymentGateway.js";
 import CryptoJS from "crypto-js";
 import { generateInvoice, generateSalesReport } from "../config/pdfKit.js";
 import { sendInvoiceByEmail } from "../config/nodeMailer.js";
-
 dotenv.config();
 
 export default {
@@ -18,18 +17,21 @@ export default {
       const allProductWithCategory = await userHelper.getAllProducts();
       const products = allProductWithCategory.products;
       const categories = allProductWithCategory.categories;
+      const banners = await userHelper.getListedBanner();
       if (user) {
-        user.count = await userHelper.getCartCount(user._id);
+        // user.count =
         res.render("layout", {
           user,
           products,
           categories,
+          banners,
         });
       } else {
         res.render("layout", {
           user,
           products,
           categories,
+          banners,
         });
       }
     } catch (err) {
@@ -43,11 +45,13 @@ export default {
   listProductCategory: async (req, res) => {
     try {
       let user = req.session.user;
-      const categoryId = req.query.category;
+      const { category: categoryId, sort } = req.query;
       const products = await userHelper.getAllProductsForList(
         categoryId,
+        sort,
         user?._id
       );
+      console.log(products);
       if (user) {
         res.render("productList", { user, products });
       }
@@ -71,10 +75,11 @@ export default {
   },
   signUpPost: (req, res) => {
     userHelper.doSignUp(req.body).then((userData) => {
+      console.log(userData);
       let user = userData;
-      let token = user.newToken.token;
-      console.log(token);
       if (!user.status) {
+        let token = user.newToken.token;
+
         const url = `${process.env.BASE_URL}users/${user.user._id}/verify/${token}`;
         sendMail(user.user.email, "Verify Email", url);
         res.status(201);
@@ -375,11 +380,10 @@ export default {
   },
   productView: async (req, res) => {
     let user = req.session?.user;
+    const slug = req.params.slug;
+
     try {
-      var products = await userHelper.getProductDetails(
-        req.params.id,
-        user?._id
-      );
+      var products = await userHelper.getProductDetails(slug, user?._id);
 
       res.render("product-view", { user, products });
     } catch (err) {
@@ -469,6 +473,104 @@ export default {
     }
   },
 
+  removeProdctFromWishLIst: async (req, res) => {
+    try {
+      await userHelper.removeProdctFromWishLIst(
+        req.session.user._id,
+        req.body.product
+      );
+      res.json({
+        status: "success",
+        message: "product added to cart",
+      });
+    } catch (err) {
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
+    }
+  },
+  addToWishList: async (req, res) => {
+    try {
+      const response = await userHelper.addToWishListUpdate(
+        req.session.user._id,
+        req.body.product_id
+      );
+      if (!response) {
+        res.json({ error: true });
+        return;
+      } else if (response === "removed") {
+        res.json({ removeSuccess: true });
+        return;
+      }
+      res.json({ success: true });
+    } catch (err) {
+      res.render("catchError", {
+        message: err?.message,
+        user: req.session.user,
+      });
+    }
+  },
+
+  wishlist: async (req, res) => {
+    try {
+      const showList = await userHelper.showWishlist(req.session.user._id);
+      console.log(showList);
+      res.render("wishlist", { user: req.session.user, showList });
+    } catch (err) {
+      console.error(err);
+      res.render("catchError", {
+        message: err?.message,
+        user: req.session.user,
+      });
+    }
+  },
+  addToCartFromWish: async (req, res) => {
+    try {
+      const response = await userHelper.addToCartFromWish(
+        req.params.id,
+        req.session.user._id
+      );
+      if (response) {
+        res.json({
+          status: "success",
+          message: "product added to cart",
+        });
+      } else {
+        res.json({
+          error: "error",
+          message: "product not added to cart",
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
+    }
+  },
+
+  getCartCount: async (req, res) => {
+    try {
+      let user = req.session.user; // retrieve currently authenticated user
+      let count = await userHelper.getCartCount(user._id); // count items in cart for user
+      res.json({ count: count });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Internal server error");
+    }
+  },
+  getWishCount: async (req, res) => {
+    try {
+      let user = req.session.user; // retrieve currently authenticated user
+      let count = await userHelper.countWish(user._id); // count items in wishlist for user
+      res.json({ count: count });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Internal server error");
+    }
+  },
   checkOut: async (req, res) => {
     try {
       let user = req.session.user;
@@ -476,6 +578,7 @@ export default {
       const items = await userHelper.getCheckoutProducts(req.session.user._id);
       if (!items) {
         res.json({ items });
+        return;
       }
 
       const address = await userHelper.getDefaultAddress(req.session.user._id);
@@ -491,7 +594,6 @@ export default {
 
   placeOrderPost: async (req, res) => {
     try {
-      console.log(req.body);
       const { userId, paymentMethod, totalAmount, couponCode } = req.body;
 
       const response = await userHelper.placeOrder(
@@ -513,7 +615,6 @@ export default {
         };
 
         const order = await instance.orders.create(paymentOptions);
-        console.log(order);
         res.json(order);
       } else if (response.payment_method == "wallet") {
         res.json({ codstatus: "success" });
@@ -747,7 +848,10 @@ export default {
 
       // Compare the generated signature with the received signature
       if (razorpaySignature === generatedSignature) {
-        await userHelper.changeOnlinePaymentStatus(order.receipt);
+        await userHelper.changeOnlinePaymentStatus(
+          order.receipt,
+          req.session.user._id
+        );
         res.json({ status: "success" });
       } else {
         res.json({ error: "error" });
@@ -772,7 +876,6 @@ export default {
       console.log(products);
       res.render("productList", { user: req.session.user, products });
     } catch (err) {
-      console.error(err);
       res.render("catchError", {
         message: err?.message,
         user: req.session.user,
@@ -812,6 +915,7 @@ export default {
 
   mailInvoice: async (req, res) => {
     try {
+      const email = req.session.user.email;
       const order_id = req.params.id;
       console.log(order_id);
       // Generate the PDF invoice
@@ -820,11 +924,11 @@ export default {
       const { order: invoiceData, productDetails } = order;
       console.log(invoiceData);
       const invoicePath = await generateInvoice(invoiceData, productDetails);
-      await sendInvoiceByEmail(invoicePath, "view.prabhath.kj@gmail.com");
+      await sendInvoiceByEmail(invoicePath, email);
       // Download the generated PDF
       res.json({ status: "success" });
-    } catch (error) {
-      console.error("Failed to download invoice:", error);
+    } catch (err) {
+      console.error("Failed to download invoice:", err);
       res.render("catchError", {
         message: err?.message,
         user: req.session.user,
@@ -832,11 +936,36 @@ export default {
     }
   },
 
-  wishlist: async (req, res) => {
+  filterProducts: async (req, res) => {
     try {
-      res.render("wishlist", { user: req.session.user });
+      const { sort } = req.query;
+      console.log(sort);
+      const products = await userHelper.sortQuery(sort, req.session.user?._id);
+      res.render("productList", { user: req.session.user, products });
     } catch (err) {
-      console.error(TypeError);
+      res.render("catchError", {
+        message: err?.message,
+        user: req.session.user,
+      });
+    }
+  },
+
+  updateProfile: async (req, res) => {
+    try {
+      const { updateName, gender, updateEmail, updateMobNumber } = req.body;
+      const response = await userHelper.updataUserProfile(
+        req.session.user._id,
+        updateName,
+        gender,
+        updateEmail,
+        updateMobNumber
+      );
+      if (!response) {
+        res.json({ error: "error" });
+        return;
+      }
+      res.json({ status: "success" });
+    } catch (err) {
       res.render("catchError", {
         message: err?.message,
         user: req.session.user,

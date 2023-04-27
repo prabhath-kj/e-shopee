@@ -7,7 +7,7 @@ dotenv.config();
 export const generateInvoice = async (invoiceData, productDetails) => {
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument();
-    const invoicePath = path.join("invoices", "invoice.pdf"); // Path to save the generated PDF
+    const invoicePath = path.join("config/invoices", "invoice.pdf"); // Path to save the generated PDF
 
     // Pipe PDF document to a writable stream
     doc.pipe(fs.createWriteStream(invoicePath));

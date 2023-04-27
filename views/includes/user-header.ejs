@@ -11,9 +11,13 @@
                 <i class="icon-bars"></i>
               </button>
 
-              <a href="/" class="logo">
+              <!-- <a href="/" class="logo">
                 <p class="text-primary" style="font-size: 4rem;" alt="e sopee Logo" >e shopee</p>
+            </a> -->
+            <a href="/" class="logo">
+              <img src="assets/images/e shopee logo.png" alt="Molla Logo" width="190rem" height="5rem">
             </a>
+            
             </div>
             <!-- End .header-left -->
 
@@ -24,7 +28,7 @@
                 <a href="#" class="search-toggle" role="button"
                   ><i class="icon-search"></i
                 ></a>
-                <form action="/product-search/?search" method="get">
+                <form action="/product-search/?search"  method="get" onsubmit="return validateForm()">
                   <div class="header-search-wrapper search-wrapper-wide">
                     <label for="q" class="sr-only">Search</label>
                     <input type="search" class="form-control" name="search" id="product-search"
@@ -85,15 +89,15 @@
                 </div><!-- End .cart-dropdown -->
                 
 
-              <div class="wishlist">
-                <a href="/wishlist" title="Wishlist">
-                  <div class="icon">
-                    <i class="icon-heart-o"></i>
-                    <span class="wishlist-count badge">3</span>
-                </div>
-                  <p>Wishlist</p>
-                </a>
-              </div>
+                <div class="wishlist">
+                  <a href="/wishlist" title="Wishlist">
+                      <div class="icon">
+                          <i class="icon-heart-o"></i>
+                          <span class="wishlist-count badge bg-danger"></span>
+                      </div>
+                      <p>Wishlist</p>
+                  </a>
+              </div><!-- End .compare-dropdow
               <!-- End .compare-dropdown -->
 
               <div class="dropdown cart-dropdown">
@@ -108,7 +112,7 @@
                 >
                   <div class="icon">
                     <i class="icon-shopping-cart"></i>
-                    <span class="cart-count"><%=user.count%></span>
+                    <span id="cart-badge" class="cart-count"></span>
                   </div>
                   <p>Cart</p>
                 </a>
@@ -224,11 +228,11 @@
                   <nav class="side-nav">
                     <ul class="menu-vertical sf-arrows">
                       <li class="item-lead">
-                        <a href="#">What's New In e shopee</a>
+                        <a href="/">What's New In e shopee</a>
                       </li>
-                      <li><a href="#">Whole-Home Wi-Fi</a></li>
-                      <li><a href="#">Routers</a></li>
-                      <li><a href="#">Modems/ Gateways </a></li>
+                      <li><a href="productsList?category=6428824e2ea79d75e5cd7eda">Whole-Home Wi-Fi</a></li>
+                      <li><a href="productsList?category=642882622ea79d75e5cd7ede">Routers</a></li>
+                      <li><a href="productsList?category=642882772ea79d75e5cd7ee2">Modems/ Gateways </a></li>
                     </ul>
                     <!-- End .menu-vertical -->
                   </nav>

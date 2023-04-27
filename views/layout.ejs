@@ -5,62 +5,40 @@
   
     <main class="main">
       <div class="intro-slider-container mb-5">
-        <div
-          class="intro-slider owl-carousel owl-theme owl-nav-inside owl-light"
-          data-toggle="owl"
-          data-owl-options='{
-                          "dots": true,
-                          "nav": false, 
-                          "responsive": {
-                              "1200": {
-                                  "nav": true,
-                                  "dots": false
-                              }
-                          }
-                      }'
-        >
-          <div
-            class="intro-slide"
-            style="
-              background-image: url(assets/images/demos/demo-4/slider/slide-1.jpg);
-            "
-          >
-          
-            <div class="container intro-content">
-              <div class="row justify-content-end">
-                <div class="col-auto col-sm-7 col-md-6 col-lg-5"></div>
-                <!-- End .col-lg-11 offset-lg-1 -->
+        <div class="intro-slider owl-carousel owl-theme owl-nav-inside owl-light"
+             data-toggle="owl"
+             data-owl-options='{
+               "dots": true,
+               "nav": false,
+               "responsive": {
+                 "1200": {
+                   "nav": true,
+                   "dots": false
+                 }
+               }
+             }'>
+      
+          <% banners.forEach(function(banner) { %>
+            <div class="intro-slide" style="background-image: url('<%= banner.image%>');">
+              <div class="container intro-content">
+                <div class="row justify-content-end">
+                  <div class="col-auto col-sm-7 col-md-6 col-lg-5"></div>
+                  <!-- End .col-lg-11 offset-lg-1 -->
+                </div>
+                <!-- End .row -->
               </div>
-              <!-- End .row -->
+              <!-- End .intro-content -->
             </div>
-            <!-- End .intro-content -->
-          </div>
-          <!-- End .intro-slide -->
-  
-          <div
-            class="intro-slide"
-            style="
-              background-image: url(assets/images/demos/demo-4/slider/slide-2.jpg);
-            "
-          >
-            <div class="container intro-content">
-              <div class="row justify-content-end">
-                <div class="col-auto col-sm-7 col-md-6 col-lg-5"></div>
-                <!-- End .col-md-6 offset-md-6 -->
-              </div>
-              <!-- End .row -->
-            </div>
-            <!-- End .intro-content -->
-          </div>
-          <!-- End .intro-slide -->
+            <!-- End .intro-slide -->
+          <% }); %>
+      
         </div>
         <!-- End .intro-slider owl-carousel owl-simple -->
-  
-        <span class="slider-loader"></span
-        ><!-- End .slider-loader -->
+      
+        <span class="slider-loader"></span><!-- End .slider-loader -->
       </div>
       <!-- End .intro-slider-container -->
-  
+      
       <div class="mb-4"></div>
       <!-- End .mb-4 -->
   
@@ -124,7 +102,7 @@
                 <div class="product product-2 ">
                   <figure class="product-media ">
                     <!-- <span class="product-label label-circle label-top">Top</span> -->
-                    <a href="/product-view/<%=product._id%>">
+                    <a href="/product-view/<%=product?.slug%>">
                       <img
                         src="<%= product.productImage[0] %>"
                         alt="Product image"
@@ -137,16 +115,17 @@
                         href="#"
                         class="btn-product-icon btn-wishlist"
                         title="Add to wishlist"
+                        onclick="AddToWishList('<%=product._id%>','<%=user?._id%>');event.preventDefault();"
                       ></a>
                     </div>
                     <!-- End .product-action -->
         
-                    <div class="product-action">
+                    <!-- <div class="product-action">
                       <a href="#" class="btn-product btn-cart" title="Add to cart"
                         ><span>add to cart</span></a
                       >
                       
-                    </div>
+                    </div> -->
                     <!-- End .product-action -->
                   </figure>
                   <!-- End .product-media -->
@@ -212,7 +191,7 @@
               </div>
               <!-- End .text-center -->
   
-              <form action="#">
+              <form>
                 <div class="input-group input-group-round">
                   <input
                     type="email"
@@ -222,13 +201,12 @@
                     required
                   />
                   <div class="input-group-append">
-                    <button class="btn btn-primary" type="submit">
-                      <span>Subscribe</span><i class="icon-long-arrow-right"></i>
+                    <button class="btn btn-primary" type="submit" onclick="handleSubscription(event)">
+                      <span>Subscribe</span>
+                      <i class="icon-long-arrow-right"></i>
                     </button>
                   </div>
-                  <!-- .End .input-group-append -->
                 </div>
-                <!-- .End .input-group -->
               </form>
             </div>
             <!-- End .col-sm-10 col-md-8 col-lg-6 -->
@@ -239,68 +217,69 @@
       </div>
       <!-- End .cta -->
       <div class="footer-middle">
-        <div class="container">
-          <div class="row">
-            <div class="col-sm-6 col-lg-3">
-              <div class="widget widget-about"></div>
-              <!-- End .widget about-widget -->
-            </div>
-            <!-- End .col-sm-6 col-lg-3 -->
-  
-            <div class="col-sm-6 col-lg-3">
-              <div class="widget">
-                <h4 class="widget-title">Useful Links</h4>
-                <!-- End .widget-title -->
-  
-                <ul class="widget-list">
-                  <li><a href="about.html">About </a></li>
-                  <li><a href="#">Our Services</a></li>
-                  <li><a href="#">How to shop </a></li>
-                  <li><a href="faq.html">FAQ</a></li>
-                  <li><a href="contact.html">Contact us</a></li>
-                </ul>
-                <!-- End .widget-list -->
+            <div class="container">
+              <div class="row">
+                <div class="col-sm-6 col-md-3 col-lg-3">
+                  <div class="widget widget-about"></div>
+                  <!-- End .widget about-widget -->
+                </div>
+                <!-- End .col-sm-6 col-md-4 col-lg-3 -->
+            
+                <div class=" col-sm-6 col-md-3 col-lg-3">
+                  <div class="widget">
+                    <h4 class="widget-title">Useful Links</h4>
+                    <!-- End .widget-title -->
+            
+                    <ul class="widget-list">
+                      <li><a href="/login">Sign In</a></li>
+                      <li><a href="/cart">View Cart</a></li>
+                      <li><a href="/wishlist">My Wishlist</a></li>
+                      <li><a href="/orders">Track My Order</a></li>
+                    </ul>
+                    <!-- End .widget-list -->
+                  </div>
+                  <!-- End .widget -->
+                </div>
+                <!-- End .col-sm-6 col-md-4 col-lg-3 -->
+            
+                <div class=" col-sm-6 col-md-3 col-lg-3">
+                  <div class="widget">
+                    <h4 class="widget-title">Customer Service</h4>
+                    <!-- End .widget-title -->
+            
+                    <ul class="widget-list">
+                      <li><a href="/login">Sign In</a></li>
+                      <li><a href="/cart">View Cart</a></li>
+                      <li><a href="/wishlist">My Wishlist</a></li>
+                      <li><a href="/orders">Track My Order</a></li>
+                    </ul>
+                    <!-- End .widget-list -->
+                  </div>
+                  <!-- End .widget -->
+                </div>
+                <!-- End .col-sm-6 col-md-4 col-lg-3 -->
+            
+                <div class="col-sm-6 col-md-3 col-lg-3">
+                  <div class="widget">
+                    <h4 class="widget-title">My Account</h4>
+                    <!-- End .widget-title -->
+            
+                    <ul class="widget-list">
+                      <li><a href="/login">Sign In</a></li>
+                      <li><a href="/cart">View Cart</a></li>
+                      <li><a href="/wishlist">My Wishlist</a></li>
+                      <li><a href="/orders">Track My Order</a></li>
+                    </ul>
+                    <!-- End .widget-list -->
+                  </div>
+                  <!-- End .widget -->
+                </div>
+                <!-- End .col-sm-6 col-md-4 col-lg-3 -->
               </div>
-              <!-- End .widget -->
+              <!-- End .row -->
             </div>
-            <!-- End .col-sm-6 col-lg-3 -->
-  
-            <div class="col-sm-6 col-lg-3">
-              <div class="widget">
-                <h4 class="widget-title">Customer Service</h4>
-                <!-- End .widget-title -->
-  
-                <ul class="widget-list">
-                  <li><a href="#">Payment Methods</a></li>
-                  <li><a href="#">Money-back guarantee!</a></li>
-                  <li><a href="#">Returns</a></li>
-                  <li><a href="#">Shipping</a></li>
-                  <li><a href="#">Terms and conditions</a></li>
-                  <li><a href="#">Privacy Policy</a></li>
-                </ul>
-                <!-- End .widget-list -->
-              </div>
-              <!-- End .widget -->
-            </div>
-            <!-- End .col-sm-6 col-lg-3 -->
-  
-            <div class="col-sm-6 col-lg-3">
-              <div class="widget">
-                <h4 class="widget-title">My Account</h4>
-                <!-- End .widget-title -->
-  
-                <ul class="widget-list">
-                  <li><a href="#">Sign In</a></li>
-                  <li><a href="cart.html">View Cart</a></li>
-                  <li><a href="#">My Wishlist</a></li>
-                  <li><a href="#">Track My Order</a></li>
-                  <li><a href="#">Help</a></li>
-                </ul>
-                <!-- End .widget-list -->
-              </div>
-              <!-- End .widget -->
-            </div>
-            <!-- End .col-sm-6 col-lg-3 -->
+            <!-- End .container -->
+            
           </div>
           <!-- End .row -->
         </div>
@@ -331,7 +310,7 @@
   
     <!-- End .modal -->
   </div>
-  <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+  <!-- <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button> -->
   <!-- Mobile Menu -->
   <div class="mobile-menu-overlay"></div>
   <!-- End .mobil-menu-overlay -->
@@ -339,8 +318,8 @@
   <div class="mobile-menu-container mobile-menu-light">
     <div class="mobile-menu-wrapper">
       <span class="mobile-menu-close"><i class="icon-close"></i></span>
-  
-      <form action="#" method="get" class="mobile-search">
+      <form class="mobile-search" action="/product-search/?search"  method="get" onsubmit="return validateForm()">
+
         <label for="mobile-search" class="sr-only">Search</label>
         <input
           type="search"
