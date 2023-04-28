@@ -8,6 +8,11 @@ import debug from "debug";
 import mongoose from "mongoose";
 import connectDB from "./config/db.config.js";
 import session from "express-session";
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 
 // Load environment variables from .env file
@@ -27,7 +32,10 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.static("public"));
+
+app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, 'public/adminassets')));
+app.use(express.static(path.join(__dirname, 'public/assets')));
 app.use("/node_modules", express.static("node_modules"));
 
 // Session handler
@@ -76,14 +84,14 @@ app.use(function (err, req, res, next) {
 const server = http.createServer(app);
 
 // Set port
-const PORT = normalizePort(process.env.PORT || "3000");
-app.set("port", PORT);
+const port = normalizePort(process.env.PORT || "3000");
+app.set("port", port);
 
 // Listen on provided port, on all network interfaces
 mongoose.connection.once("open", () => {
   console.log("Connected to the database.");
-  server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  server.listen(port, () => {
+    console.log(`Server running on port ${port}`);
   });
 });
 
