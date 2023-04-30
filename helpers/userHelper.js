@@ -945,7 +945,7 @@ export default {
         }
         return products;
       }
-      return null;
+      return [];
     } catch (err) {
       console.error(err);
     }

@@ -2,7 +2,7 @@ import express from "express";
 const router = express.Router();
 import adminController from "../controllers/adminController.js";
 import upload from "../config/diskStorage.js";
-import { isloggedInad } from "../middileware/sessionHandling.js";
+import { isloggedInad } from "../middleware/sessionHandling.js"
 
 /* GET users listing. */
 

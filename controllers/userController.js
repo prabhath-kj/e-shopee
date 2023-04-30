@@ -873,7 +873,6 @@ export default {
         search,
         req.session.user?._id
       );
-      console.log(products);
       res.render("productList", { user: req.session.user, products });
     } catch (err) {
       res.render("catchError", {

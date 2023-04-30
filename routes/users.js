@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 import userController from "../controllers/userController.js";
-import { isLoggedIn, isUser } from "../middileware/sessionHandling.js";
+import { isLoggedIn, isUser } from "../middleware/sessionHandling.js";
 
 // /* GET home page. */
 router.get("/", userController.homePage);
