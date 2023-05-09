@@ -29,7 +29,7 @@
                 </ul>
 
                 <div class="tab-pane fade show active" id="register-2" role="tabpanel" aria-labelledby="register-tab-2">
-                  <form id="userForm" action="/signup" method="post">
+                  <form id="userForm">
                     <div class="form-group">
                       <label for="registerName">Full Name</label>
                       <input type="text" class="form-control" id="registerName" name="registerName" required
@@ -74,18 +74,8 @@
                       <label id="submit-error" class="errorLabel text-danger" for="button"></label>
 
                       </button>
-
-
-                      <% if (olduser){%>
-                        <p class="text-center" style="color: red">
-                          user already exists!
-                        </p>
-                        <% }%>
-                        <% if (EmailSended){%>
-                          <p class="text-center" style="color: green">
-                            An Email sent to your email account please verify
+                          <p class="text-center" id="usererr" style="color: red">
                           </p>
-                          <% }%>
                     </div>
                     <!-- End .form-footer -->
                   </form>
@@ -282,8 +272,61 @@
           }, 3000);
           return false;
         } else {
-          document.getElementById("userForm").submit();
+          // document.getElementById("userForm").submit();
+
+           // Listen to form submit event
+  $('#userForm').submit(function(event) {
+    event.preventDefault(); // Prevent form from submitting normally
+
+    // Serialize form data
+    var formData = $(this).serialize();
+
+    // Send AJAX request
+    $.ajax({
+      type: 'POST',
+      url: '/signup',
+      data: formData,
+      success: function(response) {
+        // Handle success response
+  if (response.status=="error") {
+  // Show SweetAlert with the message that user already exists
+  Swal.fire({
+    icon: 'warning',
+    title: 'User already exists',
+    text: 'Please login!'
+  }).then((result) => {
+    // Redirect to login page after user clicks "OK" button
+    if (result.isConfirmed) {
+      window.location.href = "/login";
+    }
+  });
+} else if(response.status=="success"){
+  // Show SweetAlert with the message that signup was successful
+  Swal.fire({
+    icon: 'success',
+    title: 'Signup Successful',
+    text: 'Please verify your email!'
+  }).then((result) => {
+    // Redirect to homepage after user clicks "OK" button
+    if (result.isConfirmed) {
+      window.location.href = "/";
+    }
+  });
+}
+ },
+      error: function(xhr, status, error) {
+        // Handle error response
+        console.log(xhr.responseText);
+      }
+    });
+  });
         }
       }
+
+
+
+
+ 
+
     </script>
     <%- include('includes/footerpartial') -%>

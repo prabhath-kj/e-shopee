@@ -67,37 +67,41 @@ export default {
 
   //signup
   signUpPage: (req, res) => {
-    res.render("signup.ejs", {
-      olduser: false,
-      EmailSended: false,
-      user: false,
-    });
+    try{
+      res.render("signup.ejs", {
+        user:req.session.user,
+      });
+    }catch(err){
+      console.error(err);
+      res.render("catchError", {
+        message: err.message,
+        user: req.session.user,
+      });
+    }
+   
   },
-  signUpPost: (req, res) => {
-    userHelper.doSignUp(req.body).then((userData) => {
-      console.log(userData);
-      let user = userData;
-      if (!user.status) {
-        let token = user.newToken.token;
+  signUpPost: async (req, res) => {
+    try {
+      const response = await userHelper.doSignUp(req.body);
+      console.log(response);
+      if (!response.oldUser) {
+        let token =response.newToken.token;
+        let user=response.user;
 
-        const url = `${process.env.BASE_URL}users/${user.user._id}/verify/${token}`;
-        sendMail(user.user.email, "Verify Email", url);
-        res.status(201);
-        res.render("signup", {
-          olduser: false,
-          EmailSended: true,
-          user: false,
-        });
-        // res.redirect("/");
+        const url = `${process.env.BASE_URL}users/${user._id}/verify/${token}`;
+        sendMail(user.email, "Verify Email", url);
+      
+        res.send({ status: "success" });
+
       } else {
         // If the user already exists, show the signup page with an error
-        res.render("signup", {
-          EmailSended: false,
-          olduser: true,
-          user: false,
-        });
+
+        res.send({ status: "error" });
       }
-    });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Internal Server Error");
+    }
   },
 
   verifyToken: async (req, res) => {

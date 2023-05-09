@@ -14,48 +14,44 @@ import mongoose from "mongoose";
 import Banner from "../models/banner.js";
 
 export default {
-  doSignUp: (body) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        var oldUser = await User.findOne({ email: body.registerEmail });
-        var mobileUser = await User.findOne({
+  doSignUp: async (body) => {
+    try {
+      let response = {};
+      const oldUser = await User.findOne({ email: body.registerEmail });
+      const mobileUser = await User.findOne({
+        mobnumber: body.registerMobileno,
+      });
+      if (oldUser || mobileUser) {
+        // If an existing user is found, return an object with status=true
+        response.oldUser = true;
+        return response;
+      } else {
+        // Otherwise, create a new user, save it to the database, and return an object with status=false and the saved user object
+        const newUser = new User({
+          username: body.registerName,
+          email: body.registerEmail,
           mobnumber: body.registerMobileno,
-        }); // New query to check if mobile number already exists
-
-        if (oldUser) {
-          // If an existing user is found, return an object with status=true
-          resolve({ status: true });
-          return;
-        } else if (mobileUser) {
-          // If an existing user is found with the provided mobile number, return an object with status=true
-          resolve({ status: true });
-          return;
-        } else {
-          // Otherwise, create a new user, save it to the database, and return an object with status=false and the saved user object
-          const newUser = new User({
-            username: body.registerName,
-            email: body.registerEmail,
-            mobnumber: body.registerMobileno,
-            password: CryptoJS.AES.encrypt(
-              body.registerPassword,
-              process.env.Secret_PassPhrase
-            ).toString(),
-          });
-          var savedUser = await newUser.save();
-
-          //token creation at database
-          const token = await new Token({
-            userId: savedUser._id,
-            token: crypto.randomBytes(32).toString("hex"),
-          }).save();
-
-          resolve({ status: false, user: savedUser, newToken: token });
-        }
-      } catch (err) {
-        console.error(err);
-        reject(err);
+          password: CryptoJS.AES.encrypt(
+            body.registerPassword,
+            process.env.Secret_PassPhrase
+          ).toString(),
+        });
+        const savedUser = await newUser.save();
+        //token creation at database
+        const token = await new Token({
+          userId: savedUser._id,
+          token: crypto.randomBytes(32).toString("hex"),
+        }).save();
+        response.oldUser=false,
+        response.user=savedUser,
+        response.newToken=token
+        // { status: false, user: savedUser, newToken: token }
+        return response;
       }
-    });
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
   },
 
   doLogin: (user) => {
