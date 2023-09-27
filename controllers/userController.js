@@ -860,8 +860,6 @@ export default {
       } else {
         res.json({ error: "error" });
       }
-      console.log(payment);
-      console.log(order);
     } catch (err) {
       console.error(err);
       res.render("catchError", {

@@ -76,7 +76,7 @@ app.use(function (err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
-//   // Render the error page
+
   res.render("error",{status:err?.status||500});
 });
 
@@ -101,7 +101,7 @@ const onError = (error) => {
     throw error;
   }
 
-  const bind = typeof PORT === "string" ? `Pipe ${PORT}` : `Port ${PORT}`;
+  const bind = typeof port === "string" ? `Pipe ${port}` : `Port ${port}`;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {

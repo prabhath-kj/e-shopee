@@ -16,19 +16,16 @@ export default {
         console.error(err);
       }
 
-      if (validAdmin) {
         if (validAdmin.isAdmin) {
-          response.validAdmin = validAdmin;
-          response.status = true;
-          resolve(response);
-        } else {
-          console.log("Login Failed");
-          resolve({ status: false });
-        }
-      } else {
-        console.log("No Admin Found!");
-        resolve({ status: false });
-      }
+          return res.send({
+            success: true,
+            message: "admin logged in succesfully",
+            data: token,
+            admin: admin
+        });
+        } 
+        
+      
     });
   },
 
