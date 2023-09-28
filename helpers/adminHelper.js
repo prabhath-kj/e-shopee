@@ -16,16 +16,17 @@ export default {
         console.error(err);
       }
 
+      if (validAdmin) {
         if (validAdmin.isAdmin) {
-          return res.send({
-            success: true,
-            message: "admin logged in succesfully",
-            data: token,
-            admin: admin
-        });
-        } 
-        
-      
+          response.validAdmin = validAdmin;
+          response.status = true;
+          resolve(response);
+        } else {
+          resolve({ status: false });
+        }
+      } else {
+        resolve({ status: false });
+      }
     });
   },
 
@@ -569,5 +570,4 @@ export default {
       console.error(err);
     }
   },
- 
 };

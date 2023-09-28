@@ -8,12 +8,11 @@ import debug from "debug";
 import mongoose from "mongoose";
 import connectDB from "./config/db.config.js";
 import session from "express-session";
-import { fileURLToPath } from 'url';
-import path from 'path';
+import { fileURLToPath } from "url";
+import path from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 
 // Load environment variables from .env file
 dotenv.config();
@@ -34,8 +33,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(express.static(path.join(__dirname, "public")));
-app.use(express.static(path.join(__dirname, 'public/adminassets')));
-app.use(express.static(path.join(__dirname, 'public/assets')));
+app.use(express.static(path.join(__dirname, "public/adminassets")));
+app.use(express.static(path.join(__dirname, "public/assets")));
 app.use("/node_modules", express.static("node_modules"));
 
 // Session handler
@@ -76,8 +75,7 @@ app.use(function (err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
-
-  res.render("error",{status:err?.status||500});
+  res.render("error", { status: err?.status || 500 });
 });
 
 // Create HTTP server
@@ -126,9 +124,7 @@ const onListening = () => {
   const bind = typeof addr === "string" ? `pipe ${addr}` : `port ${addr.port}`;
   debug(`Listening on ${bind}`);
 };
-server.on("listening", onListening)
-
-
+server.on("listening", onListening);
 
 /**
  * Normalize a port into a number, string, or false.
